@@ -8,6 +8,7 @@ import {runCycle,scheduledRun,startExperiment,stopExperiment,experimentInfo,birt
 import {isFrozen,restoreLocked,beginExport,exportSegment,sealExport,cancelExport,beginRestore,uploadRestoreSegment,applyRestore} from './segmented-backup';
 import {runToolTest} from './tool-tests';
 import {coordinate}from'./coordination';
+import { highlights, logbook, recordVisit, visitorsToday } from './insights';
 export const json = (value: unknown, status = 200) =>
   Response.json(value, { status, headers: { 'cache-control': 'no-store' } });
 const kinds = [
@@ -125,6 +126,8 @@ export async function api(request: Request, env: Env): Promise<Response> {
         environment: env.ENVIRONMENT,
       });
     }
+    if (path === '/api/highlights') return json({ ...(await highlights(env)), visitors: await visitorsToday(env) });
+    if (path === '/api/logbook') return json(await logbook(env, Math.min(14, Math.max(1, Number(url.searchParams.get('days')) || 7))));
     if (path === '/api/records') {
       const kind = url.searchParams.get('kind') ?? 'memoria';
       if (!kinds.includes(kind) && kind !== 'todos')
@@ -225,6 +228,7 @@ export async function api(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'metodo_nao_permitido' }, 405);
   if (authenticated && !(await rateLimit(env, 'write', 30, 60000)))
     return json({ error: 'limite_de_operacoes' }, 429);
+  if (path === '/api/visit') return json(await recordVisit(env, request));
   if (path === '/api/logout')
     return new Response('{}', {
       headers: { 'set-cookie': 'observador=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0' },
@@ -335,10 +339,10 @@ export async function api(request: Request, env: Env): Promise<Response> {
   }
   return json({ error: 'rota_inexistente' }, 404);
 }
-export const publicGet = new Set(['/api/state', '/api/records', '/api/monitor']);
+export const publicGet = new Set(['/api/state', '/api/records', '/api/monitor', '/api/highlights', '/api/logbook']);
 export function isPublicRoute(env: Env, method: string, path: string) {
   if (env.PUBLIC_OBSERVATION !== 'true') return false;
-  return (method === 'GET' && publicGet.has(path)) || (method === 'POST' && path === '/api/message');
+  return (method === 'GET' && publicGet.has(path)) || (method === 'POST' && (path === '/api/message' || path === '/api/visit'));
 }
 async function ipHash(request: Request) {
   const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(request.headers.get('cf-connecting-ip') ?? 'local'));

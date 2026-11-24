@@ -12,6 +12,8 @@ import {
   Heart,
   Home,
   Lightbulb,
+  NotebookPen,
+  Users,
   MessageCircle,
   Moon,
   Network,
@@ -39,6 +41,7 @@ import { ArtifactView } from './ArtifactView';
 import {BirthRitual} from './BirthRitual';
 import { expressionFor } from '../shared/expression';
 import { Explanation } from './explain';
+import { HighlightsPanel, LogbookPanel, useVisitors } from './insights';
 import {exportExistence,restoreExistence}from'./backups';
 const Habitat = lazy(() => import('./HabitatView'));
 type Data = {
@@ -52,6 +55,8 @@ type Data = {
 };
 type Tab =
   | 'Habitat'
+  | 'Destaques'
+  | 'Diário de bordo'
   | 'Estado interno'
   | 'Intenções'
   | 'Linha do tempo'
@@ -70,6 +75,7 @@ const groups = [
     title: 'A pequena existência',
     items: [
       ['Habitat', Home],
+      ['Destaques', Sparkles],
       ['Estado interno', Heart],
       ['Intenções', Lightbulb],
     ],
@@ -78,6 +84,7 @@ const groups = [
     title: 'O que fica',
     items: [
       ['Linha do tempo', Clock],
+      ['Diário de bordo', NotebookPen],
       ['Diário', Feather],
       ['Memórias', Brain],
       ['Conhecimentos', Network],
@@ -188,6 +195,7 @@ export function App() {
   const [birthOpen,setBirthOpen]=useState(false);
   const [auth, setAuth] = useState(false),
     [publicObs, setPublicObs] = useState(false),
+    [visitTracking, setVisitTracking] = useState(false),
     [configured, setConfigured] = useState<boolean | null>(null),
     [data, setData] = useState<Data | null>(null),
     [tab, setTab] = useState<Tab>('Habitat'),
@@ -254,6 +262,7 @@ export function App() {
       .then((s) => {
         setAuth(s.authenticated);
         setPublicObs(!!s.publicObservation);
+        setVisitTracking(!!s.publicObservation);
         setConfigured(s.configured);
         if (s.authenticated || s.publicObservation) void refresh().catch((e) => setError(e.message));
       })
@@ -272,7 +281,7 @@ export function App() {
   }, [auth, publicObs, refresh]);
   const load = useCallback(
     async (append = false, after = 0) => {
-      if ((!auth && !publicObs) || tab === 'Habitat') return;
+      if ((!auth && !publicObs) || ['Habitat', 'Destaques', 'Diário de bordo'].includes(tab)) return;
       const latest = [
         'Projetos',
         'Interesses',
@@ -339,6 +348,7 @@ export function App() {
     setFilter('todas');
     setMobileNav(false);
   }
+  const visitorsToday = useVisitors(visitTracking);
   const lastIntention = data?.recent.find((r) => r.kind === 'intencao');
   const lastEvents = (data?.recent ?? [])
     .filter((r) => !['memoria', 'intencao'].includes(r.kind))
@@ -427,6 +437,11 @@ export function App() {
           </div>
           <div className="top-actions">
             {data?.environmentId==='homologation'?<span className="environment-badge">Homologação · descartável</span>:null}
+            {visitorsToday !== null ? (
+              <span className="visitor-count" title="Visitantes únicos hoje (contagem anônima)">
+                <Users size={14} /> {visitorsToday} {visitorsToday === 1 ? 'visitante' : 'visitantes'} hoje
+              </span>
+            ) : null}
             <span className={`connection ${auth || publicObs ? 'connected' : ''}`}>
               <i />
               {auth ? 'Observação conectada (responsável)' : publicObs ? 'Observatório público' : 'Sem conexão com a existência'}
@@ -649,7 +664,7 @@ export function App() {
             <section className="records-panel">
               <div className="records-toolbar">
                 <div className="section-heading">
-                  <span className="record-count">{visible.length}</span>
+                  {['Destaques', 'Diário de bordo', 'Monitoramento'].includes(tab) ? null : <span className="record-count">{visible.length}</span>}
                   <h2>{tab === 'Linha do tempo' ? 'Registro completo' : tab}</h2>
                 </div>
                 <div className="filters">
@@ -800,7 +815,9 @@ export function App() {
                   </button>
                 </>
               ) : null}
-              {tab === 'Monitoramento' ? null : !visible.length ? (
+              {tab === 'Destaques' ? <HighlightsPanel /> : null}
+              {tab === 'Diário de bordo' ? <LogbookPanel /> : null}
+              {['Monitoramento', 'Destaques', 'Diário de bordo'].includes(tab) ? null : !visible.length ? (
                 <Empty
                   title={
                     tab === 'Diário'

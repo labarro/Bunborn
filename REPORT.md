@@ -104,6 +104,15 @@ Emergência não demonstrada; cotas Gemini reais não comprovadas por endpoint (
 
 O usuário fez o nascimento da criatura permanente em **2026-11-24 01:13:21Z**, pela cerimônia (desafio de uso único + frase de confirmação). Primeira decisão real: "Explorar o ambiente físico e compreender a disposição dos objetos ao meu redor". `BIRTH_ENABLED` foi fechado logo depois. A produção é um observatório público.
 
+## 16. Depois do nascimento: o que a criatura fez sozinha
+
+- **Nome escolhido espontaneamente: "Lumi"** (3ª decisão, 01:45Z, ~32 min depois do nascimento), com evidência de um registro próprio. Nenhum nome foi sugerido; a única mensagem recebida antes foi um "oi" de visitante.
+- Uma decisão foi perdida às 01:39Z por uma ação malformada (`evidence` vazio). Corrigido com validação por ação.
+
+## 17. Para visitantes (24/11)
+
+Abas **Destaques** e **Diário de bordo** (sem IA, só registros), linha do tempo do mais recente para o mais antigo, contador anônimo de visitantes do dia, prévia de compartilhamento (`public/og-image.png`, Open Graph/Twitter). Produção liberada para usar todo o teto global de IA (440/16).
+
 ## 15. Interface depois do nascimento
 
 - Coelho articulado e animado: respiração, piscadas, orelhas, pulos com amassa e estica virando para a direção do movimento, e poses para comer, beber, higiene, dormir (com "z"), pesquisar, criar, diário, organizar e observar. O deslocamento acontece somente quando há ação real registrada. `prefers-reduced-motion` é respeitado.

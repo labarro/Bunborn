@@ -170,6 +170,15 @@ test.describe.serial('Disposable local Worker + D1 + browser', () => {
     expect(statuses).toEqual([200, 200, 200, 429]);
     await expect.poll(async () => ((await (await visitor.get('/api/state')).json()).pending as { author: string }[]).filter((m) => m.author === 'visitante').length, { timeout: 45000, intervals: [3000] }).toBeGreaterThanOrEqual(3);
     expect((await visitor.post('/api/settings', { headers: { origin }, data: { paused: false, multiplier: 6 } })).status()).toBe(401);
+    const highlights = await (await visitor.get('/api/highlights')).json();
+    expect(highlights.born).toBe(true);
+    expect(highlights.decisions).toBe(0);
+    const book = await (await visitor.get('/api/logbook?days=7')).json();
+    expect(book.days[0].born).toBe(true);
+    const first = await (await visitor.post('/api/visit', { headers: { origin }, data: {} })).json();
+    const again = await (await visitor.post('/api/visit', { headers: { origin }, data: {} })).json();
+    expect(first.today).toBeGreaterThanOrEqual(1);
+    expect(again.today).toBe(first.today);
     await visitor.dispose();
   });
   test('serves CSP and no credentials in static assets', async ({ request }) => {

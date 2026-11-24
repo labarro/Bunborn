@@ -23,7 +23,7 @@ flowchart TD
   A --> DB
 ```
 
-- **Worker (gateway fino)**: serve assets estáticos, responde `/api/session`, `/api/login` e `/api/logout`, verifica a sessão das outras rotas e as encaminha ao Durable Object. Sem sessão, só passam as rotas do **observatório público** (quando `PUBLIC_OBSERVATION=true`, hoje só em produção): `GET /api/state`, `/api/records`, `/api/monitor` (cache de 30 s por isolate, com chave formada só pelos parâmetros conhecidos) e `POST /api/message` (≤ 500 caracteres; 3/h por IP com hash e 30/h globais; autor `visitante`). O resto do tráfego anônimo recebe 401 sem consumir o DO. O Cron só encaminha a tarefa `scheduled`. Motivo: o Worker Free tem 10 ms de CPU por invocação; antes da mudança, a versão de produção tinha P99 de 13,7 ms no Cron e as rotas HTTP chegavam a P99 de 12,5–84,7 ms. Depois: P99 de 0,5–1,3 ms no Cron e de 4,7–7,1 ms no HTTP (medição em `TESTS.md`).
+- **Worker (gateway fino)**: serve assets estáticos, responde `/api/session`, `/api/login` e `/api/logout`, verifica a sessão das outras rotas e as encaminha ao Durable Object. Sem sessão, só passam as rotas do **observatório público** (quando `PUBLIC_OBSERVATION=true`, hoje só em produção): `GET /api/state`, `/api/records`, `/api/monitor`, `/api/highlights`, `/api/logbook` (cache de 30 s por isolate, com chave formada só pelos parâmetros conhecidos) `POST /api/visit` (contador anônimo: hash SHA-256 de IP+dia+segredo, tabela `visits` podada após 8 dias) e `POST /api/message` (≤ 500 caracteres; 3/h por IP com hash e 30/h globais; autor `visitante`). O resto do tráfego anônimo recebe 401 sem consumir o DO. O Cron só encaminha a tarefa `scheduled`. Motivo: o Worker Free tem 10 ms de CPU por invocação; antes da mudança, a versão de produção tinha P99 de 13,7 ms no Cron e as rotas HTTP chegavam a P99 de 12,5–84,7 ms. Depois: P99 de 0,5–1,3 ms no Cron e de 4,7–7,1 ms no HTTP (medição em `TESTS.md`).
 - **Durable Object `CognitionCoordinator`** (SQLite, disponível no Free): é um executor, não um subagente nem outra personalidade. Tarefas cognitivas e administrativas (ciclo, experimento, diagnóstico, ensaio de ferramentas, nascimento) entram numa fila serial. Leituras do observador não esperam atrás de uma chamada lenta ao modelo; toda mutação de estado continua cercada pela lease do D1. Identidade e história ficam **só no D1**: o armazenamento do DO não é usado.
 - **D1 da existência**: `world` (estado singleton, revisão otimista), `records` (append-only), `memory_search` (FTS5), `record_links`, `retrievals`, `calls`/`budgets` locais, `inbox`, métricas, experimento e tabelas de backup/restauração.
 - **D1 `bunborn-budget`**: reservas globais por modelo e dia do Pacífico, compartilhadas pelos dois ambientes, porque a chave Gemini é a mesma.
@@ -34,6 +34,10 @@ flowchart TD
 | homologation | `bunborn-homologation` + budget | Criatura descartável, experimento de 24h. |
 | homologation | `bunborn-tool-tests` (TOOL_DB) | Cenários **induzidos** de ferramentas, separados da criatura autônoma. |
 | homologation | `bunborn-recovery` (RESTORE_DB) | Alvo isolado de restauração real. Hoje contém o arquivo da primeira criatura descartável. |
+
+**Destaques e diário de bordo** (`worker/insights.ts`): contagens e listas por intervalo de tempo, usando o índice `records(real_at)`, sem IA nem interpretação. São calculados no Durable Object e guardados na memória dele (destaques por 2 min, dia corrente por 10 min, dias encerrados por 6 h), então todos os visitantes compartilham o mesmo cálculo e as leituras do D1 ficam limitadas.
+
+**Validação por ação**: a resposta do modelo é validada no envelope (intenção, justificativa, intervalo) e em cada ação separadamente. Ações válidas são executadas; ações malformadas viram `erro_ferramenta` com código `acao_malformada` e detalhe do campo. Antes, uma única ação inválida descartava a decisão inteira (aconteceu em produção às 01:39Z de 24/11: `evidence` vazio).
 
 ## Persistência
 
@@ -70,4 +74,4 @@ Login com comparação de hashes e rate limit (5 por IP e 30 globais a cada 15 m
 
 ## Evolução
 
-Migrações apenas aditivas (0001–0008). `0007_backup_segments` e `0008_message_author` foram aplicadas aos quatro bancos de existência; `bunborn-budget` está na 0003 (só usa `budgets`/`calls`). `tests/database.ts` enumera as migrações explicitamente.
+Migrações apenas aditivas (0001–0009). `0007_backup_segments`, `0008_message_author` e `0009_insights_visits` foram aplicadas aos quatro bancos de existência; `bunborn-budget` está na 0003 (só usa `budgets`/`calls`). `tests/database.ts` enumera as migrações explicitamente.

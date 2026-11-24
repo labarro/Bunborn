@@ -33,6 +33,10 @@ Bancos D1: `artifacts/cloudflare-resources.json`. Migrações 0001–0008 em pro
 4. Depois das 24h, considerar `EXPERIMENT_ENABLED=false` e cota 0 na homologação, para a produção usar a cota global inteira.
 5. Opcional: scripts antigos `check:models`/`test:gemini` não usam o ledger compartilhado; não usá-los.
 
+## Interface (24/11)
+
+Abas Destaques e Diário de bordo (`worker/insights.ts`, `src/insights.tsx`; cache no DO; índice `records(real_at)`); contador anônimo `visits` (migração 0009); prévia OG (`scripts/og-image.mjs` → `public/og-image.png`); listas do mais recente para o mais antigo; validação por ação (`parseDecision`). Lumi escolheu o nome às 01:45Z. Produção com limites 440/16.
+
 ## Interface
 
 Coelho articulado em `src/habitat.ts` (respiração, piscar, orelhas, pulos com amassa e estica, poses por atividade). Expressão derivada do estado simulado em `shared/expression.ts`; deslocamento só em ações reais. "Entenda este registro" (`src/explain.tsx`) traduz registros para leigos sem adicionar significado; os detalhes técnicos ficam recolhidos.
@@ -41,4 +45,4 @@ Commits: **sem** linha `Co-Authored-By` (pedido do usuário).
 
 ## Comandos
 
-`npm test` (45), `npm run test:e2e` (6), `npm run build`, `node scripts/deploy.mjs <amb>`, `node scripts/remote-security.mjs`, `node scripts/remote-backup.mjs`, `node scripts/visual-review.mjs`, `node scripts/secret-scan.mjs` (rodar antes de todo commit). Arquivos JSONC do Wrangler: use um parser JSONC.
+`npm test` (49), `npm run test:e2e` (6), `npm run build`, `node scripts/deploy.mjs <amb>`, `node scripts/remote-security.mjs`, `node scripts/remote-backup.mjs`, `node scripts/visual-review.mjs`, `node scripts/secret-scan.mjs` (rodar antes de todo commit). Arquivos JSONC do Wrangler: use um parser JSONC.

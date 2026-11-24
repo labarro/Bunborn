@@ -196,6 +196,24 @@ describe('shared budget across environments (HTTP fixture, never real Gemini)', 
     void s;
   });
 });
+describe('malformed actions (HTTP fixture reproducing a real production failure)', () => {
+  it('runs the valid actions and records the malformed one instead of discarding the decision', async () => {
+    const { env, store } = setup({ GEMINI_API_KEY: 'TEST-ONLY', FREE_TIER_CONFIRMED: 'true' });
+    const t0 = Date.now();
+    await seed(store, t0);
+    const reply = { intention: 'Fixture HTTP', summary: 'Não é IA real.', nextMinutes: 5, complexNext: false, actions: [
+      { type: 'atividade', activity: 'beber', minutes: 10 },
+      { type: 'memoria', category: 'episodica', content: 'Sem evidência', confidence: 0.5, status: 'observacao', evidence: [] },
+    ] };
+    const fetcher = (async () => Response.json({ candidates: [{ finishReason: 'STOP', content: { parts: [{ text: JSON.stringify(reply) }] } }], usageMetadata: { totalTokenCount: 10 } })) as typeof fetch;
+    const result = await tick(env, t0 + 1000, new GeminiProvider(env, store, fetcher));
+    expect(result.status).toBe('decisao_registrada');
+    expect((await store.state())!.activity.kind).toBe('beber');
+    const rejected = (await store.records('erro_ferramenta'))[0];
+    expect(rejected.data).toMatchObject({ tool: 'memoria', code: 'acao_malformada' });
+    expect(JSON.stringify(rejected.data.detail)).toContain('evidence');
+  });
+});
 describe('public observatory messages (fixture decisions)', () => {
   it('records visitor messages as visitor influence, distinct from the responsible observer', async () => {
     const { env, store } = setup();

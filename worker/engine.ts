@@ -485,7 +485,7 @@ export async function tick(
       })),
     };
     try {
-      const { decision, model } = await (provider ?? new GeminiProvider(env, store)).decide(
+      const { decision, model, invalidActions = [] } = await (provider ?? new GeminiProvider(env, store)).decide(
         packContext(context),
         complex,
         now,
@@ -502,6 +502,8 @@ export async function tick(
           proposals:decision.actions.map(a=>a.type==='criar'?{...a,artifact:{format:a.artifact.format}}:a),
         }),
       );
+      for (const bad of invalidActions)
+        records.push(entry(s, 'erro_ferramenta', 'Ação rejeitada ou indisponível.', { tool: bad.type, code: 'acao_malformada', detail: { issues: bad.issues, hint: 'Siga o contrato da ferramenta; evidence precisa citar ao menos um registro existente.' } }));
       // Apply each tool against a draft so rejected actions cannot partially mutate state.
       let external = 0;
       for (const a of decision.actions) {

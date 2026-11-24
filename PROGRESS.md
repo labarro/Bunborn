@@ -26,3 +26,6 @@ Atualizado em 24/11/2026 (UTC). Agente único, sem subagentes. Nascimento perman
 - [x] Coelho animado (respiração, piscar, orelhas, pulos, poses por atividade) e expressões derivadas do estado simulado.
 - [x] "Entenda este registro": explicações em linguagem simples para visitantes.
 - [x] README reescrito para o público.
+- [x] Destaques, Diário de bordo, contador de visitantes, prévia de compartilhamento, listas do mais recente para o mais antigo.
+- [x] Validação por ação (uma ação malformada não descarta a decisão inteira).
+- [x] Produção com todo o teto global de IA; a homologação pausada não consome cota.

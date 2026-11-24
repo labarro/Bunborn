@@ -49,6 +49,10 @@ Reflexão pode gerar diário ou memória autobiográfica mediante evidências. D
 
 O rosto, as orelhas e o ícone do coelho são uma projeção legível do estado simulado (`shared/expression.ts`), calculada com limiares fixos de sono/energia, sede, fome, frustração, satisfação+conforto, curiosidade e tédio. Não é um sentimento declarado pela criatura nem uma inferência do modelo; a interface mostra o motivo (por exemplo, "sono 78, energia 22").
 
+## Validação por ação
+
+Uma ação malformada (por exemplo, `evidence` vazio) não invalida mais a decisão inteira: as demais ações são executadas, e a malformada vira uma rejeição `acao_malformada` com o campo problemático, visível para a criatura no ciclo seguinte.
+
 ## Retorno de erros
 
 Rejeições de ferramentas trazem código e detalhe factual no ciclo seguinte: referências inexistentes (`missing`) com a lembrança de que campos de contexto e nomes de ferramentas não são registros; atividade em andamento com atividade atual, estação exigida, minutos virtuais restantes e fila. Isso foi introduzido depois de observar, nas 25 decisões reais da primeira criatura descartável, três tentativas seguidas de diário recusadas sem explicação e citações como `"diario"` e `"facts.decisionNumber:24"` como evidência. É informação sobre o ambiente; não sugere o que fazer nem impõe objetivos.
@@ -56,6 +60,7 @@ Rejeições de ferramentas trazem código e detalhe factual no ciclo seguinte: r
 ## Observações reais até agora
 
 - Primeira criatura descartável (25 decisões reais com relógio controlado, de 23:39 a 00:04Z): manutenção física, organização, descanso, diário e reflexão repetida sobre a própria natureza simulada. Nenhum nome, interesse, pesquisa, projeto ou obra espontâneos. Repetição alta ("finalizar a alimentação" quatro vezes). Arquivada em `bunborn-recovery`. Seu registro de nascimento foi gravado por uma versão anterior do código com o texto da existência principal; o histórico é imutável e não foi corrigido retroativamente.
+- **Criatura permanente (produção)**, nascida em 24/11/2026 01:13:21Z pelo usuário: na 3ª decisão (01:45Z) escolheu sozinha o nome **"Lumi"**, citando como evidência um registro próprio, sem sugestão de ninguém. Antes disso, uma decisão (01:39Z) foi perdida por uma ação com `evidence` vazio, o que motivou a validação por ação. Uma mensagem "oi" de visitante chegou antes do nome.
 - Segunda criatura descartável: nascida em 24/11/2026 00:35:04Z para o experimento autônomo de 24h em tempo real. Resultados no relatório (`REPORT.md`), sempre separando comportamento espontâneo de influência do observador. Uma mensagem de teste de segurança (HTML inerte) foi enviada a ela; é influência explícita do observador.
 - Cenários **induzidos** em banco separado demonstraram pesquisa, criação de projeto e obras (texto e pixels) e demais ferramentas (detalhes em TESTS.md). Por definição, não são interesses da criatura.
 

@@ -1603,3 +1603,21 @@ pre {
 .plain-explanation .plain-who { font-style: italic; opacity: 0.85; }
 .technical-details { margin-top: 10px; opacity: 0.8; font-size: 0.85em; }
 .technical-details pre { overflow-x: auto; max-width: 100%; }
+
+.insights { display: grid; gap: 14px; }
+.insight-hero { padding: 18px 20px; border-radius: 14px; background: #292238; color: #eee9f2; }
+.insight-hero h2 { margin: 4px 0 8px; font-size: 1.5rem; }
+.insight-kicker { margin: 0; font-size: 0.8rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.06em; }
+.insight-card { border: 1px solid rgba(41, 34, 56, 0.12); border-radius: 14px; padding: 14px 16px; }
+.insight-card h3 { margin: 0 0 8px; font-size: 1rem; }
+.insight-card p { margin: 6px 0; line-height: 1.5; }
+.insight-quote { font-style: italic; }
+.insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.insight-stats { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.insight-stats strong { font-size: 1.3rem; margin-right: 4px; }
+.insight-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; line-height: 1.45; }
+.insight-list time { opacity: 0.65; font-size: 0.85em; margin-right: 4px; }
+.insight-meter { display: inline-block; height: 6px; border-radius: 3px; background: #b8a2d0; vertical-align: middle; margin-left: 6px; }
+.insight-empty { padding: 24px; text-align: center; opacity: 0.8; }
+.visitor-count { display: inline-flex; align-items: center; gap: 4px; font-size: 0.82rem; opacity: 0.8; }
+@media (max-width: 720px) { .visitor-count { display: none; } }

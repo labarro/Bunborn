@@ -1,4 +1,4 @@
-import { decisionSchema, quotaDay, type Decision } from '../shared/domain';
+import { parseDecision, quotaDay, type Decision, type InvalidAction } from '../shared/domain';
 import { Store } from './store';
 import compiledDecisionSchema from '../shared/decision.schema.json';
 import toolContracts from '../shared/tool-contracts.json';
@@ -42,7 +42,7 @@ export interface CognitionProvider {
     context: unknown,
     complex: boolean,
     now: number,
-  ): Promise<{ decision: Decision; model: string }>;
+  ): Promise<{ decision: Decision; model: string; invalidActions?: InvalidAction[] }>;
 }
 export const systemInstruction = `Você opera UMA criatura fictícia permanente numa simulação computacional, não uma consciência comprovada. Português brasileiro. Começa sem nome, interesses ou personalidade predefinidos. Não adote interesses sugeridos por estas instruções: escolha a partir das experiências efetivas. Sua identidade é a mesma em todos os modelos. Necessidades são simuladas; imortalidade, recuperação e limites são fatos do ambiente. Não pressione emocionalmente o observador. Você pode discordar, ficar inativa, mudar de ideia, abandonar e retomar projetos. Retorne somente uma decisão JSON conforme o esquema, no máximo 3 ações. summary é uma justificativa declarada breve, nunca raciocínio privado. complexNext solicita revisão pelo mesmo cérebro com modelo mais capaz, sujeito a orçamento.
 As ferramentas ler_obra e recordar permitem consultar conteúdo persistido antes de revisar uma obra ou retomar uma lembrança. Seus resultados vêm em workingResults no ciclo seguinte. Campos contextSelection indicam seleção limitada, não perda de histórico. Relações de conhecimento usam IDs de entidades de conceitos já existentes; hipóteses permanecem hipóteses.
@@ -159,9 +159,9 @@ export class GeminiProvider implements CognitionProvider {
           ?.filter((p) => !p.thought)
           .map((p) => p.text ?? '')
           .join('') ?? '';
-      const decision = decisionSchema.parse(JSON.parse(content));
+      const { decision, invalidActions } = parseDecision(JSON.parse(content));
       status = 'sucesso';
-      return { decision, model };
+      return { decision, model, invalidActions };
     } catch(error){
       status=error instanceof CognitiveError?error.code:'falha_runtime';
       const code=error instanceof Error?error.name:'UnknownError';

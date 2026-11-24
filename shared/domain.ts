@@ -179,6 +179,24 @@ export const decisionSchema = z
   })
   .strict();
 export type Decision = z.infer<typeof decisionSchema>;
+export type InvalidAction = { type: string; issues: { path: string; message: string }[] };
+// One malformed action must not discard the whole decision: valid actions run, malformed
+// ones become explained rejections the creature sees in its next cycle.
+export function parseDecision(raw: unknown): { decision: Decision; invalidActions: InvalidAction[] } {
+  const envelope = decisionSchema.extend({ actions: z.array(z.unknown()).max(3) }).parse(raw);
+  const valid: z.infer<typeof actionSchema>[] = [];
+  const invalidActions: InvalidAction[] = [];
+  for (const action of envelope.actions) {
+    const result = actionSchema.safeParse(action);
+    if (result.success) valid.push(result.data);
+    else
+      invalidActions.push({
+        type: String((action as { type?: unknown } | null)?.type ?? 'desconhecida').slice(0, 40),
+        issues: result.error.issues.slice(0, 4).map((i) => ({ path: i.path.join('.'), message: i.message.slice(0, 160) })),
+      });
+  }
+  return { decision: decisionSchema.parse({ ...envelope, actions: valid }), invalidActions };
+}
 export type Action = z.infer<typeof actionSchema>;
 export type Artifact = z.infer<typeof artifactSchema>;
 export type Point = { x: number; y: number };

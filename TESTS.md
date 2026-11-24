@@ -7,7 +7,7 @@ Execução: **24/11/2026 (UTC)**, Windows 11, Node.js 24.13.0, Wrangler 4, Chrom
 | Camada | Ambiente | Resultado |
 |---|---|---|
 | TypeScript + build | local | Aprovado (main ~357 KB, Phaser ~1.217 KB antes do gzip) |
-| Motor, memória, ferramentas | SQLite real + adaptador D1 (batch atômico síncrono) | **45 aprovados**, 1 de rede ignorado por padrão |
+| Motor, memória, ferramentas | SQLite real + adaptador D1 (batch atômico síncrono) | **49 aprovados**, 1 de rede ignorado por padrão |
 | Backup v2 | idem, com >2.000 registros | 6 testes (incluídos nos 45) |
 | E2E | Chromium + Worker + **DO** + D1 locais (Wrangler), observatório público ligado | **6 aprovados** |
 | Segurança remota | produção (pública) e homologação (privada) | **40/40** (`artifacts/remote-security.json`) |
@@ -44,6 +44,8 @@ Correção do adaptador de teste: o batch anterior cedia o controle (`await`) de
 E2E de observatório público: visitante sem credencial lê estado/registros, recebe 400 acima de 500 caracteres e 429 na 4ª mensagem da hora, as mensagens ficam marcadas como `visitante`; configurações, backup, nascimento, tick, recursos e exportação retornam 401 sem sessão.
 
 E2E novo: exportação v2 assinada pelo gateway + DO, escrita recusada durante o congelamento, cookie forjado retorna 401, restauração recusada sobre banco populado.
+
+`tests/insights.test.ts`: destaques e diário de bordo refletem só os registros armazenados; existência não nascida não gera resumo; o contador de visitas conta cada visitante uma vez por dia e não guarda o IP. `features.test.ts` também cobre a validação por ação, reproduzindo a falha real de produção: a ação válida é executada e a malformada vira `acao_malformada`. O E2E do visitante cobre destaques, diário de bordo e contador sem credencial.
 
 ## Restauração real (homologação → recuperação isolada)
 

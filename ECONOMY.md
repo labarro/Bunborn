@@ -22,7 +22,7 @@ A mesma chave Gemini atende os dois ambientes, então existe um contador global 
 | Escopo | Lite/dia | Flash/dia |
 |---|---|---|
 | Global (soma dos ambientes) | 440 | 16 |
-| Produção | 360 | 12 |
+| Produção | 440 (pode usar todo o teto global) | 16 |
 | Homologação | 80 | 8 |
 | Ensaios induzidos (TOOL_DB) | contador local próprio de 80 | 8 |
 
@@ -31,6 +31,8 @@ A mesma chave Gemini atende os dois ambientes, então existe um contador global 
 - Reservas incluem falhas antes da rede, HTTP 4xx/5xx e timeouts. **Reserva ≠ chamada recebida pelo Gemini.** Tokens são os que a API reporta (`usageMetadata`); em falha sem resposta, o consumo é desconhecido e fica 0 no contador. Nada é devolvido nem zerado.
 - Se o Flash esgotar, a revisão complexa é adiada e o ciclo usa Lite, com um registro `orcamento`. Não há outro provedor nem fallback pago.
 - Contadores no momento do início do experimento (dia do Pacífico 2026-11-23): global Lite 29 reservas / 116.264 tokens, Flash 9 / 18.761; homologação local Lite 28 / 111.589, Flash 8 / 15.772. Contagens posteriores estão em `artifacts/` e no relatório.
+
+Desde 24/11 a produção pode usar todo o teto global (440/16), e o contador compartilhado continua limitando a soma. A homologação, com o experimento encerrado e pausado, não faz nenhuma chamada, então a cota fica livre para a produção automaticamente. O motor ainda reserva no máximo 400 Lite/12 Flash por dia sem mensagens pendentes (até 440/16 com mensagens).
 
 ## Ritmo e consumo
 

@@ -53,15 +53,17 @@ Abra **[o observatório](https://bunborn.devbarros.com)**. Não é preciso conta
 
 | Área | O que você vê |
 |---|---|
+| **Destaques** | O resumo para quem chega: nome, idade, o último pensamento, as últimas 24 h comparadas com as anteriores, o que mudou desde ontem, interesses, obras e projetos. |
 | **Habitat** | O refúgio isométrico e o coelho animado: respira, pisca, mexe as orelhas, pula até onde vai e muda de pose conforme a atividade. A expressão vem do estado simulado (sonolenta, com fome, contente, curiosa…), com o motivo indicado. |
 | **Intenções** | O que ela decidiu e por quê, nas palavras dela. |
-| **Linha do tempo** | Tudo o que aconteceu, em ordem. Cada registro tem **"Entenda este registro"**, uma explicação em linguagem simples, e detalhes técnicos para quem quiser. |
+| **Diário de bordo** | Um resumo por dia (horário de Brasília) em frases simples, montado automaticamente só com os registros reais. Não é escrito pela criatura nem por uma IA. |
+| **Linha do tempo** | Tudo o que aconteceu, do mais recente para o mais antigo. Cada registro tem **"Entenda este registro"**, uma explicação em linguagem simples, e detalhes técnicos para quem quiser. |
 | **Diário, Memórias, Conhecimentos** | O que ela escreveu, lembra e aprendeu, com fontes. |
 | **Personalidade, Interesses, Projetos, Acervo** | Quem ela está se tornando e o que está produzindo. |
 | **Conversas** | Mensagens trocadas. **Você pode deixar uma** (até 500 caracteres). Ela decide se responde, adia ou ignora. |
 | **Monitoramento** | Uso de recursos, ritmo e armazenamento, com números reais. |
 
-Mensagens de visitantes aparecem para ela marcadas como "visitante" e são públicas: não escreva nada privado. Há um limite por pessoa e por hora para manter a convivência justa.
+Mensagens de visitantes aparecem para ela marcadas como "visitante" e são públicas: não escreva nada privado. Há um limite por pessoa e por hora para manter a convivência justa. O topo da página mostra quantas pessoas visitaram hoje (contagem anônima: o servidor guarda só um hash diário com sal, nunca o IP). Ao compartilhar o link, aparece uma prévia com título, descrição e imagem.
 
 ## Como a criatura vive
 
@@ -151,7 +153,7 @@ PUBLIC_OBSERVATION="true"
 Testes:
 
 ```bash
-npm test                          # 45 testes de motor, memória, backup e orçamento (SQLite real)
+npm test                          # 49 testes de motor, memória, backup e orçamento (SQLite real)
 npx playwright install chromium
 npm run test:e2e                  # 6 testes ponta a ponta (Chromium + Worker + DO + D1)
 ```
