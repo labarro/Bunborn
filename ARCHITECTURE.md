@@ -30,7 +30,7 @@ flowchart TD
 
 | Ambiente | Banco(s) | Finalidade |
 |---|---|---|
-| production | `bunborn-production` + budget | Existência permanente futura. Vazia; `BIRTH_ENABLED=false`. |
+| production (https://bunborn.devbarros.com) | `bunborn-production` + budget | Existência permanente futura. Vazia; `BIRTH_ENABLED=false`. |
 | homologation | `bunborn-homologation` + budget | Criatura descartável, experimento de 24h. |
 | homologation | `bunborn-tool-tests` (TOOL_DB) | Cenários **induzidos** de ferramentas, separados da criatura autônoma. |
 | homologation | `bunborn-recovery` (RESTORE_DB) | Alvo isolado de restauração real. Hoje contém o arquivo da primeira criatura descartável. |

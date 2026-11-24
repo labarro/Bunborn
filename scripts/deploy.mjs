@@ -9,4 +9,4 @@ const secrets=await encryptedGeneratedSecrets();const gemini=await readGemini();
 const cli=path.resolve('node_modules/wrangler/bin/wrangler.js');
 await new Promise((resolve,reject)=>{const child=spawn(process.execPath,[cli,'deploy','--config',`wrangler.${envName}.jsonc`],{stdio:'inherit',windowsHide:true,env:{...process.env,WRANGLER_SEND_METRICS:'false'}});child.on('exit',code=>code===0?resolve():reject(new Error('deploy_failed')));});
 for(const [name,text]of Object.entries({OBSERVER_SECRET:secrets[envName].observer,SESSION_SECRET:secrets[envName].session,GEMINI_API_KEY:gemini.key})){await cf(`/accounts/${accountId}/workers/scripts/bunborn-${envName}/secrets`,{method:'PUT',body:JSON.stringify({name,text,type:'secret_text'})});console.log(`${envName}: secret ${name} configurado (valor oculto)`);}
-console.log(`${envName}: https://bunborn-${envName}.luiisaugustoobad.workers.dev`);
+console.log(`${envName}: ${envName==='production'?'https://bunborn.devbarros.com':`https://bunborn-${envName}.luiisaugustoobad.workers.dev`}`);

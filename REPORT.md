@@ -6,7 +6,7 @@ Data: 24/11/2026 (UTC). Agente único. **Nenhum nascimento permanente foi execut
 
 | Ambiente | URL | Versão ativa | Estado |
 |---|---|---|---|
-| Produção | https://bunborn-production.luiisaugustoobad.workers.dev | `8ffa74a1-5eaa-44c2-ae71-cdcf00fa33dc` (código `68e6b485`) | **Observatório público**; `state=null`; `BIRTH_ENABLED=false`; experimentos desativados |
+| Produção | https://bunborn.devbarros.com | `8ffa74a1-5eaa-44c2-ae71-cdcf00fa33dc` (código `68e6b485`) | **Observatório público**; `state=null`; `BIRTH_ENABLED=false`; experimentos desativados |
 | Homologação | https://bunborn-homologation.luiisaugustoobad.workers.dev | `67f1ff10-3f8d-42fe-bfc0-62bd30df17f8` (código `344e8231`) | Privada; criatura descartável; experimento de 24h ativo |
 
 Os dois ambientes rodam o mesmo código-fonte testado. As versões finais incluem a configuração de secrets (cada `PUT` de secret gera uma versão nova). O código está no repositório https://github.com/labarro/Bunborn.

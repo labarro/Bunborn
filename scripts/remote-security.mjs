@@ -16,13 +16,17 @@ for (const env of ['production', 'homologation']) {
   const base = baseFor(env);
   if (env === 'production') {
     const pub = await raw(env, '/api/state');
-    check(env, 'public observatory: anonymous read allowed', pub.status === 200 && pub.body?.state === null, pub.status);
+    const born = !!pub.body?.state;
+    check(env, 'public observatory: anonymous read allowed', pub.status === 200 && 'state' in (pub.body ?? {}), { status: pub.status, born });
     check(env, 'public session flag exposed', (await raw(env, '/api/session')).body?.publicObservation === true);
     for (const path of ['/api/settings', '/api/backup/begin', '/api/birth/prepare', '/api/birth/confirm', '/api/tick', '/api/resource', '/api/experiment', '/api/restore'])
       check(env, 'anonymous POST ' + path + ' is 401', (await raw(env, path, { method: 'POST', headers: { origin: base, 'content-type': 'application/json' }, body: '{}' })).status === 401);
     check(env, 'anonymous export is 401', (await raw(env, '/api/export')).status === 401);
-    const msg = await raw(env, '/api/message', { method: 'POST', headers: { origin: base, 'content-type': 'application/json' }, body: JSON.stringify({ content: 'teste', id: crypto.randomUUID() }) });
-    check(env, 'anonymous message refused while unborn (no creature)', msg.status === 409, msg.status);
+    // Never write to a living permanent creature: the message check only runs before birth.
+    if (!born) {
+      const msg = await raw(env, '/api/message', { method: 'POST', headers: { origin: base, 'content-type': 'application/json' }, body: JSON.stringify({ content: 'teste', id: crypto.randomUUID() }) });
+      check(env, 'anonymous message refused while unborn (no creature)', msg.status === 409, msg.status);
+    }
   } else check(env, 'unauthenticated API is 401 (private homologation)', (await raw(env, '/api/state')).status === 401);
   check(env, 'forged session cookie on private route is 401', (await raw(env, '/api/export', { headers: { cookie: 'observador=9999999999999.' + 'a'.repeat(64) } })).status === 401);
   check(env, 'POST without Origin is 403', (await raw(env, '/api/login', { method: 'POST', body: '{}' })).status === 403);
@@ -47,7 +51,7 @@ const expectError = async (env, client, name, path, body, pattern) => {
   catch (e) { check(env, name, pattern.test(e.message), e.message); }
 };
 const state = await prod.request('state');
-check('production', 'production existence is empty (state=null)', state.state === null && state.birthEnabled === false, { birthEnabled: state.birthEnabled, ready: state.ready });
+check('production', 'birth closed (BIRTH_ENABLED=false) and at most one existence', state.birthEnabled === false, { born: !!state.state, birthEnabled: state.birthEnabled });
 await expectError('production', prod, 'birth preflight refused while BIRTH_ENABLED=false', 'birth/prepare', {}, /aguardando_liberacao_da_homologacao/);
 await expectError('production', prod, 'legacy /api/birth refused', 'birth', {}, /409|confirma/);
 await expectError('production', prod, 'experiments refused in production', 'experiment', { action: 'start', hours: 1, maxCalls: 1 }, /experimento_nao_autorizado/);

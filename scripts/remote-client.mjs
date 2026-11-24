@@ -1,6 +1,7 @@
 import {encryptedGeneratedSecrets} from './private-secrets.mjs';
 import{createHmac}from'node:crypto';
-export const baseFor=env=>`https://bunborn-${env}.luiisaugustoobad.workers.dev`;
+// Production is served on its custom domain; workers.dev remains an alternate address.
+export const baseFor=env=>env==='production'?'https://bunborn.devbarros.com':`https://bunborn-${env}.luiisaugustoobad.workers.dev`;
 export async function remoteClient(environment='homologation'){
  if(!['production','homologation'].includes(environment))throw new Error('invalid_environment');
  const secrets=await encryptedGeneratedSecrets(),base=baseFor(environment);

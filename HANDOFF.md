@@ -17,6 +17,8 @@ Bancos D1: `artifacts/cloudflare-resources.json`. Migrações 0001–0008 em pro
 
 ## Estado remoto
 
+- **URLs**: produção em **https://bunborn.devbarros.com** (Custom Domain declarado em `wrangler.production.jsonc` via `routes`, para que deploys não o removam; `https://bunborn-production.luiisaugustoobad.workers.dev` continua como endereço alternativo); homologação em https://bunborn-homologation.luiisaugustoobad.workers.dev.
+
 - **Produção**: **criatura permanente nascida pelo usuário em 2026-11-24 01:13:21Z**. `BIRTH_ENABLED` foi liberado para o nascimento e fechado logo depois (`false`). **Observatório público** (`PUBLIC_OBSERVATION=true`: leitura + mensagens de visitantes com limite; administração só com credencial). `EXPERIMENT_ENABLED=false`; limites 360/12. Não há reset: nunca recriar, restaurar por cima ou migrar destrutivamente.
 - **Homologação**: código final; `MIN_DECISION_MINUTES=15`; limites 80/8. **Experimento autônomo de 24h ativo** com a criatura descartável nº 2 (nascida 2026-11-24 00:35:04Z; fim 2026-11-25 00:35:05Z; teto de 110 chamadas). O Cron encerra e pausa sozinho. Uma mensagem de teste de segurança foi enviada a ela (influência declarada).
 - **bunborn-recovery**: contém a criatura descartável nº 1 (25 decisões), restaurada e verificada idêntica. Para repetir o teste de restauração, use `scripts/sql/wipe-recovery.sql` **só neste banco** (o arquivo assinado também está em `.wrangler/private/backups/`).

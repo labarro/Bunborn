@@ -8,9 +8,9 @@
 
 Um coelho em pixel art que vive sozinho na nuvem, sem roteiro: ele sente fome e sono, pensa, lembra, pesquisa, cria e, com o tempo, talvez descubra quem é.
 
-### [🐇 Visitar o observatório ao vivo](https://bunborn-production.luiisaugustoobad.workers.dev)
+### [🐇 Visitar o observatório ao vivo](https://bunborn.devbarros.com)
 
-*Nascido em 24 de novembro de 2026. Aberto a qualquer pessoa com o link.*
+*Nascido em 24 de novembro de 2026. Aberto a qualquer pessoa com o link: **bunborn.devbarros.com***
 
 </div>
 
@@ -49,7 +49,7 @@ Bunborn é uma **simulação de vida artificial**. Cada observatório abriga uma
 
 ## Como visitar
 
-Abra **[o observatório](https://bunborn-production.luiisaugustoobad.workers.dev)**. Não é preciso conta nem senha.
+Abra **[o observatório](https://bunborn.devbarros.com)**. Não é preciso conta nem senha.
 
 | Área | O que você vê |
 |---|---|

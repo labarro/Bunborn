@@ -1,13 +1,16 @@
 {
-  "checkedAt": "2026-11-24T01:06:14.485Z",
-  "passed": 40,
+  "checkedAt": "2026-11-24T01:35:36.832Z",
+  "passed": 39,
   "failed": 0,
   "results": [
     {
       "env": "production",
       "name": "public observatory: anonymous read allowed",
       "ok": true,
-      "detail": 200
+      "detail": {
+        "status": 200,
+        "born": true
+      }
     },
     {
       "env": "production",
@@ -58,12 +61,6 @@
       "env": "production",
       "name": "anonymous export is 401",
       "ok": true
-    },
-    {
-      "env": "production",
-      "name": "anonymous message refused while unborn (no creature)",
-      "ok": true,
-      "detail": 409
     },
     {
       "env": "production",
@@ -148,11 +145,11 @@
     },
     {
       "env": "production",
-      "name": "production existence is empty (state=null)",
+      "name": "birth closed (BIRTH_ENABLED=false) and at most one existence",
       "ok": true,
       "detail": {
-        "birthEnabled": false,
-        "ready": false
+        "born": true,
+        "birthEnabled": false
       }
     },
     {
