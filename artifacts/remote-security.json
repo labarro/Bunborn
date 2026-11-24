@@ -1,0 +1,238 @@
+{
+  "checkedAt": "2026-11-24T01:06:14.485Z",
+  "passed": 40,
+  "failed": 0,
+  "results": [
+    {
+      "env": "production",
+      "name": "public observatory: anonymous read allowed",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "env": "production",
+      "name": "public session flag exposed",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "anonymous POST /api/settings is 401",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "anonymous POST /api/backup/begin is 401",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "anonymous POST /api/birth/prepare is 401",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "anonymous POST /api/birth/confirm is 401",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "anonymous POST /api/tick is 401",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "anonymous POST /api/resource is 401",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "anonymous POST /api/experiment is 401",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "anonymous POST /api/restore is 401",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "anonymous export is 401",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "anonymous message refused while unborn (no creature)",
+      "ok": true,
+      "detail": 409
+    },
+    {
+      "env": "production",
+      "name": "forged session cookie on private route is 401",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "POST without Origin is 403",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "POST from foreign Origin is 403",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "wrong observer credential is 401 (rate limited)",
+      "ok": true,
+      "detail": 401
+    },
+    {
+      "env": "production",
+      "name": "login sets HttpOnly; Secure; SameSite=Strict cookie",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "env": "production",
+      "name": "no secrets or API keys in HTML/JS assets",
+      "ok": true,
+      "detail": "1 scripts scanned"
+    },
+    {
+      "env": "production",
+      "name": "CSP frame-ancestors none + nosniff on assets",
+      "ok": true
+    },
+    {
+      "env": "homologation",
+      "name": "unauthenticated API is 401 (private homologation)",
+      "ok": true
+    },
+    {
+      "env": "homologation",
+      "name": "forged session cookie on private route is 401",
+      "ok": true
+    },
+    {
+      "env": "homologation",
+      "name": "POST without Origin is 403",
+      "ok": true
+    },
+    {
+      "env": "homologation",
+      "name": "POST from foreign Origin is 403",
+      "ok": true
+    },
+    {
+      "env": "homologation",
+      "name": "wrong observer credential is 401 (rate limited)",
+      "ok": true,
+      "detail": 401
+    },
+    {
+      "env": "homologation",
+      "name": "login sets HttpOnly; Secure; SameSite=Strict cookie",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "env": "homologation",
+      "name": "no secrets or API keys in HTML/JS assets",
+      "ok": true,
+      "detail": "1 scripts scanned"
+    },
+    {
+      "env": "homologation",
+      "name": "CSP frame-ancestors none + nosniff on assets",
+      "ok": true
+    },
+    {
+      "env": "production",
+      "name": "production existence is empty (state=null)",
+      "ok": true,
+      "detail": {
+        "birthEnabled": false,
+        "ready": false
+      }
+    },
+    {
+      "env": "production",
+      "name": "birth preflight refused while BIRTH_ENABLED=false",
+      "ok": true,
+      "detail": "remote_http_409_aguardando_liberacao_da_homologacao"
+    },
+    {
+      "env": "production",
+      "name": "legacy /api/birth refused",
+      "ok": true,
+      "detail": "remote_http_409_Use a confirmação explícita de nascimento."
+    },
+    {
+      "env": "production",
+      "name": "experiments refused in production",
+      "ok": true,
+      "detail": "remote_http_409_experimento_nao_autorizado"
+    },
+    {
+      "env": "production",
+      "name": "controlled clock refused in production",
+      "ok": true,
+      "detail": "remote_http_409_relogio_controlado_nao_autorizado"
+    },
+    {
+      "env": "production",
+      "name": "Gemini diagnostics refused in production (no call)",
+      "ok": true,
+      "detail": "remote_http_409_diagnostico_somente_homologacao"
+    },
+    {
+      "env": "production",
+      "name": "induced tool tests refused in production",
+      "ok": true,
+      "detail": "remote_http_409_ensaio_de_ferramentas_nao_autorizado"
+    },
+    {
+      "env": "production",
+      "name": "recovery target refused in production",
+      "ok": true,
+      "detail": "remote_http_403_recuperacao_nao_autorizada"
+    },
+    {
+      "env": "production",
+      "name": "legacy v1 restore refused in production",
+      "ok": true,
+      "detail": "remote_http_403_Use backup assinado de origem production."
+    },
+    {
+      "env": "production",
+      "name": "homologation-signed backup cannot be imported into production",
+      "ok": true,
+      "detail": "remote_http_409_assinatura_ou_integridade_invalida"
+    },
+    {
+      "env": "homologation",
+      "name": "tampered manifest rejected by signature",
+      "ok": true,
+      "detail": "remote_http_409_assinatura_ou_integridade_invalida"
+    },
+    {
+      "env": "homologation",
+      "name": "unsigned extra manifest field rejected",
+      "ok": true,
+      "detail": "remote_http_400_falha_validacao_ou_servico"
+    },
+    {
+      "env": "homologation",
+      "name": "three concurrent ticks cause at most one model call (lease + nextDecisionAt)",
+      "ok": true,
+      "detail": {
+        "statuses": [
+          "tempo_atualizado",
+          "tempo_atualizado",
+          "tempo_atualizado"
+        ],
+        "newCalls": 0
+      }
+    }
+  ]
+}

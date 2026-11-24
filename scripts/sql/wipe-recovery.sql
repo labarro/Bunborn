@@ -1,0 +1,24 @@
+-- ONLY for the isolated bunborn-recovery database (restore-test target). Never production.
+INSERT INTO memory_search(memory_search) VALUES('delete-all');
+DELETE FROM records;
+DELETE FROM world;
+DELETE FROM retrievals;
+DELETE FROM budgets;
+DELETE FROM calls;
+DELETE FROM inbox;
+DELETE FROM rate_limits;
+DELETE FROM operations;
+DELETE FROM heartbeats;
+DELETE FROM cycle_metrics;
+DELETE FROM experiment;
+DELETE FROM birth_challenges;
+DELETE FROM backup_sessions;
+DELETE FROM backup_segments;
+DELETE FROM restore_sessions;
+DELETE FROM restore_chunks;
+DELETE FROM record_links;
+DELETE FROM research_cache;
+DELETE FROM checkpoints;
+DELETE FROM sqlite_sequence;
+UPDATE storage_meter SET bytes=0, records=0 WHERE id=1;
+UPDATE lease SET token='', expires=0 WHERE id=1;

@@ -1,0 +1,77 @@
+{
+  "checkedAt": "2026-11-24T01:06:47.076Z",
+  "report": [
+    {
+      "name": "production-desktop-public",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "production-desktop-empty-authenticated",
+      "overflow": false,
+      "errors": [],
+      "birthButtonDisabled": true
+    },
+    {
+      "name": "homologation-desktop-habitat",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "homologation-desktop-intencoes",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "homologation-desktop-linhadotempo",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "homologation-desktop-memorias",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "homologation-desktop-personalidade",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "homologation-desktop-acervo",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "homologation-desktop-monitoramento",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "production-mobile-public",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "production-mobile-empty-authenticated",
+      "overflow": false,
+      "errors": [],
+      "birthButtonDisabled": true
+    },
+    {
+      "name": "homologation-mobile-habitat",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "homologation-mobile-linhadotempo",
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "name": "homologation-mobile-monitoramento",
+      "overflow": false,
+      "errors": []
+    }
+  ]
+}

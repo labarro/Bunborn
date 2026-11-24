@@ -1,0 +1,105 @@
+{
+  "checkedAt": "2026-11-24T00:34:12.427Z",
+  "environment": "homologation (disposable) -> bunborn-recovery (isolated, was empty)",
+  "backupId": "25224e31-0de5-410f-aa1b-f154fe16df8c",
+  "bytes": 182522,
+  "segments": 16,
+  "counts": {
+    "records": 179,
+    "budgets": 2,
+    "calls": 36,
+    "inbox": 0,
+    "retrievals": 126,
+    "record_links": 316,
+    "cycle_metrics": 26,
+    "experiment": 1,
+    "checkpoints": 0,
+    "operations": 2
+  },
+  "exportMs": 9582,
+  "restoreMs": 11360,
+  "applyCalls": 6,
+  "restoreResumed": false,
+  "identical": {
+    "segmentDigests": true,
+    "mismatchedSegments": 0,
+    "counts": true,
+    "state": true,
+    "stateSameKeyOrder": true,
+    "identity": true,
+    "ageVirtualMinutes": [
+      1718.4267,
+      1718.4267
+    ],
+    "needs": true,
+    "decisions": [
+      25,
+      25
+    ],
+    "storageMeter": true,
+    "kindCounts": true
+  },
+  "storage": {
+    "homologation": {
+      "id": 1,
+      "bytes": 152153,
+      "records": 179
+    },
+    "recovery": {
+      "id": 1,
+      "bytes": 152153,
+      "records": 179
+    }
+  },
+  "kindCounts": [
+    {
+      "kind": "atividade",
+      "n": 22
+    },
+    {
+      "kind": "checkpoint",
+      "n": 1
+    },
+    {
+      "kind": "comportamento",
+      "n": 2
+    },
+    {
+      "kind": "diario",
+      "n": 6
+    },
+    {
+      "kind": "ensaio_temporal",
+      "n": 26
+    },
+    {
+      "kind": "erro",
+      "n": 1
+    },
+    {
+      "kind": "erro_ferramenta",
+      "n": 7
+    },
+    {
+      "kind": "experimento",
+      "n": 2
+    },
+    {
+      "kind": "habitat",
+      "n": 1
+    },
+    {
+      "kind": "intencao",
+      "n": 25
+    },
+    {
+      "kind": "memoria",
+      "n": 85
+    },
+    {
+      "kind": "nascimento",
+      "n": 1
+    }
+  ],
+  "localFile": ".wrangler/private/backups/homologation-25224e31-0de5-410f-aa1b-f154fe16df8c.backup.json"
+}

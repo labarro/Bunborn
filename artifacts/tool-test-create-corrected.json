@@ -1,0 +1,388 @@
+{
+  "scenario": "create",
+  "induced": true,
+  "result": {
+    "status": "decisao_registrada",
+    "decisions": 2
+  },
+  "beforeDecisions": 1,
+  "afterDecisions": 2,
+  "recent": [
+    {
+      "seq": 16,
+      "id": "f6a3c9ea-6b31-48a4-8f62-9afcafe6139a",
+      "entityId": "f6a3c9ea-6b31-48a4-8f62-9afcafe6139a",
+      "kind": "memoria",
+      "category": "trabalho",
+      "content": "Contexto de continuidade: Executar o teste induzido conforme o contrato técnico, criando projeto e obras associadas..",
+      "data": {
+        "activity": {
+          "kind": "observar",
+          "until": 0,
+          "target": "descanso",
+          "intention": "Executar o teste induzido conforme o contrato técnico, criando projeto e obras associadas."
+        },
+        "evidence": [
+          "6de04f3e-d522-438f-93a0-98377d26acec"
+        ]
+      },
+      "realAt": 1795478403831,
+      "virtualAt": 51.2669,
+      "importance": 0.35,
+      "confidence": 1,
+      "associations": [
+        "6de04f3e-d522-438f-93a0-98377d26acec"
+      ],
+      "origin": "observacao"
+    },
+    {
+      "seq": 15,
+      "id": "6de04f3e-d522-438f-93a0-98377d26acec",
+      "entityId": "6de04f3e-d522-438f-93a0-98377d26acec",
+      "kind": "memoria",
+      "category": "episodica",
+      "content": "Intenção: Executar o teste induzido conforme o contrato técnico, criando projeto e obras associadas.. Resultado: Ação rejeitada ou indisponível. Ação rejeitada ou indisponível. Ação rejeitada ou indisponível.",
+      "data": {
+        "evidence": [
+          "49e8fa5e-8d4c-438e-831a-8e73b6d5f34a",
+          "efd53808-d238-4c52-ab1b-6265c9d87a8f",
+          "38a450a8-f886-44a8-96e8-e0944f1f2eb1",
+          "8f3fac5e-091b-481e-9962-0f28c0483af3"
+        ]
+      },
+      "realAt": 1795478403831,
+      "virtualAt": 51.2669,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [
+        "49e8fa5e-8d4c-438e-831a-8e73b6d5f34a",
+        "efd53808-d238-4c52-ab1b-6265c9d87a8f",
+        "38a450a8-f886-44a8-96e8-e0944f1f2eb1",
+        "8f3fac5e-091b-481e-9962-0f28c0483af3"
+      ],
+      "origin": "observacao"
+    },
+    {
+      "seq": 14,
+      "id": "8f3fac5e-091b-481e-9962-0f28c0483af3",
+      "entityId": "8f3fac5e-091b-481e-9962-0f28c0483af3",
+      "kind": "erro_ferramenta",
+      "category": "episodica",
+      "content": "Ação rejeitada ou indisponível.",
+      "data": {
+        "tool": "criar",
+        "code": "projeto_inexistente"
+      },
+      "realAt": 1795478403831,
+      "virtualAt": 51.2669,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [],
+      "origin": "motor"
+    },
+    {
+      "seq": 13,
+      "id": "38a450a8-f886-44a8-96e8-e0944f1f2eb1",
+      "entityId": "38a450a8-f886-44a8-96e8-e0944f1f2eb1",
+      "kind": "erro_ferramenta",
+      "category": "episodica",
+      "content": "Ação rejeitada ou indisponível.",
+      "data": {
+        "tool": "criar",
+        "code": "projeto_inexistente"
+      },
+      "realAt": 1795478403831,
+      "virtualAt": 51.2669,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [],
+      "origin": "motor"
+    },
+    {
+      "seq": 12,
+      "id": "efd53808-d238-4c52-ab1b-6265c9d87a8f",
+      "entityId": "efd53808-d238-4c52-ab1b-6265c9d87a8f",
+      "kind": "erro_ferramenta",
+      "category": "episodica",
+      "content": "Ação rejeitada ou indisponível.",
+      "data": {
+        "tool": "projeto",
+        "code": "etapa_sem_artefato"
+      },
+      "realAt": 1795478403831,
+      "virtualAt": 51.2669,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [],
+      "origin": "motor"
+    },
+    {
+      "seq": 11,
+      "id": "49e8fa5e-8d4c-438e-831a-8e73b6d5f34a",
+      "entityId": "49e8fa5e-8d4c-438e-831a-8e73b6d5f34a",
+      "kind": "intencao",
+      "category": "episodica",
+      "content": "Executar o teste induzido conforme o contrato técnico, criando projeto e obras associadas.",
+      "data": {
+        "summary": "Criação de projeto, artefato textual e artefato visual para homologação do contrato.",
+        "model": "gemini-3.1-flash-lite",
+        "proposed": [
+          "projeto",
+          "criar",
+          "criar"
+        ],
+        "nextMinutes": 10,
+        "complexNext": false,
+        "proposals": [
+          {
+            "type": "projeto",
+            "id": "ensaio",
+            "title": "Projeto de Ensaio Técnico",
+            "steps": [
+              "Produzir uma obra"
+            ],
+            "completed": [
+              0
+            ],
+            "status": "ativo",
+            "horizon": "curto",
+            "evidence": [
+              "60b13161-0f58-47f0-86fa-79479e597e7b"
+            ]
+          },
+          {
+            "type": "criar",
+            "id": "texto-ensaio",
+            "title": "Poema de Teste",
+            "motivation": "Homologação do contrato",
+            "projectId": "ensaio",
+            "artifact": {
+              "format": "texto"
+            }
+          },
+          {
+            "type": "criar",
+            "id": "pixels-ensaio",
+            "title": "Pixel Art de Teste",
+            "motivation": "Homologação do contrato",
+            "projectId": "ensaio",
+            "artifact": {
+              "format": "pixels"
+            }
+          }
+        ]
+      },
+      "realAt": 1795478403831,
+      "virtualAt": 51.2669,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [],
+      "origin": "motor"
+    },
+    {
+      "seq": 10,
+      "id": "6b5543b4-ad6a-4981-bdcc-c2ed8ea607ca",
+      "entityId": "6b5543b4-ad6a-4981-bdcc-c2ed8ea607ca",
+      "kind": "ensaio_ferramenta",
+      "category": "episodica",
+      "content": "Cenário induzido de homologação; separado da criatura autônoma.",
+      "data": {
+        "scenario": "create",
+        "model": "lite",
+        "induced": true
+      },
+      "realAt": 1795478403177,
+      "virtualAt": 51.2015,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [],
+      "origin": "homologacao_induzida"
+    },
+    {
+      "seq": 9,
+      "id": "71f38a50-39e5-4317-9920-ef071d5f80ea",
+      "entityId": "71f38a50-39e5-4317-9920-ef071d5f80ea",
+      "kind": "memoria",
+      "category": "trabalho",
+      "content": "Contexto de continuidade: Executar teste induzido de ferramentas e homologação de contratos conforme instruções do cenário técnico..",
+      "data": {
+        "activity": {
+          "kind": "observar",
+          "until": 0,
+          "target": "descanso",
+          "intention": "Executar teste induzido de ferramentas e homologação de contratos conforme instruções do cenário técnico."
+        },
+        "evidence": [
+          "65c04a1b-e8ab-40bb-a74e-25e2e3570a61"
+        ]
+      },
+      "realAt": 1795477894361,
+      "virtualAt": 0.3199,
+      "importance": 0.35,
+      "confidence": 1,
+      "associations": [
+        "65c04a1b-e8ab-40bb-a74e-25e2e3570a61"
+      ],
+      "origin": "observacao"
+    },
+    {
+      "seq": 8,
+      "id": "65c04a1b-e8ab-40bb-a74e-25e2e3570a61",
+      "entityId": "65c04a1b-e8ab-40bb-a74e-25e2e3570a61",
+      "kind": "memoria",
+      "category": "episodica",
+      "content": "Intenção: Executar teste induzido de ferramentas e homologação de contratos conforme instruções do cenário técnico.. Resultado: Ação rejeitada ou indisponível. Ação rejeitada ou indisponível. Ação rejeitada ou indisponível.",
+      "data": {
+        "evidence": [
+          "4b24dcdc-7527-4028-a439-7df12c8dbc26",
+          "dce0cee0-5314-4642-8e65-4215c037ceda",
+          "2730f987-28f3-4117-a516-8b49e12bfe45",
+          "f1b30971-d3b8-4be5-a951-7730b303ef25"
+        ]
+      },
+      "realAt": 1795477894361,
+      "virtualAt": 0.3199,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [
+        "4b24dcdc-7527-4028-a439-7df12c8dbc26",
+        "dce0cee0-5314-4642-8e65-4215c037ceda",
+        "2730f987-28f3-4117-a516-8b49e12bfe45",
+        "f1b30971-d3b8-4be5-a951-7730b303ef25"
+      ],
+      "origin": "observacao"
+    },
+    {
+      "seq": 7,
+      "id": "f1b30971-d3b8-4be5-a951-7730b303ef25",
+      "entityId": "f1b30971-d3b8-4be5-a951-7730b303ef25",
+      "kind": "erro_ferramenta",
+      "category": "episodica",
+      "content": "Ação rejeitada ou indisponível.",
+      "data": {
+        "tool": "criar",
+        "code": "projeto_inexistente"
+      },
+      "realAt": 1795477894361,
+      "virtualAt": 0.3199,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [],
+      "origin": "motor"
+    },
+    {
+      "seq": 6,
+      "id": "2730f987-28f3-4117-a516-8b49e12bfe45",
+      "entityId": "2730f987-28f3-4117-a516-8b49e12bfe45",
+      "kind": "erro_ferramenta",
+      "category": "episodica",
+      "content": "Ação rejeitada ou indisponível.",
+      "data": {
+        "tool": "criar",
+        "code": "projeto_inexistente"
+      },
+      "realAt": 1795477894361,
+      "virtualAt": 0.3199,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [],
+      "origin": "motor"
+    },
+    {
+      "seq": 5,
+      "id": "dce0cee0-5314-4642-8e65-4215c037ceda",
+      "entityId": "dce0cee0-5314-4642-8e65-4215c037ceda",
+      "kind": "erro_ferramenta",
+      "category": "episodica",
+      "content": "Ação rejeitada ou indisponível.",
+      "data": {
+        "tool": "projeto",
+        "code": "evidencia_inexistente"
+      },
+      "realAt": 1795477894361,
+      "virtualAt": 0.3199,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [],
+      "origin": "motor"
+    },
+    {
+      "seq": 4,
+      "id": "4b24dcdc-7527-4028-a439-7df12c8dbc26",
+      "entityId": "4b24dcdc-7527-4028-a439-7df12c8dbc26",
+      "kind": "intencao",
+      "category": "episodica",
+      "content": "Executar teste induzido de ferramentas e homologação de contratos conforme instruções do cenário técnico.",
+      "data": {
+        "summary": "Iniciando projeto 'ensaio' com a criação de um poema e uma arte em pixels para validar os sistemas de criação e gestão de projetos.",
+        "model": "gemini-3-flash-preview",
+        "proposed": [
+          "projeto",
+          "criar",
+          "criar"
+        ]
+      },
+      "realAt": 1795477894361,
+      "virtualAt": 0.3199,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [],
+      "origin": "motor"
+    },
+    {
+      "seq": 3,
+      "id": "243513df-fba2-41a1-8af6-e64a717bacd5",
+      "entityId": "243513df-fba2-41a1-8af6-e64a717bacd5",
+      "kind": "ensaio_ferramenta",
+      "category": "episodica",
+      "content": "Cenário induzido de homologação; separado da criatura autônoma.",
+      "data": {
+        "scenario": "create",
+        "model": "flash",
+        "induced": true
+      },
+      "realAt": 1795477893736,
+      "virtualAt": 0.2574,
+      "importance": 0.5,
+      "confidence": 1,
+      "associations": [],
+      "origin": "homologacao_induzida"
+    },
+    {
+      "seq": 2,
+      "id": "63517bd8-4eee-444f-8f50-8fa914758ae2",
+      "entityId": "63517bd8-4eee-444f-8f50-8fa914758ae2",
+      "kind": "memoria",
+      "category": "semantica",
+      "content": "O ambiente possui recursos renováveis, terminal de leitura e ferramentas limitadas. Sou uma criatura simulada e imortal.",
+      "data": {
+        "status": "fato_do_ambiente"
+      },
+      "realAt": 1795477891162,
+      "virtualAt": 0,
+      "importance": 1,
+      "confidence": 1,
+      "associations": [],
+      "origin": "motor"
+    },
+    {
+      "seq": 1,
+      "id": "60b13161-0f58-47f0-86fa-79479e597e7b",
+      "entityId": "60b13161-0f58-47f0-86fa-79479e597e7b",
+      "kind": "nascimento",
+      "category": "episodica",
+      "content": "Nascimento único da existência principal.",
+      "data": {
+        "natureza": "Simulação computacional; nenhuma consciência real é afirmada.",
+        "environment": "tool-tests",
+        "permanent": false
+      },
+      "realAt": 1795477891162,
+      "virtualAt": 0,
+      "importance": 1,
+      "confidence": 1,
+      "associations": [],
+      "origin": "motor"
+    }
+  ]
+}

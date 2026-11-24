@@ -1,0 +1,10 @@
+[
+  {
+    "model": "lite",
+    "error": "remote_http_409_gemini_response_zoderror"
+  },
+  {
+    "model": "flash",
+    "error": "remote_http_409_gemini_fetch_timeouterror"
+  }
+]

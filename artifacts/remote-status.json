@@ -1,0 +1,942 @@
+{
+  "checkedAt": "2026-11-24T00:36:40.206Z",
+  "state": {
+    "schema": 1,
+    "id": "principal",
+    "bornAt": 1795480504904,
+    "updatedAt": 1795480591259,
+    "virtualMinutes": 8.635499999999999,
+    "multiplier": 6,
+    "paused": false,
+    "revision": 7,
+    "nextDecisionAt": 1795481428673,
+    "decisions": 1,
+    "failures": 0,
+    "identity": {
+      "name": null,
+      "description": "Identidade ainda em formação.",
+      "traits": {},
+      "version": 0
+    },
+    "needs": {
+      "fome": 15.287849999999999,
+      "sede": 15.3598125,
+      "sono": 10.287849999999999,
+      "energia": 84.79850499999999,
+      "higiene": 89.88486,
+      "conforto": 89.766121875,
+      "saude": 100
+    },
+    "motives": {
+      "curiosidade": 50,
+      "tedio": 10.143925000000001,
+      "satisfacao": 50,
+      "criatividade": 50,
+      "frustracao": 0,
+      "interacao": 20.043177500000002,
+      "motivacao": 50
+    },
+    "activity": {
+      "kind": "observar",
+      "until": 12.3769,
+      "target": "descanso",
+      "intention": "Explorar o ambiente para organizar os objetos ao meu redor e entender minha disposição física."
+    },
+    "position": {
+      "x": 5,
+      "y": 5
+    },
+    "queue": [],
+    "objects": [
+      {
+        "id": "cama",
+        "label": "Cama",
+        "kind": "cama",
+        "x": 1,
+        "y": 1,
+        "color": "#a38ab9"
+      },
+      {
+        "id": "mesa",
+        "label": "Mesa de trabalho",
+        "kind": "mesa",
+        "x": 8,
+        "y": 2,
+        "color": "#b88b68"
+      },
+      {
+        "id": "terminal",
+        "label": "Terminal de pesquisa",
+        "kind": "terminal",
+        "x": 8,
+        "y": 1,
+        "color": "#91aab0"
+      },
+      {
+        "id": "estante",
+        "label": "Estante",
+        "kind": "estante",
+        "x": 1,
+        "y": 5,
+        "color": "#bb946b"
+      },
+      {
+        "id": "comida",
+        "label": "Alimentação e água",
+        "kind": "comida",
+        "x": 2,
+        "y": 9,
+        "color": "#d4ad78"
+      },
+      {
+        "id": "higiene",
+        "label": "Área de higiene",
+        "kind": "higiene",
+        "x": 9,
+        "y": 9,
+        "color": "#8fbbba"
+      },
+      {
+        "id": "diario",
+        "label": "Diário",
+        "kind": "diario",
+        "x": 7,
+        "y": 3,
+        "color": "#b389a6"
+      },
+      {
+        "id": "atelie",
+        "label": "Ateliê",
+        "kind": "atelie",
+        "x": 9,
+        "y": 5,
+        "color": "#d7ba90"
+      },
+      {
+        "id": "bau",
+        "label": "Armazenamento",
+        "kind": "bau",
+        "x": 1,
+        "y": 7,
+        "color": "#b08767"
+      },
+      {
+        "id": "descanso",
+        "label": "Almofada de descanso",
+        "kind": "descanso",
+        "x": 5,
+        "y": 6,
+        "color": "#9eae84"
+      },
+      {
+        "id": "planta",
+        "label": "Planta",
+        "kind": "planta",
+        "x": 10,
+        "y": 1,
+        "color": "#91ad7e"
+      }
+    ],
+    "complexNext": false,
+    "lastConsolidation": 0,
+    "working": [
+      "eb0ed766-7b28-4b62-83d1-e7af0c5ab17a",
+      "Explorar o ambiente para organizar os objetos ao meu redor e entender minha disposição física."
+    ],
+    "lastModel": "gemini-3.1-flash-lite"
+  },
+  "monitor": {
+    "lease": {
+      "expires": 0
+    },
+    "calls": [
+      {
+        "id": "9c35ce27-3963-4c3f-bbf1-e40bc826ee17",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795480528673,
+        "reserved_tokens": 15611,
+        "actual_tokens": 3018,
+        "status": "sucesso"
+      },
+      {
+        "id": "1388f907-97ac-470d-b4b8-2b4596b8d0e1",
+        "model": "gemini-3-flash-preview",
+        "at": 1795478639118,
+        "reserved_tokens": 23135,
+        "actual_tokens": 5565,
+        "status": "sucesso"
+      },
+      {
+        "id": "bd3b9d4d-b27e-431b-b8f8-4456964a17bc",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478617100,
+        "reserved_tokens": 24100,
+        "actual_tokens": 5936,
+        "status": "sucesso"
+      },
+      {
+        "id": "bfb8ef3f-2a66-430a-92bd-22bbe9022731",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478595574,
+        "reserved_tokens": 21523,
+        "actual_tokens": 5454,
+        "status": "sucesso"
+      },
+      {
+        "id": "2c27dae8-df01-43f5-b10d-140f509da36b",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478573720,
+        "reserved_tokens": 21219,
+        "actual_tokens": 5267,
+        "status": "sucesso"
+      },
+      {
+        "id": "d6e0a714-c183-4b8a-82d9-46ca335708ed",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478547860,
+        "reserved_tokens": 21310,
+        "actual_tokens": 5174,
+        "status": "sucesso"
+      },
+      {
+        "id": "63f18c01-6a51-4f2e-b225-904c648c254f",
+        "model": "gemini-3-flash-preview",
+        "at": 1795478525749,
+        "reserved_tokens": 21223,
+        "actual_tokens": 5205,
+        "status": "sucesso"
+      },
+      {
+        "id": "7811d88f-ba3a-4f0e-a86c-9f52a55dcf7f",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478503927,
+        "reserved_tokens": 21072,
+        "actual_tokens": 5122,
+        "status": "sucesso"
+      },
+      {
+        "id": "8180b2d5-89ad-4f22-a5da-26bd4fcea905",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478481978,
+        "reserved_tokens": 21841,
+        "actual_tokens": 5344,
+        "status": "sucesso"
+      },
+      {
+        "id": "9d123a2b-5349-456e-b538-ac44922c651c",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478459950,
+        "reserved_tokens": 22084,
+        "actual_tokens": 5292,
+        "status": "sucesso"
+      },
+      {
+        "id": "af627824-0c75-4919-88cf-69a705e23fec",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478437834,
+        "reserved_tokens": 21183,
+        "actual_tokens": 5061,
+        "status": "sucesso"
+      },
+      {
+        "id": "88dea5fa-7bb0-4770-ad5d-c3d708eac3c5",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478415919,
+        "reserved_tokens": 20468,
+        "actual_tokens": 4995,
+        "status": "sucesso"
+      },
+      {
+        "id": "1d38ba41-4c8b-43c7-a6c0-fdb3635bf30d",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478393687,
+        "reserved_tokens": 20943,
+        "actual_tokens": 5143,
+        "status": "sucesso"
+      },
+      {
+        "id": "d2ed8e94-208b-4ed7-b890-a6f80e7b39d1",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478124085,
+        "reserved_tokens": 19505,
+        "actual_tokens": 4838,
+        "status": "sucesso"
+      },
+      {
+        "id": "04bf1d3e-c0a5-49ff-80e8-760831b9eb51",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478101912,
+        "reserved_tokens": 19418,
+        "actual_tokens": 4641,
+        "status": "sucesso"
+      },
+      {
+        "id": "fd4354b8-4d64-4a89-af2a-ded7bd0e70e6",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478079996,
+        "reserved_tokens": 19865,
+        "actual_tokens": 4758,
+        "status": "sucesso"
+      },
+      {
+        "id": "235c2293-262e-435b-901d-99dd2003bc14",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478058283,
+        "reserved_tokens": 19977,
+        "actual_tokens": 4753,
+        "status": "sucesso"
+      },
+      {
+        "id": "5d1c9d91-e4be-4f9b-9d5e-b4de59b72104",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795478035924,
+        "reserved_tokens": 20653,
+        "actual_tokens": 5105,
+        "status": "sucesso"
+      },
+      {
+        "id": "907df739-0674-40b1-ad7f-d679bf6d1f55",
+        "model": "gemini-3-flash-preview",
+        "at": 1795478013984,
+        "reserved_tokens": 20375,
+        "actual_tokens": 5002,
+        "status": "sucesso"
+      },
+      {
+        "id": "54680ccd-d68a-480d-bcfe-45df224cf518",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795477992060,
+        "reserved_tokens": 20560,
+        "actual_tokens": 4973,
+        "status": "sucesso"
+      },
+      {
+        "id": "31fa5647-5ab9-415b-8b3d-161842d9b95f",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795477970009,
+        "reserved_tokens": 22975,
+        "actual_tokens": 5668,
+        "status": "sucesso"
+      },
+      {
+        "id": "d59e26da-3b53-45d6-851b-c08688470f6d",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795477948159,
+        "reserved_tokens": 22329,
+        "actual_tokens": 5455,
+        "status": "sucesso"
+      },
+      {
+        "id": "f183090e-198e-43eb-ba46-ebd7b08461d6",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795477926137,
+        "reserved_tokens": 21723,
+        "actual_tokens": 5280,
+        "status": "sucesso"
+      },
+      {
+        "id": "59120470-af8e-48fc-bf05-9f826238ff45",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795477904070,
+        "reserved_tokens": 20337,
+        "actual_tokens": 4917,
+        "status": "sucesso"
+      },
+      {
+        "id": "5dae7630-6fff-47b1-8dce-3a7d5059fcf3",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795477881984,
+        "reserved_tokens": 17011,
+        "actual_tokens": 3950,
+        "status": "sucesso"
+      },
+      {
+        "id": "5de6590e-244c-438b-b900-2d21e864c0be",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795477570151,
+        "reserved_tokens": 17053,
+        "actual_tokens": 0,
+        "status": "gemini_http_503"
+      },
+      {
+        "id": "449f78e6-cce4-40f6-a370-865f00fc9e5d",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795477185896,
+        "reserved_tokens": 14219,
+        "actual_tokens": 2784,
+        "status": "sucesso"
+      },
+      {
+        "id": "99a608b3-9dd4-4497-82db-71c3b95a7d43",
+        "model": "gemini-3-flash-preview",
+        "at": 1795477072958,
+        "reserved_tokens": 11814,
+        "actual_tokens": 0,
+        "status": "falha_runtime"
+      },
+      {
+        "id": "c002ee56-c4c0-4e67-aacd-e5487f0bfa58",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795477069339,
+        "reserved_tokens": 11814,
+        "actual_tokens": 1679,
+        "status": "falha_runtime"
+      },
+      {
+        "id": "663621d3-aaf5-41bd-8554-0a62d12affde",
+        "model": "gemini-3-flash-preview",
+        "at": 1795476852875,
+        "reserved_tokens": 11814,
+        "actual_tokens": 0,
+        "status": "gemini_http_400"
+      },
+      {
+        "id": "edee531f-d3f1-4d04-9a68-7434b53edf3b",
+        "model": "gemini-3-flash-preview",
+        "at": 1795476743696,
+        "reserved_tokens": 11814,
+        "actual_tokens": 0,
+        "status": "gemini_http_400"
+      },
+      {
+        "id": "056aa168-e110-417d-b3dc-340c141a5c77",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795476741673,
+        "reserved_tokens": 11814,
+        "actual_tokens": 0,
+        "status": "gemini_http_503"
+      },
+      {
+        "id": "6398bb15-4c3f-4141-9f13-0d2c7cb3b6aa",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795476668011,
+        "reserved_tokens": 11814,
+        "actual_tokens": 0,
+        "status": "falha"
+      },
+      {
+        "id": "468ac8d9-959c-4aff-b1e1-d9cf64efea64",
+        "model": "gemini-3-flash-preview",
+        "at": 1795476605750,
+        "reserved_tokens": 11814,
+        "actual_tokens": 0,
+        "status": "falha"
+      },
+      {
+        "id": "64618e74-35c1-4c29-82c5-14b25093b795",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795476604832,
+        "reserved_tokens": 11814,
+        "actual_tokens": 0,
+        "status": "falha"
+      },
+      {
+        "id": "055dc1a9-036b-4f65-bfd0-cb80eccf802e",
+        "model": "gemini-3-flash-preview",
+        "at": 1795476513864,
+        "reserved_tokens": 11814,
+        "actual_tokens": 0,
+        "status": "falha"
+      },
+      {
+        "id": "06c7cae1-a164-4b76-9ed5-7717a161863a",
+        "model": "gemini-3.1-flash-lite",
+        "at": 1795476512782,
+        "reserved_tokens": 11814,
+        "actual_tokens": 0,
+        "status": "falha"
+      }
+    ],
+    "retrievals": [
+      {
+        "memory_id": "970603fb-7150-4a93-b712-d9251ade6ec8",
+        "count": 1,
+        "last_at": 1795480528673
+      }
+    ],
+    "counts": [
+      {
+        "kind": "atividade",
+        "count": 1
+      },
+      {
+        "kind": "experimento",
+        "count": 1
+      },
+      {
+        "kind": "intencao",
+        "count": 1
+      },
+      {
+        "kind": "memoria",
+        "count": 5
+      },
+      {
+        "kind": "nascimento",
+        "count": 1
+      }
+    ],
+    "storage": {
+      "bytes": 7157,
+      "records": 9
+    },
+    "usage": [
+      {
+        "day": "2026-11-23",
+        "model": "gemini-3.1-flash-lite",
+        "calls": 29,
+        "tokens": 114607
+      },
+      {
+        "day": "2026-11-23",
+        "model": "gemini-3-flash-preview",
+        "calls": 8,
+        "tokens": 15772
+      }
+    ],
+    "sharedUsage": [
+      {
+        "day": "2026-11-23",
+        "model": "gemini-3.1-flash-lite",
+        "calls": 30,
+        "tokens": 119282
+      },
+      {
+        "day": "2026-11-23",
+        "model": "gemini-3-flash-preview",
+        "calls": 9,
+        "tokens": 18761
+      }
+    ],
+    "experiment": {
+      "id": 1,
+      "started_at": 1795480505472,
+      "ends_at": 1795566905472,
+      "max_calls": 110,
+      "status": "ativo",
+      "mode": "autonomo",
+      "context": "Criatura descartável; nome, interesses e objetivos não direcionados."
+    },
+    "heartbeat": {
+      "id": 1,
+      "scheduled_at": 1795480587032,
+      "completed_at": 1795480588532,
+      "status": "tempo_atualizado",
+      "count": 61
+    },
+    "metrics": [
+      {
+        "id": "531295fb-bf25-4c9e-868b-587797782b78",
+        "started_at": 1795480528673,
+        "completed_at": 1795480532293,
+        "decision_before": 0,
+        "decision_after": 1,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 1948,
+        "logical_bytes_after": 7157,
+        "rows_read": 114,
+        "rows_written": 105,
+        "db_size": 245760,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "e8141bbf-f3c4-41c7-bc01-8094ad16663c",
+        "started_at": 1795478639118,
+        "completed_at": 1795478643265,
+        "decision_before": 24,
+        "decision_after": 25,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 144599,
+        "logical_bytes_after": 151585,
+        "rows_read": 379,
+        "rows_written": 154,
+        "db_size": 479232,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "00b78eed-8dbc-4823-99ca-8e7a5513813d",
+        "started_at": 1795478617100,
+        "completed_at": 1795478623139,
+        "decision_before": 23,
+        "decision_after": 24,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 134150,
+        "logical_bytes_after": 144599,
+        "rows_read": 460,
+        "rows_written": 148,
+        "db_size": 458752,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "bd618bd0-9b51-45da-a6bd-8efc32eecdce",
+        "started_at": 1795478595574,
+        "completed_at": 1795478599579,
+        "decision_before": 22,
+        "decision_after": 23,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 127934,
+        "logical_bytes_after": 134150,
+        "rows_read": 364,
+        "rows_written": 125,
+        "db_size": 450560,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "79108d02-2fdd-422b-94a9-fd0ec9196b8a",
+        "started_at": 1795478573720,
+        "completed_at": 1795478580027,
+        "decision_before": 21,
+        "decision_after": 22,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 120792,
+        "logical_bytes_after": 127934,
+        "rows_read": 359,
+        "rows_written": 153,
+        "db_size": 438272,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "5a5b300a-935f-4e4d-bb36-0729ce591708",
+        "started_at": 1795478547860,
+        "completed_at": 1795478561679,
+        "decision_before": 20,
+        "decision_after": 21,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 115828,
+        "logical_bytes_after": 120792,
+        "rows_read": 352,
+        "rows_written": 122,
+        "db_size": 425984,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "563db46f-71f6-44f0-b2f5-f3749f3a8800",
+        "started_at": 1795478525749,
+        "completed_at": 1795478531520,
+        "decision_before": 19,
+        "decision_after": 20,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 108674,
+        "logical_bytes_after": 115828,
+        "rows_read": 341,
+        "rows_written": 155,
+        "db_size": 413696,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "849450f6-9802-4de9-a9bb-795b6785889d",
+        "started_at": 1795478503927,
+        "completed_at": 1795478509941,
+        "decision_before": 18,
+        "decision_after": 19,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 102227,
+        "logical_bytes_after": 108674,
+        "rows_read": 358,
+        "rows_written": 151,
+        "db_size": 401408,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "8bae0185-e1dd-4fc5-82bb-8dfaa76c4ee5",
+        "started_at": 1795478481978,
+        "completed_at": 1795478488606,
+        "decision_before": 17,
+        "decision_after": 18,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 96158,
+        "logical_bytes_after": 102227,
+        "rows_read": 356,
+        "rows_written": 138,
+        "db_size": 389120,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "97aa8935-78ed-4e23-ad67-a7c9649b0921",
+        "started_at": 1795478459950,
+        "completed_at": 1795478464725,
+        "decision_before": 16,
+        "decision_after": 17,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 91288,
+        "logical_bytes_after": 96158,
+        "rows_read": 367,
+        "rows_written": 120,
+        "db_size": 385024,
+        "shared_reads": 11,
+        "shared_writes": 8
+      },
+      {
+        "id": "ef8901eb-78b3-434e-beb4-513a37d447e4",
+        "started_at": 1795478437834,
+        "completed_at": 1795478442422,
+        "decision_before": 15,
+        "decision_after": 16,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 86365,
+        "logical_bytes_after": 91288,
+        "rows_read": 361,
+        "rows_written": 121,
+        "db_size": 376832,
+        "shared_reads": 11,
+        "shared_writes": 8
+      },
+      {
+        "id": "7a18e8f7-add3-41b6-b43e-cf4cf5b153a6",
+        "started_at": 1795478415919,
+        "completed_at": 1795478421577,
+        "decision_before": 14,
+        "decision_after": 15,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 80311,
+        "logical_bytes_after": 86365,
+        "rows_read": 353,
+        "rows_written": 139,
+        "db_size": 360448,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "f032c40c-6a0d-46a2-a360-2054b425d776",
+        "started_at": 1795478393687,
+        "completed_at": 1795478399515,
+        "decision_before": 13,
+        "decision_after": 14,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 74485,
+        "logical_bytes_after": 80311,
+        "rows_read": 347,
+        "rows_written": 139,
+        "db_size": 352256,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "ffb4d366-5a61-40f9-ae63-4f674d9b8c70",
+        "started_at": 1795478124085,
+        "completed_at": 1795478129273,
+        "decision_before": 12,
+        "decision_after": 13,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 68981,
+        "logical_bytes_after": 74485,
+        "rows_read": 379,
+        "rows_written": 138,
+        "db_size": 339968,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "09821d95-adb8-412b-b513-1635278f32fe",
+        "started_at": 1795478101912,
+        "completed_at": 1795478105977,
+        "decision_before": 11,
+        "decision_after": 12,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 63424,
+        "logical_bytes_after": 68981,
+        "rows_read": 397,
+        "rows_written": 132,
+        "db_size": 315392,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "a5d64475-9259-4fe5-9225-c3f542489262",
+        "started_at": 1795478079996,
+        "completed_at": 1795478085172,
+        "decision_before": 10,
+        "decision_after": 11,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 58887,
+        "logical_bytes_after": 63424,
+        "rows_read": 330,
+        "rows_written": 120,
+        "db_size": 315392,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "e8b816ca-ff1b-4805-84ee-2a25b97731a6",
+        "started_at": 1795478058283,
+        "completed_at": 1795478063128,
+        "decision_before": 9,
+        "decision_after": 10,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 54340,
+        "logical_bytes_after": 58887,
+        "rows_read": 334,
+        "rows_written": 122,
+        "db_size": 311296,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "29aa4f7f-afff-4c5b-bb29-caf36bd18b88",
+        "started_at": 1795478035924,
+        "completed_at": 1795478041933,
+        "decision_before": 8,
+        "decision_after": 9,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 48559,
+        "logical_bytes_after": 54340,
+        "rows_read": 336,
+        "rows_written": 139,
+        "db_size": 307200,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "24773afd-7329-41a0-b602-30c13f13643c",
+        "started_at": 1795478013984,
+        "completed_at": 1795478019722,
+        "decision_before": 7,
+        "decision_after": 8,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 41831,
+        "logical_bytes_after": 48559,
+        "rows_read": 295,
+        "rows_written": 157,
+        "db_size": 303104,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "debfb665-fcfe-4c84-870a-6945ad0096ce",
+        "started_at": 1795477992060,
+        "completed_at": 1795477997471,
+        "decision_before": 6,
+        "decision_after": 7,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 36510,
+        "logical_bytes_after": 41831,
+        "rows_read": 320,
+        "rows_written": 141,
+        "db_size": 286720,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "77f8803c-3263-4901-937f-158b9577d28a",
+        "started_at": 1795477970009,
+        "completed_at": 1795477974790,
+        "decision_before": 5,
+        "decision_after": 6,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 30818,
+        "logical_bytes_after": 36510,
+        "rows_read": 324,
+        "rows_written": 138,
+        "db_size": 282624,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "96b5287e-44f1-4e9a-b051-444e97b6d2d6",
+        "started_at": 1795477948159,
+        "completed_at": 1795477953612,
+        "decision_before": 4,
+        "decision_after": 5,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 25567,
+        "logical_bytes_after": 30818,
+        "rows_read": 290,
+        "rows_written": 125,
+        "db_size": 278528,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "6b33e727-1d70-4d82-9f80-d67984c10734",
+        "started_at": 1795477926137,
+        "completed_at": 1795477932813,
+        "decision_before": 3,
+        "decision_after": 4,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 18574,
+        "logical_bytes_after": 25567,
+        "rows_read": 265,
+        "rows_written": 157,
+        "db_size": 266240,
+        "shared_reads": 9,
+        "shared_writes": 8
+      },
+      {
+        "id": "0de202ea-1bb7-456d-8021-f16bf57064bf",
+        "started_at": 1795477904070,
+        "completed_at": 1795477909419,
+        "decision_before": 2,
+        "decision_after": 3,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 13497,
+        "logical_bytes_after": 18574,
+        "rows_read": 238,
+        "rows_written": 124,
+        "db_size": 245760,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "dfc56840-93d8-44d5-a037-79ed50aa3d7e",
+        "started_at": 1795477881984,
+        "completed_at": 1795477888500,
+        "decision_before": 1,
+        "decision_after": 2,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 8225,
+        "logical_bytes_after": 13497,
+        "rows_read": 158,
+        "rows_written": 115,
+        "db_size": 233472,
+        "shared_reads": 7,
+        "shared_writes": 8
+      },
+      {
+        "id": "6c8452aa-2a21-44fe-97ad-533fc5a490bc",
+        "started_at": 1795477570151,
+        "completed_at": 1795477573560,
+        "decision_before": 1,
+        "decision_after": 1,
+        "status": "suspenso",
+        "logical_bytes_before": 6979,
+        "logical_bytes_after": 8225,
+        "rows_read": 0,
+        "rows_written": 0,
+        "db_size": null,
+        "shared_reads": null,
+        "shared_writes": null
+      },
+      {
+        "id": "7c2a75a9-d2b7-48ab-8db9-37d660790640",
+        "started_at": 1795477185896,
+        "completed_at": 1795477196198,
+        "decision_before": 0,
+        "decision_after": 1,
+        "status": "decisao_registrada",
+        "logical_bytes_before": 1890,
+        "logical_bytes_after": 6979,
+        "rows_read": 0,
+        "rows_written": 0,
+        "db_size": null,
+        "shared_reads": null,
+        "shared_writes": null
+      }
+    ],
+    "limits": {
+      "lite": 80,
+      "flash": 8,
+      "logicalBytesCap": 180000000,
+      "physicalBytesGuard": 400000000
+    },
+    "integration": "Cotas efetivas e CPU em produção exigem homologação. Nenhum serviço pago é acionado automaticamente."
+  }
+}

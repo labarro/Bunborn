@@ -1,0 +1,29 @@
+Bunborn — verificação local em 2026-11-23
+
+npm run build: exit 0
+TypeScript sem erros; Vite produção concluído.
+Frontend: aproximadamente 109 KiB gzip + Phaser lazy aproximadamente 336 KiB gzip.
+
+npm test (última execução 20:09 America/Sao_Paulo): exit 0
+Vitest 5.1.1: 28 passed, 1 skipped (teste de rede opt-in).
+Fixtures de provider são explícitas; zero chamadas Gemini reais.
+
+npm run test:e2e (última execução): exit 0
+Chromium + Worker Wrangler + D1 local descartável: 4 passed (14.9s).
+Representação de coelho verificada em artifacts/coelho-fixture.png, em criatura descartável.
+Desktop 1440x1000 e mobile 390x844; imagens em artifacts/.
+
+LIVE_RESEARCH=1 npm test -- tests/research.live.test.ts: exit 0
+1 teste aprovado cobrindo Wikipedia e Wikidata reais (685 ms na execução).
+Sem LLM, sem inserir assunto na existência principal.
+
+npm audit: exit 0, found 0 vulnerabilities.
+npm run format:check: exit 0, All matched files use Prettier code style.
+npm run typecheck (última execução): exit 0.
+
+wrangler d1 migrations apply DB --local: 0001 e 0002 aplicadas.
+wrangler deploy --dry-run: exit 0; 906.73 KiB / gzip 145.38 KiB; não publicado.
+
+check:models e test:gemini sem secrets: exit 1 de configuração, zero chamadas.
+Não homologados: Gemini real, cotas do projeto, CPU Workers Free, Cron remoto e emergência comportamental.
+Nenhum nascimento principal, implantação, faturamento ou subagente nesta entrega.

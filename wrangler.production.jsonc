@@ -1,0 +1,69 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bunborn-production",
+  "account_id": "c94a2b1ed3c401c62b4a8b112479ca18",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  },
+  "triggers": {
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bunborn-production",
+      "database_id": "3bb637d3-c197-4d8f-8a68-6a84307bd5e1",
+      "migrations_dir": "migrations"
+    },
+    {
+      "binding": "BUDGET_DB",
+      "database_name": "bunborn-budget",
+      "database_id": "9cd54641-7c10-4596-a546-12d305f38aaa",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ENVIRONMENT_ID": "production",
+    "MODEL_LITE": "gemini-3.1-flash-lite",
+    "MODEL_FLASH": "gemini-3-flash-preview",
+    "FREE_TIER_CONFIRMED": "true",
+    "BIRTH_ENABLED": "false",
+    "EXPERIMENT_ENABLED": "false",
+    "PUBLIC_OBSERVATION": "true",
+    "MIN_DECISION_MINUTES": "5",
+    "LITE_DAILY_LIMIT": "360",
+    "FLASH_DAILY_LIMIT": "12",
+    "LITE_GLOBAL_LIMIT": "440",
+    "FLASH_GLOBAL_LIMIT": "16"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "COGNITION",
+        "class_name": "CognitionCoordinator"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "CognitionCoordinator"
+      ]
+    }
+  ]
+}

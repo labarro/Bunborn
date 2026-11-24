@@ -1,0 +1,1134 @@
+{
+  "checkedAt": "2026-11-24T00:55:30.923Z",
+  "periodStart": "2026-11-23T22:55:30.923Z",
+  "hours": 2,
+  "units": "cpu/wall values in microseconds; quantiles are sampled estimates",
+  "workers": {
+    "durableObjectsInvocationsAdaptiveGroups": [
+      {
+        "dimensions": {
+          "scriptVersion": "1b443a37-6f80-4355-bfed-cf878027029c",
+          "status": "success",
+          "type": "http"
+        },
+        "quantiles": {
+          "cpuTimeP50": 3983,
+          "cpuTimeP90": 8217,
+          "cpuTimeP99": 26863,
+          "cpuTimeP999": 31352,
+          "wallTimeP50": 334641,
+          "wallTimeP99": 30399016
+        },
+        "sum": {
+          "errors": 0,
+          "requests": 160,
+          "wallTime": 266192427
+        }
+      },
+      {
+        "dimensions": {
+          "scriptVersion": "edc34f69-f9d9-402b-be1c-923b79b0642d",
+          "status": "success",
+          "type": "http"
+        },
+        "quantiles": {
+          "cpuTimeP50": 7658,
+          "cpuTimeP90": 33143,
+          "cpuTimeP99": 33818,
+          "cpuTimeP999": 33818,
+          "wallTimeP50": 5547377,
+          "wallTimeP99": 30938816
+        },
+        "sum": {
+          "errors": 0,
+          "requests": 18,
+          "wallTime": 172475160
+        }
+      },
+      {
+        "dimensions": {
+          "scriptVersion": "8732e1d6-e7c6-43f7-a64b-2c2c535a8e32",
+          "status": "success",
+          "type": "http"
+        },
+        "quantiles": {
+          "cpuTimeP50": 4024,
+          "cpuTimeP90": 6256,
+          "cpuTimeP99": 40333,
+          "cpuTimeP999": 40333,
+          "wallTimeP50": 335535,
+          "wallTimeP99": 559323
+        },
+        "sum": {
+          "errors": 0,
+          "requests": 68,
+          "wallTime": 21024899
+        }
+      },
+      {
+        "dimensions": {
+          "scriptVersion": "b9b16205-6f57-4b49-9adb-2c6f6f73c941",
+          "status": "success",
+          "type": "http"
+        },
+        "quantiles": {
+          "cpuTimeP50": 4821,
+          "cpuTimeP90": 7963,
+          "cpuTimeP99": 7963,
+          "cpuTimeP999": 7963,
+          "wallTimeP50": 988560,
+          "wallTimeP99": 1018501
+        },
+        "sum": {
+          "errors": 0,
+          "requests": 4,
+          "wallTime": 3988700
+        }
+      },
+      {
+        "dimensions": {
+          "scriptVersion": "78e43334-3b4b-4792-98ae-cf9254231372",
+          "status": "success",
+          "type": "http"
+        },
+        "quantiles": {
+          "cpuTimeP50": 7725,
+          "cpuTimeP90": 7725,
+          "cpuTimeP99": 7725,
+          "cpuTimeP999": 7725,
+          "wallTimeP50": 1122655,
+          "wallTimeP99": 1122655
+        },
+        "sum": {
+          "errors": 0,
+          "requests": 1,
+          "wallTime": 1122655
+        }
+      },
+      {
+        "dimensions": {
+          "scriptVersion": "bbfbf654-ad15-4c26-ac75-311147f0856f",
+          "status": "success",
+          "type": "http"
+        },
+        "quantiles": {
+          "cpuTimeP50": 2067,
+          "cpuTimeP90": 4873,
+          "cpuTimeP99": 6486,
+          "cpuTimeP999": 6486,
+          "wallTimeP50": 251575,
+          "wallTimeP99": 1196880
+        },
+        "sum": {
+          "errors": 0,
+          "requests": 62,
+          "wallTime": 30048051
+        }
+      },
+      {
+        "dimensions": {
+          "scriptVersion": "0afdbddd-be36-4317-b9e8-9d2e297af1cf",
+          "status": "success",
+          "type": "http"
+        },
+        "quantiles": {
+          "cpuTimeP50": 3032,
+          "cpuTimeP90": 4534,
+          "cpuTimeP99": 41828,
+          "cpuTimeP999": 41828,
+          "wallTimeP50": 302528,
+          "wallTimeP99": 30142252
+        },
+        "sum": {
+          "errors": 0,
+          "requests": 31,
+          "wallTime": 82630231
+        }
+      }
+    ],
+    "durableObjectsPeriodicGroups": [
+      {
+        "dimensions": {
+          "namespaceId": "2370451ed0b64e89a32f002e23717ce6"
+        },
+        "sum": {
+          "activeTime": 529579661,
+          "cpuTime": 1579807,
+          "duration": 67.78619660799998,
+          "exceededCpuErrors": 0,
+          "exceededMemoryErrors": 0,
+          "rowsRead": 0,
+          "rowsWritten": 0
+        }
+      },
+      {
+        "dimensions": {
+          "namespaceId": "7cf9a77ee1304a0296659b400dc7dd7e"
+        },
+        "sum": {
+          "activeTime": 35178870,
+          "cpuTime": 195366,
+          "duration": 4.50289536,
+          "exceededCpuErrors": 0,
+          "exceededMemoryErrors": 0,
+          "rowsRead": 0,
+          "rowsWritten": 0
+        }
+      }
+    ],
+    "workersInvocationsAdaptive": [
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "dd9112c8-f3f3-4b86-990e-a5ccb2e509bc",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 3786,
+          "cpuTimeP90": 4065,
+          "cpuTimeP99": 4065,
+          "cpuTimeP999": 4065,
+          "startupCpuTimeUsP50": 51833,
+          "startupCpuTimeUsP99": 70357,
+          "wallTimeP50": 383237,
+          "wallTimeP99": 553207
+        },
+        "sum": {
+          "cpuTimeUs": 7851,
+          "errors": 0,
+          "requests": 2,
+          "startupCpuTimeUs": 122190,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "d2c99b1c-170c-4544-94f1-2315b513bdaf",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 4970,
+          "cpuTimeP90": 10114,
+          "cpuTimeP99": 10114,
+          "cpuTimeP999": 10114,
+          "startupCpuTimeUsP50": 48547,
+          "startupCpuTimeUsP99": 56276,
+          "wallTimeP50": 404694,
+          "wallTimeP99": 1616668
+        },
+        "sum": {
+          "cpuTimeUs": 15084,
+          "errors": 0,
+          "requests": 2,
+          "startupCpuTimeUs": 104823,
+          "subrequests": 1
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "1b443a37-6f80-4355-bfed-cf878027029c",
+          "status": "clientDisconnected"
+        },
+        "quantiles": {
+          "cpuTimeP50": 4342,
+          "cpuTimeP90": 4342,
+          "cpuTimeP99": 4342,
+          "cpuTimeP999": 4342,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 0,
+          "wallTimeP50": 478018,
+          "wallTimeP99": 478018
+        },
+        "sum": {
+          "cpuTimeUs": 4342,
+          "errors": 0,
+          "requests": 1,
+          "startupCpuTimeUs": 0,
+          "subrequests": 1
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "bbfbf654-ad15-4c26-ac75-311147f0856f",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 571,
+          "cpuTimeP90": 1200,
+          "cpuTimeP99": 1313,
+          "cpuTimeP999": 1313,
+          "startupCpuTimeUsP50": 51521,
+          "startupCpuTimeUsP99": 107725,
+          "wallTimeP50": 1228102,
+          "wallTimeP99": 1532023
+        },
+        "sum": {
+          "cpuTimeUs": 8704,
+          "errors": 0,
+          "requests": 12,
+          "startupCpuTimeUs": 723626,
+          "subrequests": 12
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "4df065b7-29e4-45e9-acef-8408f9c52c80",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 4150,
+          "cpuTimeP90": 7419,
+          "cpuTimeP99": 7419,
+          "cpuTimeP999": 7419,
+          "startupCpuTimeUsP50": 55917,
+          "startupCpuTimeUsP99": 155392,
+          "wallTimeP50": 303095,
+          "wallTimeP99": 766915
+        },
+        "sum": {
+          "cpuTimeUs": 43318,
+          "errors": 0,
+          "requests": 9,
+          "startupCpuTimeUs": 670679,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "42b9b375-e7b7-4ed9-a3e2-53b67832deff",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 5925,
+          "cpuTimeP90": 5925,
+          "cpuTimeP99": 5925,
+          "cpuTimeP999": 5925,
+          "startupCpuTimeUsP50": 85495,
+          "startupCpuTimeUsP99": 85495,
+          "wallTimeP50": 404969,
+          "wallTimeP99": 404969
+        },
+        "sum": {
+          "cpuTimeUs": 5925,
+          "errors": 0,
+          "requests": 1,
+          "startupCpuTimeUs": 85495,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "1b443a37-6f80-4355-bfed-cf878027029c",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 1405,
+          "cpuTimeP90": 2675,
+          "cpuTimeP99": 7054,
+          "cpuTimeP999": 8837,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 110963,
+          "wallTimeP50": 339165,
+          "wallTimeP99": 5994092
+        },
+        "sum": {
+          "cpuTimeUs": 235752,
+          "errors": 0,
+          "requests": 155,
+          "startupCpuTimeUs": 861490,
+          "subrequests": 127
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "0afdbddd-be36-4317-b9e8-9d2e297af1cf",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 643,
+          "cpuTimeP90": 979,
+          "cpuTimeP99": 1200,
+          "cpuTimeP999": 1200,
+          "startupCpuTimeUsP50": 56735,
+          "startupCpuTimeUsP99": 129514,
+          "wallTimeP50": 432674,
+          "wallTimeP99": 949192
+        },
+        "sum": {
+          "cpuTimeUs": 18724,
+          "errors": 0,
+          "requests": 27,
+          "startupCpuTimeUs": 1751088,
+          "subrequests": 27
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "177b858a-30c1-4aea-8d2c-c73c14aa7dbf",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 4442,
+          "cpuTimeP90": 14982,
+          "cpuTimeP99": 14982,
+          "cpuTimeP999": 14982,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 50742,
+          "wallTimeP50": 521055,
+          "wallTimeP99": 1065019
+        },
+        "sum": {
+          "cpuTimeUs": 33512,
+          "errors": 0,
+          "requests": 4,
+          "startupCpuTimeUs": 98926,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "75ce0528-fd0a-4814-b388-40cbdcc1c067",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 12053,
+          "cpuTimeP90": 13678,
+          "cpuTimeP99": 13678,
+          "cpuTimeP999": 13678,
+          "startupCpuTimeUsP50": 49732,
+          "startupCpuTimeUsP99": 154098,
+          "wallTimeP50": 373390,
+          "wallTimeP99": 1050738
+        },
+        "sum": {
+          "cpuTimeUs": 25731,
+          "errors": 0,
+          "requests": 2,
+          "startupCpuTimeUs": 203830,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "78e43334-3b4b-4792-98ae-cf9254231372",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 543,
+          "cpuTimeP90": 543,
+          "cpuTimeP99": 543,
+          "cpuTimeP999": 543,
+          "startupCpuTimeUsP50": 49750,
+          "startupCpuTimeUsP99": 49750,
+          "wallTimeP50": 1422205,
+          "wallTimeP99": 1422205
+        },
+        "sum": {
+          "cpuTimeUs": 543,
+          "errors": 0,
+          "requests": 1,
+          "startupCpuTimeUs": 49750,
+          "subrequests": 1
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "edc34f69-f9d9-402b-be1c-923b79b0642d",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 580,
+          "cpuTimeP90": 1158,
+          "cpuTimeP99": 1158,
+          "cpuTimeP999": 1158,
+          "startupCpuTimeUsP50": 49055,
+          "startupCpuTimeUsP99": 93122,
+          "wallTimeP50": 1158277,
+          "wallTimeP99": 4513346
+        },
+        "sum": {
+          "cpuTimeUs": 4725,
+          "errors": 0,
+          "requests": 7,
+          "startupCpuTimeUs": 402678,
+          "subrequests": 7
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "1b443a37-6f80-4355-bfed-cf878027029c",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 568,
+          "cpuTimeP90": 657,
+          "cpuTimeP99": 773,
+          "cpuTimeP999": 773,
+          "startupCpuTimeUsP50": 49015,
+          "startupCpuTimeUsP99": 73889,
+          "wallTimeP50": 1048668,
+          "wallTimeP99": 4914365
+        },
+        "sum": {
+          "cpuTimeUs": 8552,
+          "errors": 0,
+          "requests": 15,
+          "startupCpuTimeUs": 763504,
+          "subrequests": 15
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "b9b16205-6f57-4b49-9adb-2c6f6f73c941",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 499,
+          "cpuTimeP90": 1402,
+          "cpuTimeP99": 1402,
+          "cpuTimeP999": 1402,
+          "startupCpuTimeUsP50": 41640,
+          "startupCpuTimeUsP99": 126792,
+          "wallTimeP50": 1151049,
+          "wallTimeP99": 1550028
+        },
+        "sum": {
+          "cpuTimeUs": 4731,
+          "errors": 0,
+          "requests": 7,
+          "startupCpuTimeUs": 403457,
+          "subrequests": 7
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "707115e4-ea37-46c3-b7cc-80764eac56ff",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 1187,
+          "cpuTimeP90": 3785,
+          "cpuTimeP99": 3785,
+          "cpuTimeP999": 3785,
+          "startupCpuTimeUsP50": 54805,
+          "startupCpuTimeUsP99": 148560,
+          "wallTimeP50": 505275,
+          "wallTimeP99": 644246
+        },
+        "sum": {
+          "cpuTimeUs": 8006,
+          "errors": 0,
+          "requests": 5,
+          "startupCpuTimeUs": 261236,
+          "subrequests": 5
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "a892356c-f4a6-45ca-bf3e-54b3f0a8e456",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 10518,
+          "cpuTimeP90": 53016,
+          "cpuTimeP99": 84726,
+          "cpuTimeP999": 84726,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 113976,
+          "wallTimeP50": 185715,
+          "wallTimeP99": 15476855
+        },
+        "sum": {
+          "cpuTimeUs": 468386,
+          "errors": 0,
+          "requests": 19,
+          "startupCpuTimeUs": 482304,
+          "subrequests": 9
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "1158a616-daf0-496f-8537-af3ae8053dfb",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 17395,
+          "cpuTimeP90": 50131,
+          "cpuTimeP99": 50131,
+          "cpuTimeP999": 50131,
+          "startupCpuTimeUsP50": 79116,
+          "startupCpuTimeUsP99": 174590,
+          "wallTimeP50": 1656096,
+          "wallTimeP99": 2004683
+        },
+        "sum": {
+          "cpuTimeUs": 73734,
+          "errors": 0,
+          "requests": 3,
+          "startupCpuTimeUs": 253706,
+          "subrequests": 2
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "80404461-4c3a-48a6-831f-d9504dbdae3f",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 5538,
+          "cpuTimeP90": 6030,
+          "cpuTimeP99": 6030,
+          "cpuTimeP999": 6030,
+          "startupCpuTimeUsP50": 68345,
+          "startupCpuTimeUsP99": 99613,
+          "wallTimeP50": 620319,
+          "wallTimeP99": 1082401
+        },
+        "sum": {
+          "cpuTimeUs": 47282,
+          "errors": 0,
+          "requests": 9,
+          "startupCpuTimeUs": 585751,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "4b50b542-757d-4b42-a7bc-26b6b600654c",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 5641,
+          "cpuTimeP90": 10495,
+          "cpuTimeP99": 10495,
+          "cpuTimeP999": 10495,
+          "startupCpuTimeUsP50": 55259,
+          "startupCpuTimeUsP99": 106773,
+          "wallTimeP50": 147619,
+          "wallTimeP99": 818342
+        },
+        "sum": {
+          "cpuTimeUs": 32820,
+          "errors": 0,
+          "requests": 5,
+          "startupCpuTimeUs": 273299,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "a892356c-f4a6-45ca-bf3e-54b3f0a8e456",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 7982,
+          "cpuTimeP90": 14485,
+          "cpuTimeP99": 14485,
+          "cpuTimeP999": 14485,
+          "startupCpuTimeUsP50": 81454,
+          "startupCpuTimeUsP99": 85046,
+          "wallTimeP50": 453524,
+          "wallTimeP99": 857790
+        },
+        "sum": {
+          "cpuTimeUs": 26232,
+          "errors": 0,
+          "requests": 3,
+          "startupCpuTimeUs": 205790,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "bbfbf654-ad15-4c26-ac75-311147f0856f",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 853,
+          "cpuTimeP90": 1781,
+          "cpuTimeP99": 6709,
+          "cpuTimeP999": 6709,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 97450,
+          "wallTimeP50": 443511,
+          "wallTimeP99": 1154360
+        },
+        "sum": {
+          "cpuTimeUs": 95044,
+          "errors": 0,
+          "requests": 86,
+          "startupCpuTimeUs": 387344,
+          "subrequests": 57
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "0b3f4f99-9263-4fa8-baf5-5825ba95a75b",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 16914,
+          "cpuTimeP90": 19273,
+          "cpuTimeP99": 19273,
+          "cpuTimeP999": 19273,
+          "startupCpuTimeUsP50": 51881,
+          "startupCpuTimeUsP99": 103034,
+          "wallTimeP50": 908248,
+          "wallTimeP99": 924100
+        },
+        "sum": {
+          "cpuTimeUs": 44924,
+          "errors": 0,
+          "requests": 3,
+          "startupCpuTimeUs": 154915,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "2d25eed4-b7f2-4bbe-a08f-7bdcb06dd6f3",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 2434,
+          "cpuTimeP90": 2925,
+          "cpuTimeP99": 2925,
+          "cpuTimeP999": 2925,
+          "startupCpuTimeUsP50": 41892,
+          "startupCpuTimeUsP99": 46302,
+          "wallTimeP50": 578506,
+          "wallTimeP99": 986300
+        },
+        "sum": {
+          "cpuTimeUs": 7788,
+          "errors": 0,
+          "requests": 3,
+          "startupCpuTimeUs": 127551,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "2e23b2ac-9bd6-4a93-b6c4-92ab17098e26",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 1404,
+          "cpuTimeP90": 1404,
+          "cpuTimeP99": 1404,
+          "cpuTimeP999": 1404,
+          "startupCpuTimeUsP50": 63930,
+          "startupCpuTimeUsP99": 63930,
+          "wallTimeP50": 714464,
+          "wallTimeP99": 714464
+        },
+        "sum": {
+          "cpuTimeUs": 1404,
+          "errors": 0,
+          "requests": 1,
+          "startupCpuTimeUs": 63930,
+          "subrequests": 1
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "0afdbddd-be36-4317-b9e8-9d2e297af1cf",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 6222,
+          "cpuTimeP90": 11238,
+          "cpuTimeP99": 12450,
+          "cpuTimeP999": 12450,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 188496,
+          "wallTimeP50": 174752,
+          "wallTimeP99": 7096646
+        },
+        "sum": {
+          "cpuTimeUs": 119079,
+          "errors": 0,
+          "requests": 19,
+          "startupCpuTimeUs": 611964,
+          "subrequests": 4
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "b9b16205-6f57-4b49-9adb-2c6f6f73c941",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 944,
+          "cpuTimeP90": 1444,
+          "cpuTimeP99": 1444,
+          "cpuTimeP999": 1444,
+          "startupCpuTimeUsP50": 51771,
+          "startupCpuTimeUsP99": 75668,
+          "wallTimeP50": 1218,
+          "wallTimeP99": 1927
+        },
+        "sum": {
+          "cpuTimeUs": 2855,
+          "errors": 0,
+          "requests": 3,
+          "startupCpuTimeUs": 172218,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "80404461-4c3a-48a6-831f-d9504dbdae3f",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 3946,
+          "cpuTimeP90": 73060,
+          "cpuTimeP99": 96098,
+          "cpuTimeP999": 96098,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 158503,
+          "wallTimeP50": 149450,
+          "wallTimeP99": 9741695
+        },
+        "sum": {
+          "cpuTimeUs": 799857,
+          "errors": 0,
+          "requests": 38,
+          "startupCpuTimeUs": 772725,
+          "subrequests": 14
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "4b50b542-757d-4b42-a7bc-26b6b600654c",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 5850,
+          "cpuTimeP90": 10725,
+          "cpuTimeP99": 13732,
+          "cpuTimeP999": 13732,
+          "startupCpuTimeUsP50": 52805,
+          "startupCpuTimeUsP99": 122758,
+          "wallTimeP50": 735449,
+          "wallTimeP99": 2063769
+        },
+        "sum": {
+          "cpuTimeUs": 403813,
+          "errors": 0,
+          "requests": 59,
+          "startupCpuTimeUs": 3512457,
+          "subrequests": 0
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "4df065b7-29e4-45e9-acef-8408f9c52c80",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 2084,
+          "cpuTimeP90": 27982,
+          "cpuTimeP99": 27982,
+          "cpuTimeP999": 27982,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 58579,
+          "wallTimeP50": 133163,
+          "wallTimeP99": 4778845
+        },
+        "sum": {
+          "cpuTimeUs": 46956,
+          "errors": 0,
+          "requests": 6,
+          "startupCpuTimeUs": 169235,
+          "subrequests": 1
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "dd9112c8-f3f3-4b86-990e-a5ccb2e509bc",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 3500,
+          "cpuTimeP90": 38083,
+          "cpuTimeP99": 38083,
+          "cpuTimeP999": 38083,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 57557,
+          "wallTimeP50": 133977,
+          "wallTimeP99": 11840832
+        },
+        "sum": {
+          "cpuTimeUs": 69684,
+          "errors": 0,
+          "requests": 7,
+          "startupCpuTimeUs": 161139,
+          "subrequests": 3
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "cron",
+          "scriptVersion": "8732e1d6-e7c6-43f7-a64b-2c2c535a8e32",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 694,
+          "cpuTimeP90": 697,
+          "cpuTimeP99": 697,
+          "cpuTimeP999": 697,
+          "startupCpuTimeUsP50": 43928,
+          "startupCpuTimeUsP99": 70190,
+          "wallTimeP50": 415249,
+          "wallTimeP99": 701453
+        },
+        "sum": {
+          "cpuTimeUs": 1895,
+          "errors": 0,
+          "requests": 3,
+          "startupCpuTimeUs": 157234,
+          "subrequests": 3
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "2d25eed4-b7f2-4bbe-a08f-7bdcb06dd6f3",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 7877,
+          "cpuTimeP90": 17699,
+          "cpuTimeP99": 17699,
+          "cpuTimeP999": 17699,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 97993,
+          "wallTimeP50": 352526,
+          "wallTimeP99": 31019290
+        },
+        "sum": {
+          "cpuTimeUs": 37086,
+          "errors": 0,
+          "requests": 4,
+          "startupCpuTimeUs": 148964,
+          "subrequests": 2
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "edc34f69-f9d9-402b-be1c-923b79b0642d",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 1709,
+          "cpuTimeP90": 2974,
+          "cpuTimeP99": 3100,
+          "cpuTimeP999": 3100,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 174296,
+          "wallTimeP50": 267237,
+          "wallTimeP99": 10065279
+        },
+        "sum": {
+          "cpuTimeUs": 28515,
+          "errors": 0,
+          "requests": 15,
+          "startupCpuTimeUs": 642754,
+          "subrequests": 11
+        }
+      },
+      {
+        "dimensions": {
+          "eventType": "fetch",
+          "scriptVersion": "8732e1d6-e7c6-43f7-a64b-2c2c535a8e32",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 997,
+          "cpuTimeP90": 2120,
+          "cpuTimeP99": 4695,
+          "cpuTimeP999": 4695,
+          "startupCpuTimeUsP50": 0,
+          "startupCpuTimeUsP99": 111582,
+          "wallTimeP50": 469982,
+          "wallTimeP99": 785763
+        },
+        "sum": {
+          "cpuTimeUs": 121503,
+          "errors": 0,
+          "requests": 96,
+          "startupCpuTimeUs": 637503,
+          "subrequests": 90
+        }
+      }
+    ]
+  },
+  "scheduled": {
+    "bunborn-homologation": {
+      "invocations": 0,
+      "statuses": {},
+      "cpuUs": {
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "max": null
+      },
+      "over10ms": 0,
+      "first": null,
+      "last": null
+    },
+    "bunborn-production": {
+      "invocations": 0,
+      "statuses": {},
+      "cpuUs": {
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "max": null
+      },
+      "over10ms": 0,
+      "first": null,
+      "last": null
+    }
+  },
+  "d1Errors": null,
+  "databases": {
+    "bunborn-production": {
+      "uuid": "3bb637d3-c197-4d8f-8a68-6a84307bd5e1",
+      "file_size": 237568,
+      "num_tables": 28,
+      "daily": [
+        {
+          "date": "2026-11-24",
+          "readQueries": 577,
+          "rowsRead": 1041,
+          "rowsWritten": 191,
+          "writeQueries": 175
+        },
+        {
+          "date": "2026-11-23",
+          "readQueries": 139,
+          "rowsRead": 320,
+          "rowsWritten": 163,
+          "writeQueries": 110
+        }
+      ]
+    },
+    "bunborn-homologation": {
+      "uuid": "bbb488f9-195c-452b-9914-cca4656fb559",
+      "file_size": 258048,
+      "num_tables": 28,
+      "daily": [
+        {
+          "date": "2026-11-24",
+          "readQueries": 1362,
+          "rowsRead": 15821,
+          "rowsWritten": 2839,
+          "writeQueries": 901
+        },
+        {
+          "date": "2026-11-23",
+          "readQueries": 585,
+          "rowsRead": 5897,
+          "rowsWritten": 2262,
+          "writeQueries": 889
+        }
+      ]
+    },
+    "bunborn-budget": {
+      "uuid": "9cd54641-7c10-4596-a546-12d305f38aaa",
+      "file_size": 233472,
+      "num_tables": 27,
+      "daily": [
+        {
+          "date": "2026-11-24",
+          "readQueries": 66,
+          "rowsRead": 285,
+          "rowsWritten": 200,
+          "writeQueries": 150
+        },
+        {
+          "date": "2026-11-23",
+          "readQueries": 32,
+          "rowsRead": 359,
+          "rowsWritten": 299,
+          "writeQueries": 194
+        }
+      ]
+    },
+    "bunborn-tool-tests": {
+      "uuid": "4f8fabe2-14f4-41eb-b174-e979967c4c6a",
+      "file_size": 335872,
+      "num_tables": 28,
+      "daily": [
+        {
+          "date": "2026-11-24",
+          "readQueries": 273,
+          "rowsRead": 3599,
+          "rowsWritten": 1326,
+          "writeQueries": 498
+        },
+        {
+          "date": "2026-11-23",
+          "readQueries": 37,
+          "rowsRead": 551,
+          "rowsWritten": 252,
+          "writeQueries": 85
+        }
+      ]
+    },
+    "bunborn-recovery": {
+      "uuid": "b6aa0a9a-17c5-4a20-bf8b-9c32cd2bf890",
+      "file_size": 491520,
+      "num_tables": 28,
+      "daily": [
+        {
+          "date": "2026-11-24",
+          "readQueries": 344,
+          "rowsRead": 8905,
+          "rowsWritten": 6607,
+          "writeQueries": 153
+        },
+        {
+          "date": "2026-11-23",
+          "readQueries": 14,
+          "rowsRead": 450,
+          "rowsWritten": 101,
+          "writeQueries": 39
+        }
+      ]
+    }
+  }
+}

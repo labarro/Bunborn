@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.wrangler/
+.dev.vars*
+.env*
+!.env.example
+test-results/
+playwright-report/
+.playwright-mcp/
+*.backup.json
+*.backup.sql
+*.private.json

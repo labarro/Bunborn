@@ -1,0 +1,195 @@
+{
+  "checkedAt": "2026-11-24T00:23:25.587Z",
+  "periodStart": "2026-11-23T00:23:25.587Z",
+  "hours": 24,
+  "units": "cpu/wall values in microseconds; quantiles are sampled estimates",
+  "workers": {
+    "durableObjectsInvocationsAdaptiveGroups": [
+      {
+        "dimensions": {
+          "scriptName": "__unknown__",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 3037,
+          "cpuTimeP90": 24928,
+          "cpuTimeP99": 41828,
+          "cpuTimeP999": 41828,
+          "wallTimeP50": 304994,
+          "wallTimeP99": 30142252
+        },
+        "sum": {
+          "errors": 0,
+          "requests": 24,
+          "wallTime": 80541295
+        }
+      }
+    ],
+    "durableObjectsPeriodicGroups": [
+      {
+        "dimensions": {
+          "namespaceId": "2370451ed0b64e89a32f002e23717ce6"
+        },
+        "sum": {
+          "activeTime": 80539169,
+          "cpuTime": 161889,
+          "duration": 10.309013632000001,
+          "exceededCpuErrors": 0,
+          "exceededMemoryErrors": 0,
+          "rowsRead": 0,
+          "rowsWritten": 0
+        }
+      }
+    ],
+    "workersInvocationsAdaptive": [
+      {
+        "dimensions": {
+          "scriptName": "__unknown__",
+          "status": "success"
+        },
+        "quantiles": {
+          "cpuTimeP50": 5423,
+          "cpuTimeP90": 38063,
+          "cpuTimeP99": 84726,
+          "cpuTimeP999": 96098,
+          "wallTimeP50": 472308,
+          "wallTimeP99": 11840832
+        },
+        "sum": {
+          "errors": 0,
+          "requests": 206,
+          "subrequests": 56
+        }
+      }
+    ]
+  },
+  "scheduled": {
+    "bunborn-homologation": {
+      "invocations": 0,
+      "statuses": {},
+      "cpuUs": {
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "max": null
+      },
+      "over10ms": 0,
+      "first": null,
+      "last": null
+    },
+    "bunborn-production": {
+      "invocations": 0,
+      "statuses": {},
+      "cpuUs": {
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "max": null
+      },
+      "over10ms": 0,
+      "first": null,
+      "last": null
+    }
+  },
+  "d1Errors": null,
+  "databases": {
+    "bunborn-production": {
+      "uuid": "3bb637d3-c197-4d8f-8a68-6a84307bd5e1",
+      "file_size": 225280,
+      "num_tables": 27,
+      "daily": [
+        {
+          "date": "2026-11-24",
+          "readQueries": 119,
+          "rowsRead": 422,
+          "rowsWritten": 78,
+          "writeQueries": 67
+        },
+        {
+          "date": "2026-11-23",
+          "readQueries": 139,
+          "rowsRead": 320,
+          "rowsWritten": 163,
+          "writeQueries": 110
+        }
+      ]
+    },
+    "bunborn-homologation": {
+      "uuid": "bbb488f9-195c-452b-9914-cca4656fb559",
+      "file_size": 479232,
+      "num_tables": 27,
+      "daily": [
+        {
+          "date": "2026-11-24",
+          "readQueries": 425,
+          "rowsRead": 5860,
+          "rowsWritten": 1611,
+          "writeQueries": 600
+        },
+        {
+          "date": "2026-11-23",
+          "readQueries": 585,
+          "rowsRead": 5897,
+          "rowsWritten": 2262,
+          "writeQueries": 889
+        }
+      ]
+    },
+    "bunborn-budget": {
+      "uuid": "9cd54641-7c10-4596-a546-12d305f38aaa",
+      "file_size": 233472,
+      "num_tables": 27,
+      "daily": [
+        {
+          "date": "2026-11-24",
+          "readQueries": 14,
+          "rowsRead": 106,
+          "rowsWritten": 96,
+          "writeQueries": 72
+        },
+        {
+          "date": "2026-11-23",
+          "readQueries": 32,
+          "rowsRead": 359,
+          "rowsWritten": 299,
+          "writeQueries": 194
+        }
+      ]
+    },
+    "bunborn-tool-tests": {
+      "uuid": "4f8fabe2-14f4-41eb-b174-e979967c4c6a",
+      "file_size": 233472,
+      "num_tables": 27,
+      "daily": [
+        {
+          "date": "2026-11-24",
+          "readQueries": 23,
+          "rowsRead": 195,
+          "rowsWritten": 136,
+          "writeQueries": 45
+        },
+        {
+          "date": "2026-11-23",
+          "readQueries": 37,
+          "rowsRead": 551,
+          "rowsWritten": 252,
+          "writeQueries": 85
+        }
+      ]
+    },
+    "bunborn-recovery": {
+      "uuid": "b6aa0a9a-17c5-4a20-bf8b-9c32cd2bf890",
+      "file_size": 225280,
+      "num_tables": 27,
+      "daily": [
+        {
+          "date": "2026-11-23",
+          "readQueries": 14,
+          "rowsRead": 450,
+          "rowsWritten": 101,
+          "writeQueries": 39
+        }
+      ]
+    }
+  }
+}

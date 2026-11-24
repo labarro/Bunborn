@@ -1,0 +1,10 @@
+import {execFile} from 'node:child_process';
+import {promisify} from 'node:util';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import path from 'node:path';
+const execute=promisify(execFile);
+export const accountId=process.env.CLOUDFLARE_ACCOUNT_ID??'c94a2b1ed3c401c62b4a8b112479ca18';
+export async function cloudflareToken(){if(process.env.CLOUDFLARE_API_TOKEN)return process.env.CLOUDFLARE_API_TOKEN;const {stdout}=await execute(process.execPath,[path.resolve('node_modules/wrangler/bin/wrangler.js'),'auth','token','--json'],{windowsHide:true,maxBuffer:100000});const parsed=JSON.parse(stdout);const token=parsed.token??parsed.oauth_token??parsed.api_token;if(typeof token!=='string')throw new Error('wrangler_token_unavailable');return token;}
+export async function cf(endpoint,options={}){const token=await cloudflareToken();const response=await fetch('https://api.cloudflare.com/client/v4'+endpoint,{...options,headers:{'content-type':'application/json',Authorization:'Bearer '+token,...options.headers},signal:AbortSignal.timeout(30000)});const data=await response.json();if(!response.ok||!data.success)throw new Error('cloudflare_http_'+response.status+'_'+(data.errors??[]).map(e=>e.code).join('_'));return data.result;}
+export async function inspectPlan(){const result=await cf(`/accounts/${accountId}/subscriptions`);const subscriptions=Array.isArray(result)?result:[];const workers=subscriptions.filter(s=>/workers|developer|compute/i.test(JSON.stringify(s.rate_plan??s.name??'')));const paid=workers.some(s=>!/free/i.test(JSON.stringify(s.rate_plan??s.name??'')));return {checkedAt:new Date().toISOString(),workersPlan:paid?'paid-detected':workers.length?'free':'no-paid-workers-subscription',subscriptions:workers.map(s=>({id:s.id,ratePlan:s.rate_plan,status:s.state??s.status})),safe:!paid};}
+if(process.argv[2]==='inspect'){try{const plan=await inspectPlan();await mkdir('artifacts',{recursive:true});await writeFile('artifacts/cloudflare-plan.json',JSON.stringify(plan,null,2));console.log(JSON.stringify(plan));}catch(e){console.error(e.message);process.exitCode=1;}}

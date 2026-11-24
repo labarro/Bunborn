@@ -1,0 +1,54 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bunborn-principal",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  },
+  "triggers": {
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bunborn-principal",
+      "database_id": "SUBSTITUA-PELO-UUID-REAL-DO-BANCO-NOVO",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "MODEL_LITE": "gemini-3.1-flash-lite",
+    "MODEL_FLASH": "gemini-3-flash-preview",
+    "FREE_TIER_CONFIRMED": "false",
+    "LITE_DAILY_LIMIT": "440",
+    "FLASH_DAILY_LIMIT": "16"
+  },
+  "observability": {
+    "enabled": false
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "COGNITION",
+        "class_name": "CognitionCoordinator"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "CognitionCoordinator"
+      ]
+    }
+  ]
+}

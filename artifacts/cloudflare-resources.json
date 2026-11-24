@@ -1,0 +1,19 @@
+{
+  "provisionedAt": "2026-11-23T23:22:11.064Z",
+  "accountId": "c94a2b1ed3c401c62b4a8b112479ca18",
+  "databases": {
+    "bunborn-production": "3bb637d3-c197-4d8f-8a68-6a84307bd5e1",
+    "bunborn-homologation": "bbb488f9-195c-452b-9914-cca4656fb559",
+    "bunborn-budget": "9cd54641-7c10-4596-a546-12d305f38aaa",
+    "bunborn-tool-tests": "4f8fabe2-14f4-41eb-b174-e979967c4c6a",
+    "bunborn-recovery": "b6aa0a9a-17c5-4a20-bf8b-9c32cd2bf890"
+  },
+  "freeEvidence": {
+    "confirmed": true,
+    "source": "explicit-user-confirmation-in-conversation",
+    "at": "2026-11-23T23:22:01.216Z",
+    "plan": "Workers Free",
+    "billingReadApi": "403: OAuth lacks Billing Read; no billing changes requested or performed"
+  },
+  "birthExecuted": false
+}

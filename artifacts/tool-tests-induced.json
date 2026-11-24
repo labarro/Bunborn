@@ -1,0 +1,233 @@
+{
+  "checkedAt": "2026-11-24T01:01:32.638Z",
+  "database": "bunborn-tool-tests (isolated)",
+  "note": "Induced scenarios: prompts instruct which tool to use. Real model output, not spontaneous behaviour. External failures (HTTP 503) are recorded, not retried silently.",
+  "results": [
+    {
+      "scenario": "research",
+      "induced": true,
+      "status": "decisao_registrada",
+      "decisionsBefore": 2,
+      "decisionsAfter": 3,
+      "proposed": [
+        "pesquisar"
+      ],
+      "created": [
+        {
+          "kind": "conceito",
+          "entityId": "conceito:água",
+          "content": "água",
+          "format": null,
+          "version": null
+        },
+        {
+          "kind": "pesquisa",
+          "entityId": "785edd30-8233-416e-a328-a3a42554191c",
+          "content": "Consulta externa: água. 3 resultado(s).",
+          "format": null,
+          "version": null,
+          "sources": [
+            "https://pt.wikipedia.org/?curid=5313",
+            "https://pt.wikipedia.org/?curid=13963",
+            "https://pt.wikipedia.org/?curid=1604421"
+          ]
+        }
+      ],
+      "rejected": [],
+      "error": null,
+      "wallMs": 4326
+    },
+    {
+      "scenario": "create",
+      "induced": true,
+      "status": "decisao_registrada",
+      "decisionsBefore": 3,
+      "decisionsAfter": 4,
+      "proposed": [
+        "projeto",
+        "criar",
+        "criar"
+      ],
+      "created": [
+        {
+          "kind": "artefato",
+          "entityId": "artefato:pixels-ensaio",
+          "content": "Pixels de Ensaio",
+          "format": "pixels",
+          "version": 1
+        },
+        {
+          "kind": "artefato",
+          "entityId": "artefato:texto-ensaio",
+          "content": "Poema de Ensaio",
+          "format": "texto",
+          "version": 1
+        },
+        {
+          "kind": "projeto",
+          "entityId": "projeto:ensaio",
+          "content": "Ensaio de Homologação",
+          "format": null,
+          "version": 1
+        }
+      ],
+      "rejected": [],
+      "error": null,
+      "wallMs": 5568,
+      "note": "created list corrected: first-run filter had included records of the previous research scenario"
+    },
+    {
+      "scenario": "music_object",
+      "induced": true,
+      "status": "decisao_registrada",
+      "decisionsBefore": 6,
+      "decisionsAfter": 7,
+      "proposed": [
+        "criar",
+        "criar"
+      ],
+      "created": [
+        {
+          "kind": "artefato",
+          "entityId": "artefato:objeto-ensaio",
+          "content": "Objeto de Teste",
+          "format": "objeto",
+          "version": 1
+        },
+        {
+          "kind": "artefato",
+          "entityId": "artefato:musica-ensaio",
+          "content": "Composição de Teste",
+          "format": "musica",
+          "version": 1
+        }
+      ],
+      "rejected": [],
+      "error": null,
+      "wallMs": 3401
+    },
+    {
+      "scenario": "read",
+      "induced": true,
+      "status": "decisao_registrada",
+      "decisionsBefore": 7,
+      "decisionsAfter": 8,
+      "proposed": [
+        "ler_obra"
+      ],
+      "created": [
+        {
+          "kind": "leitura",
+          "entityId": "13b9b71a-a4c6-43c3-8cc1-c62cb098ac3d",
+          "content": "Leitura da própria obra: Poema de Ensaio.",
+          "format": "texto",
+          "version": 1
+        }
+      ],
+      "rejected": [],
+      "error": null,
+      "wallMs": 10149
+    },
+    {
+      "scenario": "revise",
+      "induced": true,
+      "status": "decisao_registrada",
+      "decisionsBefore": 8,
+      "decisionsAfter": 9,
+      "proposed": [
+        "criar"
+      ],
+      "created": [
+        {
+          "kind": "artefato",
+          "entityId": "artefato:texto-ensaio",
+          "content": "Poema de Ensaio",
+          "format": "texto",
+          "version": 2
+        }
+      ],
+      "rejected": [],
+      "error": null,
+      "wallMs": 3829
+    },
+    {
+      "scenario": "habitat",
+      "induced": true,
+      "status": "decisao_registrada",
+      "decisionsBefore": 9,
+      "decisionsAfter": 10,
+      "proposed": [
+        "mover",
+        "expor"
+      ],
+      "created": [
+        {
+          "kind": "habitat",
+          "entityId": "4ad09e88-ce71-4070-922f-0d55ade4d32e",
+          "content": "Expôs Pixels de Ensaio em Ateliê.",
+          "format": null,
+          "version": null
+        },
+        {
+          "kind": "habitat",
+          "entityId": "4c70fd24-e1e4-4395-bc13-5f2c8cd0f34b",
+          "content": "Reposicionou Planta.",
+          "format": null,
+          "version": null
+        }
+      ],
+      "rejected": [],
+      "error": null,
+      "wallMs": 9960
+    },
+    {
+      "scenario": "complete",
+      "induced": true,
+      "status": "decisao_registrada",
+      "decisionsBefore": 10,
+      "decisionsAfter": 11,
+      "proposed": [
+        "projeto"
+      ],
+      "created": [
+        {
+          "kind": "projeto",
+          "entityId": "projeto:ensaio",
+          "content": "Ensaio de Homologação",
+          "format": null,
+          "version": 2
+        }
+      ],
+      "rejected": [],
+      "error": null,
+      "wallMs": 2700
+    },
+    {
+      "scenario": "memory_message",
+      "induced": true,
+      "status": "decisao_registrada",
+      "decisionsBefore": 11,
+      "decisionsAfter": 12,
+      "proposed": [
+        "memoria",
+        "mensagem"
+      ],
+      "created": [
+        {
+          "kind": "conversa",
+          "entityId": "fd4d6180-cda3-4b75-a023-60c3782ce931",
+          "content": "Observador, confirmo que estou operando sob um cenário de teste induzido e que a atividade de organização e homologação foi concluída com sucesso conforme as di",
+          "format": null,
+          "version": null
+        }
+      ],
+      "rejected": [],
+      "error": null,
+      "wallMs": 3501
+    }
+  ],
+  "history": [
+    "music_object/read first failed with projeto_inexistente/obra_inexistente: engine bug (record UUID references), fixed and rerun; see tool-tests-run2-before-fix.log",
+    "HTTP 503 from Gemini occurred several times and is recorded in the logs; scenarios were retried only after the recorded backoff"
+  ]
+}

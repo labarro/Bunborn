@@ -1,0 +1,104 @@
+{
+  "checkedAt": "2026-11-24T01:07:04.072Z",
+  "experiment": {
+    "status": "ativo",
+    "mode": "autonomo",
+    "startedAt": "2026-11-24T00:35:05.472Z",
+    "endsAt": "2026-11-25T00:35:05.472Z",
+    "maxCalls": 110,
+    "realHoursElapsed": 0.53
+  },
+  "creature": {
+    "decisions": 3,
+    "name": null,
+    "traits": {},
+    "identityVersion": 0,
+    "virtualMinutes": 188,
+    "paused": false,
+    "failures": 0
+  },
+  "decisions": {
+    "autonomous": 3,
+    "models": {
+      "gemini-3.1-flash-lite": 3
+    },
+    "distinctIntentionShapes": 3,
+    "repetitionRatio": 0,
+    "toolsProposed": {
+      "atividade": 4,
+      "memoria": 3
+    },
+    "realMinutesBetweenDecisions": {
+      "min": 15,
+      "avg": 15.5,
+      "max": 16
+    }
+  },
+  "toolRejections": {
+    "memoria:evidencia_inexistente": 1
+  },
+  "emergentSignals": {
+    "identity": [],
+    "interests": [],
+    "projects": [],
+    "artifacts": [],
+    "research": [],
+    "diary": 0,
+    "messagesToObserver": []
+  },
+  "observerInfluence": [
+    {
+      "at": "2026-11-24T00:36:28.627Z",
+      "content": "<img src=x onerror=alert(1)> teste de segurança (homologação)"
+    }
+  ],
+  "engineRules": {
+    "completedActivities": 3,
+    "protectiveRecovery": 0,
+    "budgetFallbacks": 0,
+    "failures": []
+  },
+  "calls": [
+    {
+      "model": "gemini-3.1-flash-lite",
+      "status": "sucesso",
+      "n": 3,
+      "tokens": 12378,
+      "latency": 3294.6666666666665,
+      "note": "reservations incl. failures; tokens as reported by API (0 when unknown)"
+    }
+  ],
+  "intentions": [
+    {
+      "at": "2026-11-24T00:35:28",
+      "model": "gemini-3.1-flash-lite",
+      "proposed": [
+        "atividade",
+        "memoria"
+      ],
+      "nextMinutes": 15,
+      "text": "Explorar o ambiente para organizar os objetos ao meu redor e entender minha disposição física."
+    },
+    {
+      "at": "2026-11-24T00:51:27",
+      "model": "gemini-3.1-flash-lite",
+      "proposed": [
+        "atividade",
+        "atividade",
+        "memoria"
+      ],
+      "nextMinutes": 15,
+      "text": "Estou com fome e sede, vou me alimentar primeiro para depois continuar explorando o ambiente com mais energia."
+    },
+    {
+      "at": "2026-11-24T01:06:28",
+      "model": "gemini-3.1-flash-lite",
+      "proposed": [
+        "atividade",
+        "memoria"
+      ],
+      "nextMinutes": 15,
+      "text": "Agora que a fome e a sede foram satisfeitas, vou explorar o ambiente para entender minha disposição espacial e o uso dos objetos disponíveis."
+    }
+  ]
+}

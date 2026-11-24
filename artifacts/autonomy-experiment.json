@@ -1,0 +1,46 @@
+{
+  "url": "https://bunborn-homologation.luiisaugustoobad.workers.dev",
+  "startedAt": "2026-11-24T00:35:05.472Z",
+  "endsAt": "2026-11-25T00:35:05.472Z",
+  "hours": 24,
+  "maxCalls": 110,
+  "mode": "autonomo",
+  "minDecisionMinutes": 15,
+  "browserRequired": false,
+  "localProcessRequired": false,
+  "creature": {
+    "bornAt": "2026-11-24T00:35:04.904Z",
+    "decisions": 0
+  },
+  "budgetAtStart": {
+    "local": [
+      {
+        "day": "2026-11-23",
+        "model": "gemini-3.1-flash-lite",
+        "calls": 28,
+        "tokens": 111589
+      },
+      {
+        "day": "2026-11-23",
+        "model": "gemini-3-flash-preview",
+        "calls": 8,
+        "tokens": 15772
+      }
+    ],
+    "shared": [
+      {
+        "day": "2026-11-23",
+        "model": "gemini-3.1-flash-lite",
+        "calls": 29,
+        "tokens": 116264
+      },
+      {
+        "day": "2026-11-23",
+        "model": "gemini-3-flash-preview",
+        "calls": 9,
+        "tokens": 18761
+      }
+    ]
+  },
+  "note": "Disposable creature. Cron executes on Cloudflare; computer-off operation must be verified with scripts/verify-offline-window.mjs over a window when this computer was actually off."
+}

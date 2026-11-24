@@ -1,0 +1,17 @@
+# Prompt para continuar o Bunborn
+
+Continue o projeto existente em `C:\projects\petsoso`, como agente único, sem subagentes. Leia primeiro `HANDOFF.md` integralmente e depois README.md, PLAN.md, PROGRESS.md, ARCHITECTURE.md, COGNITION.md, MEMORY.md, ECONOMY.md e TESTS.md. O handoff registra o estado mais recente; os oito documentos ainda têm trechos históricos que precisam ser atualizados.
+
+Quero concluir homologação real, correções e implantação privada do Bunborn: vida artificial de um coelho em pixel art, com identidade emergente, memória persistente, pesquisa, projetos, artefatos e execução autônoma na Cloudflare, sem navegador ou computador ligados. Bunborn é nome do aplicativo, não da criatura. Não recrie o projeto e não transforme autonomia em comportamento obrigatório roteirizado.
+
+Cloudflare e GitHub já estão autenticados; Gemini e secrets seguros estão configurados localmente por Windows DPAPI. Consulte os helpers descritos no handoff, sem imprimir secrets. Usuário já confirmou Workers Free e Gemini Free sem faturamento. Implantação privada gratuita está autorizada. Não habilite faturamento, serviços pagos, modelos locais ou provedores alternativos automáticos. Repositório público `https://github.com/labarro/Bunborn`; commit/push estão autorizados, mas ficaram pendentes por pedido meu para priorizar esta passagem. Faça secret scan antes de versionar.
+
+**NUNCA execute o nascimento da criatura permanente.** Produção deve permanecer vazia e protegida; esse momento é exclusivamente meu após homologação. Testes só em existências descartáveis e bancos isolados.
+
+Há 25 decisões Gemini reais válidas da criatura descartável e dois cenários reais induzidos com ferramentas rejeitadas. Não invente sucessos. O experimento está encerrado/pausado e o teste24–72h ainda não foi iniciado. Código local tem correções posteriores às versões implantadas. Os 28 testes e4E2E passaram, mas não homologam as novas funcionalidades. Use os detalhes/evidências/contadores do handoff, atualizando-os a partir do estado real sem zerar cotas.
+
+Execute, em ordem técnica adequada, todas as pendências do handoff: revisão e testes das novas funcionalidades; correção e homologação backup segmentado com restauração real isolada; ferramentas e cognição reais sem forçar interesses; CPU pós-DurableObject e limites Free; orçamento compartilhado; projeções de armazenamento com medições; revisão visual Chromium desktop/mobile; segurança e persistência remotas; deploy do código final testado; experimento remoto descartável24h com teto e encerramento automático; documentação integral e relatório com evidências, URLs, chamadas/tokens, CPU/D1, limitações, screenshots e procedimento de nascimento reservado ao usuário.
+
+Não pare apenas no planejamento ou após build. Continue as etapas independentes diante de bloqueios. Não solicite novamente credenciais/autorização já disponíveis. Diferencie reservas de chamadas realmente recebidas, tokens reportados de consumo desconhecido, tempo virtual de tempo real, fixtures de decisões reais e cenários induzidos de comportamentos espontâneos. Não declare CPU, restauração, pesquisa autônoma, artefatos ou experimento prolongado aprovados sem evidências. Não afirme funcionamento com PC desligado apenas por Cron ter executado; prepare verificação apropriada.
+
+O princípio central: **O verdadeiro jogo é observar quem a criatura se torna, e não controlar quem ela deve ser.** Comece pelo handoff e execute a continuação.

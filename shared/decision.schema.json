@@ -1,0 +1,632 @@
+{
+  "type": "object",
+  "properties": {
+    "intention": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "nextMinutes": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 60
+    },
+    "complexNext": {
+      "type": "boolean"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "interromper"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "ler_obra"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "recordar"
+              },
+              "query": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "query"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "atividade"
+              },
+              "activity": {
+                "type": "string",
+                "enum": [
+                  "comer",
+                  "beber",
+                  "dormir",
+                  "higiene",
+                  "descansar",
+                  "observar",
+                  "organizar"
+                ]
+              },
+              "minutes": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "type",
+              "activity",
+              "minutes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "pesquisar"
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "wikipedia",
+                  "wikidata"
+                ]
+              },
+              "query": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "source",
+              "query"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "relacionar"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "relation": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "hipotese",
+                  "opiniao",
+                  "fonte_consultada"
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "from",
+              "to",
+              "relation",
+              "status",
+              "evidence"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "diario"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "mensagem"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "memoria"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "episodica",
+                  "semantica",
+                  "procedimental",
+                  "afetiva",
+                  "autobiografica",
+                  "identidade",
+                  "prospectiva",
+                  "trabalho"
+                ]
+              },
+              "content": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "number"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "hipotese",
+                  "opiniao",
+                  "ficcao",
+                  "incerto",
+                  "fonte_consultada",
+                  "observacao",
+                  "fato_do_ambiente"
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "category",
+              "content",
+              "confidence",
+              "status",
+              "evidence"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "identidade"
+              },
+              "field": {
+                "type": "string",
+                "enum": [
+                  "nome",
+                  "autodescricao",
+                  "preferencia",
+                  "valor",
+                  "crenca",
+                  "estilo",
+                  "aparencia"
+                ]
+              },
+              "value": {
+                "type": "string"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "field",
+              "value",
+              "evidence"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "interesse"
+              },
+              "id": {
+                "type": "string"
+              },
+              "topic": {
+                "type": "string"
+              },
+              "change": {
+                "type": "number"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ativo",
+                  "adormecido",
+                  "abandonado"
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "topic",
+              "change",
+              "status",
+              "evidence"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "projeto"
+              },
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "completed": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ativo",
+                  "suspenso",
+                  "abandonado",
+                  "concluido"
+                ]
+              },
+              "horizon": {
+                "type": "string",
+                "enum": [
+                  "curto",
+                  "medio",
+                  "longo"
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "title",
+              "steps",
+              "completed",
+              "status",
+              "horizon",
+              "evidence"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "criar"
+              },
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "motivation": {
+                "type": "string"
+              },
+              "projectId": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "artifact": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "format": {
+                        "type": "string",
+                        "const": "texto"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "format",
+                      "content"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "format": {
+                        "type": "string",
+                        "const": "pixels"
+                      },
+                      "palette": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "pixels": {
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "format",
+                      "palette",
+                      "pixels"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "format": {
+                        "type": "string",
+                        "const": "musica"
+                      },
+                      "tempo": {
+                        "type": "integer"
+                      },
+                      "notes": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "pitch": {
+                              "type": "integer"
+                            },
+                            "beats": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "pitch",
+                            "beats"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "format",
+                      "tempo",
+                      "notes"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "format": {
+                        "type": "string",
+                        "const": "objeto"
+                      },
+                      "color": {
+                        "type": "string"
+                      },
+                      "shape": {
+                        "type": "string",
+                        "enum": [
+                          "vaso",
+                          "escultura",
+                          "quadro"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "format",
+                      "color",
+                      "shape"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "title",
+              "motivation",
+              "projectId",
+              "artifact"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "mover"
+              },
+              "objectId": {
+                "type": "string"
+              },
+              "x": {
+                "type": "integer"
+              },
+              "y": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "type",
+              "objectId",
+              "x",
+              "y"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "expor"
+              },
+              "artifactId": {
+                "type": "string"
+              },
+              "objectId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "artifactId",
+              "objectId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "recurso"
+              },
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "title",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "maxItems": 3
+    }
+  },
+  "required": [
+    "intention",
+    "summary",
+    "nextMinutes",
+    "complexNext",
+    "actions"
+  ],
+  "additionalProperties": false
+}

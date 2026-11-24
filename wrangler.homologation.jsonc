@@ -1,0 +1,81 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bunborn-homologation",
+  "account_id": "c94a2b1ed3c401c62b4a8b112479ca18",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  },
+  "triggers": {
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bunborn-homologation",
+      "database_id": "bbb488f9-195c-452b-9914-cca4656fb559",
+      "migrations_dir": "migrations"
+    },
+    {
+      "binding": "BUDGET_DB",
+      "database_name": "bunborn-budget",
+      "database_id": "9cd54641-7c10-4596-a546-12d305f38aaa",
+      "migrations_dir": "migrations"
+    },
+    {
+      "binding": "TOOL_DB",
+      "database_name": "bunborn-tool-tests",
+      "database_id": "4f8fabe2-14f4-41eb-b174-e979967c4c6a",
+      "migrations_dir": "migrations"
+    },
+    {
+      "binding": "RESTORE_DB",
+      "database_name": "bunborn-recovery",
+      "database_id": "b6aa0a9a-17c5-4a20-bf8b-9c32cd2bf890",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ENVIRONMENT_ID": "homologation",
+    "MODEL_LITE": "gemini-3.1-flash-lite",
+    "MODEL_FLASH": "gemini-3-flash-preview",
+    "FREE_TIER_CONFIRMED": "true",
+    "BIRTH_ENABLED": "false",
+    "EXPERIMENT_ENABLED": "true",
+    "PUBLIC_OBSERVATION": "false",
+    "MIN_DECISION_MINUTES": "15",
+    "LITE_DAILY_LIMIT": "80",
+    "FLASH_DAILY_LIMIT": "8",
+    "LITE_GLOBAL_LIMIT": "440",
+    "FLASH_GLOBAL_LIMIT": "16"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "COGNITION",
+        "class_name": "CognitionCoordinator"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "CognitionCoordinator"
+      ]
+    }
+  ]
+}

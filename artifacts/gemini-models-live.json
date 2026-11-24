@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-11-23T23:19:14.111Z",
+  "source": "live-gemini-models-api",
+  "generationCalls": 0,
+  "models": [
+    {
+      "model": "gemini-3.1-flash-lite",
+      "status": 200,
+      "name": "models/gemini-3.1-flash-lite",
+      "inputTokenLimit": 1048576,
+      "outputTokenLimit": 65536,
+      "supportedGenerationMethods": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "model": "gemini-3-flash-preview",
+      "status": 200,
+      "name": "models/gemini-3-flash-preview",
+      "inputTokenLimit": 1048576,
+      "outputTokenLimit": 65536,
+      "supportedGenerationMethods": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    }
+  ]
+}

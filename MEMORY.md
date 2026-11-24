@@ -1,0 +1,50 @@
+# Memória e continuidade
+
+## Categorias
+
+| Categoria      | Conteúdo e origem                                                        |
+| -------------- | ------------------------------------------------------------------------ |
+| Episódica      | Resultados de ciclos e acontecimentos observados                         |
+| Semântica      | Fatos do ambiente, resumos externos e conhecimentos propostos com status |
+| Procedimental  | Procedimentos que o modelo decide registrar com evidência                |
+| Afetiva        | Associação explícita entre resultado de atividade e motivações simuladas |
+| Autobiográfica | Narrativas declaradas e índices de consolidação identificados por origem |
+| Identidade     | Nome, preferências, valores, crenças e suas versões evidenciadas         |
+| Prospectiva    | Metas, projetos, solicitações e intenções futuras                        |
+| Trabalho       | Contexto de atividade e continuidade imediata entre ciclos               |
+
+As categorias existem no esquema e podem ser propostas pela criatura. Algumas são produzidas pelo motor com origem `observacao`, `regra_afetiva` ou `consolidacao_deterministica`; não são confundidas com declarações espontâneas. Registros de identidade/projeto também são recuperáveis por FTS mesmo quando não são linhas de tipo `memoria`.
+
+## Metadados
+
+Cada registro inclui ID imutável, ID da entidade, tipo, categoria, texto, dados estruturados, timestamp real, minutos virtuais, importância, confiança, associações e origem. Sequência global organiza o histórico. Frequência e última recuperação ficam em `retrievals`, evitando alterações nos registros originais. A pontuação de relevância é calculada no momento da consulta; não se armazena um número supostamente verdadeiro para todos os contextos.
+
+IDs de evidência precisam existir em registros históricos antes de uma proposta cognitiva os usar. O motor pode ligar observações que criou no mesmo commit. Conteúdo com origem externa sempre guarda referências HTTP de domínios permitidos; conteúdo gerado pelo modelo sem consulta não é tratado como fonte externa.
+
+## Recuperação limitada
+
+1. Extrair até 16 palavras da intenção e memória de trabalho.
+2. FTS5 `unicode61 remove_diacritics 2` recupera até 45 registros por correspondência; consulta é construída com tokens escapados, nunca SQL do modelo.
+3. Acrescentar até 24 memórias recentes e 12 importantes, preservando possibilidade de recuperar memórias antigas relevantes pelo índice textual.
+4. Remover duplicatas e pontuar: 50% correspondência textual, 30% importância e 20% recência exponencial com escala de 14 dias reais.
+5. Enviar até 14 memórias e atualizar contadores de recuperação.
+
+Esquecimento é redução de acessibilidade na recuperação, não exclusão. Histórico do observador pode ser percorrido por sequência e exportado integralmente. Memórias importantes permanecem candidatas mesmo antigas. Não há embeddings ou similaridade vetorial; associação textual e links explícitos são a alternativa gratuita adotada. Sinônimos sem palavras compartilhadas são uma limitação conhecida.
+
+## Consolidação
+
+O contexto informa quando uma revisão diária virtual é devida. A criatura pode registrar uma síntese autobiográfica com IDs. Durante repouso, o motor também gera índice determinístico com até seis trechos e associações, sem inventar interpretação. Fontes originais ficam intactas. Não há compactação destrutiva do histórico nem resumo substituindo episódios silenciosamente.
+
+## Versões e backups
+
+Versões de entidades são linhas novas com `entity_id` estável. `world` contém o estado corrente, com revisão; checkpoints guardam uma cópia do estado a cada 24 decisões. Um checkpoint sozinho não contém todo o histórico e não é backup externo.
+
+Referências: a criatura pode citar uma entidade pelo `entityId`, pelo id curto ou pelo UUID de qualquer versão. As três formas resolvem para a mesma entidade do tipo esperado, e qualquer versão real de uma obra do projeto comprova uma etapa. Referências inexistentes são rejeitadas, e o erro lista quais faltaram (`detail.missing`).
+
+**Backup v2 segmentado** (detalhes em ARCHITECTURE.md): manifesto com contagens e cursores congelados, segmentos de até 80 linhas com SHA-256, selo HMAC sobre JSON canônico, restauração somente em banco vazio, retomável e idempotente sob concorrência. Homologado de verdade em 24/11/2026: a criatura descartável (179 registros, 316 vínculos, 126 recuperações, 36 chamadas, 26 métricas) foi exportada e restaurada no banco isolado `bunborn-recovery`; todos os 16 digests de segmento, o estado (byte a byte), a identidade, a idade virtual, as necessidades, as decisões, o medidor de armazenamento e as contagens por tipo coincidiram (`artifacts/backup-restore-real.json`). Testes locais cobrem mais de 2.000 registros, adulteração, retomada e concorrência.
+
+O backup v2 depende do `SESSION_SECRET` do ambiente. Trocar esse secret invalida backups antigos. Por isso, guarde também `npx wrangler d1 export DB --remote --config wrangler.production.jsonc --output existencia.backup.sql`.
+
+## Limites de armazenamento
+
+Teto lógico de 180 MB (gatilho no D1) e guarda física de 400 MB (verificada pelo Worker antes da cognição). Ao atingir qualquer um, novas operações geradoras de história são suspensas; **nada é apagado** e não há limite arbitrário de quantidade de registros. O medidor lógico é heurístico (bytes de conteúdo + dados + associações + 500 por registro), e o tamanho físico real, com FTS e índices, é ~1,8× maior nas medições. Projeções em ECONOMY.md: no ritmo máximo da produção, o teto lógico chega em ~104 dias; a 15 min por decisão, em ~312 dias. Memória histórica infinita não é possível em cotas finitas.

@@ -1,0 +1,17 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE world (id TEXT PRIMARY KEY CHECK(id='principal'), state TEXT NOT NULL, revision INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE lease (id INTEGER PRIMARY KEY CHECK(id=1), token TEXT NOT NULL, expires INTEGER NOT NULL);
+INSERT INTO lease VALUES(1,'',0);
+CREATE TABLE commit_guard (ok INTEGER NOT NULL CHECK(ok=1));
+CREATE TABLE records (seq INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT NOT NULL UNIQUE, entity_id TEXT NOT NULL, kind TEXT NOT NULL, category TEXT NOT NULL, content TEXT NOT NULL, data TEXT NOT NULL, real_at INTEGER NOT NULL, virtual_at REAL NOT NULL, importance REAL NOT NULL, confidence REAL NOT NULL, associations TEXT NOT NULL, origin TEXT NOT NULL);
+CREATE INDEX records_kind_seq ON records(kind,seq);
+CREATE INDEX records_entity_seq ON records(entity_id,seq);
+CREATE INDEX records_category_seq ON records(category,seq);
+CREATE VIRTUAL TABLE memory_search USING fts5(content,content='records',content_rowid='seq',tokenize='unicode61 remove_diacritics 2');
+CREATE TRIGGER records_search AFTER INSERT ON records BEGIN INSERT INTO memory_search(rowid,content) VALUES(new.seq,new.content); END;
+CREATE TABLE retrievals (memory_id TEXT PRIMARY KEY, count INTEGER NOT NULL DEFAULT 1, last_at INTEGER NOT NULL);
+CREATE TABLE budgets (day TEXT NOT NULL, model TEXT NOT NULL, calls INTEGER NOT NULL DEFAULT 0, tokens INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(day,model));
+CREATE TABLE calls (id TEXT PRIMARY KEY, day TEXT NOT NULL, model TEXT NOT NULL, at INTEGER NOT NULL, reserved_tokens INTEGER NOT NULL, actual_tokens INTEGER, status TEXT NOT NULL);
+CREATE INDEX calls_model_at ON calls(model,at);
+CREATE TABLE inbox (id TEXT PRIMARY KEY, content TEXT NOT NULL, at INTEGER NOT NULL, consumed INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE rate_limits (key TEXT PRIMARY KEY, window INTEGER NOT NULL, count INTEGER NOT NULL);

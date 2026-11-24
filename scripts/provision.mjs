@@ -1,0 +1,11 @@
+import {cf,accountId} from './cloudflare.mjs';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
+const confirmation={confirmed:true,source:'explicit-user-confirmation-in-conversation',at:new Date().toISOString(),plan:'Workers Free',billingReadApi:'403: OAuth lacks Billing Read; no billing changes requested or performed'};
+await mkdir('.wrangler/private',{recursive:true});await writeFile('.wrangler/private/cloudflare-free.json',JSON.stringify(confirmation));
+const existing=await cf(`/accounts/${accountId}/d1/database`);const databases={};
+for(const name of ['bunborn-production','bunborn-homologation','bunborn-budget']){let db=existing.find(d=>d.name===name);if(!db)db=await cf(`/accounts/${accountId}/d1/database`,{method:'POST',body:JSON.stringify({name})});databases[name]=db.uuid??db.id;console.log(`${name}: provisionado`);}
+for(const environment of ['production','homologation']){
+ const config={$schema:'node_modules/wrangler/config-schema.json',name:`bunborn-${environment}`,account_id:accountId,main:'worker/index.ts',compatibility_date:'2026-11-01',assets:{directory:'./dist',binding:'ASSETS',not_found_handling:'single-page-application',run_worker_first:['/api/*']},triggers:{crons:['* * * * *']},d1_databases:[{binding:'DB',database_name:`bunborn-${environment}`,database_id:databases[`bunborn-${environment}`],migrations_dir:'migrations'},{binding:'BUDGET_DB',database_name:'bunborn-budget',database_id:databases['bunborn-budget'],migrations_dir:'migrations'}],vars:{ENVIRONMENT:'production',ENVIRONMENT_ID:environment,MODEL_LITE:'gemini-3.1-flash-lite',MODEL_FLASH:'gemini-3-flash-preview',FREE_TIER_CONFIRMED:'true',BIRTH_ENABLED:'false',EXPERIMENT_ENABLED:environment==='homologation'?'true':'false',MIN_DECISION_MINUTES:'5',LITE_DAILY_LIMIT:environment==='production'?'360':'80',FLASH_DAILY_LIMIT:environment==='production'?'12':'4',LITE_GLOBAL_LIMIT:'440',FLASH_GLOBAL_LIMIT:'16'},observability:{enabled:true,head_sampling_rate:1}};
+ await writeFile(`wrangler.${environment}.jsonc`,JSON.stringify(config,null,2));
+}
+await writeFile('artifacts/cloudflare-resources.json',JSON.stringify({provisionedAt:new Date().toISOString(),accountId,databases,freeEvidence:confirmation,birthExecuted:false},null,2));

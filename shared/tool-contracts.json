@@ -1,0 +1,156 @@
+[
+  {
+    "type": "interromper",
+    "reason": "string maxLength 160"
+  },
+  {
+    "type": "ler_obra",
+    "id": "string maxLength 160"
+  },
+  {
+    "type": "recordar",
+    "query": "string maxLength 160"
+  },
+  {
+    "type": "atividade",
+    "activity": "comer|beber|dormir|higiene|descansar|observar|organizar",
+    "minutes": "integer min 5 max 120"
+  },
+  {
+    "type": "pesquisar",
+    "source": "wikipedia|wikidata",
+    "query": "string maxLength 160"
+  },
+  {
+    "type": "relacionar",
+    "from": "string maxLength 160",
+    "to": "string maxLength 160",
+    "relation": "string maxLength 160",
+    "status": "hipotese|opiniao|fonte_consultada",
+    "evidence": {
+      "items": "string maxLength 100",
+      "maxItems": 8
+    }
+  },
+  {
+    "type": "diario",
+    "content": "string maxLength 2000"
+  },
+  {
+    "type": "mensagem",
+    "content": "string maxLength 2000"
+  },
+  {
+    "type": "memoria",
+    "category": "episodica|semantica|procedimental|afetiva|autobiografica|identidade|prospectiva|trabalho",
+    "content": "string maxLength 2000",
+    "confidence": "number min 0 max 1",
+    "status": "hipotese|opiniao|ficcao|incerto|fonte_consultada|observacao|fato_do_ambiente",
+    "evidence": {
+      "items": "string maxLength 100",
+      "maxItems": 8
+    }
+  },
+  {
+    "type": "identidade",
+    "field": "nome|autodescricao|preferencia|valor|crenca|estilo|aparencia",
+    "value": "string maxLength 160",
+    "evidence": {
+      "items": "string maxLength 100",
+      "maxItems": 8
+    }
+  },
+  {
+    "type": "interesse",
+    "id": "string maxLength 160",
+    "topic": "string maxLength 160",
+    "change": "number min -0.1 max 0.1",
+    "status": "ativo|adormecido|abandonado",
+    "evidence": {
+      "items": "string maxLength 100",
+      "maxItems": 8
+    }
+  },
+  {
+    "type": "projeto",
+    "id": "string maxLength 160",
+    "title": "string maxLength 160",
+    "steps": {
+      "items": "string maxLength 160",
+      "maxItems": 12
+    },
+    "completed": {
+      "items": "integer min 0 max 11",
+      "maxItems": 12
+    },
+    "status": "ativo|suspenso|abandonado|concluido",
+    "horizon": "curto|medio|longo",
+    "evidence": {
+      "items": "string maxLength 100",
+      "maxItems": 8
+    }
+  },
+  {
+    "type": "criar",
+    "id": "string maxLength 160",
+    "title": "string maxLength 160",
+    "motivation": "string maxLength 160",
+    "projectId": [
+      "string maxLength 160",
+      "null"
+    ],
+    "artifact": [
+      {
+        "format": "texto",
+        "content": "string maxLength 12000"
+      },
+      {
+        "format": "pixels",
+        "palette": {
+          "items": "string",
+          "maxItems": 16
+        },
+        "pixels": {
+          "items": {
+            "items": "integer min 0 max 15",
+            "maxItems": 32
+          },
+          "maxItems": 32
+        }
+      },
+      {
+        "format": "musica",
+        "tempo": "integer min 40 max 200",
+        "notes": {
+          "items": {
+            "pitch": "integer min 36 max 96",
+            "beats": "number min 0.125 max 8"
+          },
+          "maxItems": 128
+        }
+      },
+      {
+        "format": "objeto",
+        "color": "string",
+        "shape": "vaso|escultura|quadro"
+      }
+    ]
+  },
+  {
+    "type": "mover",
+    "objectId": "string maxLength 160",
+    "x": "integer min 0 max 11",
+    "y": "integer min 0 max 11"
+  },
+  {
+    "type": "expor",
+    "artifactId": "string maxLength 160",
+    "objectId": "string maxLength 160"
+  },
+  {
+    "type": "recurso",
+    "id": "string maxLength 160",
+    "title": "string maxLength 160",
+    "reason": "string maxLength 2000"
+  }
+]

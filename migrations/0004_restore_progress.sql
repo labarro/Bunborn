@@ -1,0 +1,1 @@
+ALTER TABLE restore_chunks ADD COLUMN applied INTEGER NOT NULL DEFAULT 0;

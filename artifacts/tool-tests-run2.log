@@ -1,0 +1,4 @@
+{"scenario":"music_object","backoffMs":146528}
+{"scenario":"music_object","induced":true,"status":"decisao_registrada","decisionsBefore":4,"decisionsAfter":5,"proposed":["criar","criar"],"created":[],"rejected":[{"tool":"criar","code":"projeto_inexistente","detail":null},{"tool":"criar","code":"projeto_inexistente","detail":null}],"error":null,"wallMs":6645}
+{"scenario":"read","induced":true,"status":"decisao_registrada","decisionsBefore":5,"decisionsAfter":6,"proposed":["ler_obra"],"created":[],"rejected":[{"tool":"ler_obra","code":"obra_inexistente","detail":null}],"error":null,"wallMs":6057}
+{"scenario":"revise","induced":true,"status":"suspenso","decisionsBefore":6,"decisionsAfter":6,"proposed":null,"created":[],"rejected":[],"error":{"code":"gemini_http_503","failures":1,"nextAttempt":1795481327308},"wallMs":1397}
