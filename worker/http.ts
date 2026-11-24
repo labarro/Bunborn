@@ -111,7 +111,7 @@ export async function api(request: Request, env: Env): Promise<Response> {
         store.recent(24),
         store.usage(),
         env.DB.prepare(
-          'SELECT id,content,at,author FROM inbox WHERE consumed=0 ORDER BY at LIMIT 24',
+          'SELECT id,content,at,author FROM inbox WHERE consumed=0 ORDER BY at DESC LIMIT 24',
         ).all(),
       ]);
       return json({
@@ -158,12 +158,18 @@ export async function api(request: Request, env: Env): Promise<Response> {
               : '';
         records = (
           await env.DB.prepare(
-            'SELECT * FROM records WHERE seq>?' + condition + ' ORDER BY seq LIMIT 80',
+            'SELECT * FROM records WHERE seq<?' + condition + ' ORDER BY seq DESC LIMIT 80',
           )
-            .bind(after)
+            .bind(after || Number.MAX_SAFE_INTEGER)
             .all<Row>()
         ).results.map(decode);
-      } else records = await store.records(kind, after);
+      } else
+        // Newest first; the cursor walks backwards through older records.
+        records = (
+          await env.DB.prepare('SELECT * FROM records WHERE kind=? AND seq<? ORDER BY seq DESC LIMIT 80')
+            .bind(kind, after || Number.MAX_SAFE_INTEGER)
+            .all<Row>()
+        ).results.map(decode);
       return json({
         records,
         next: records.length === 80 ? records[records.length - 1]?.seq : null,

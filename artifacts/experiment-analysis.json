@@ -1,36 +1,36 @@
 {
-  "checkedAt": "2026-11-24T01:07:04.072Z",
+  "checkedAt": "2026-11-24T01:37:20.822Z",
   "experiment": {
     "status": "ativo",
     "mode": "autonomo",
     "startedAt": "2026-11-24T00:35:05.472Z",
     "endsAt": "2026-11-25T00:35:05.472Z",
     "maxCalls": 110,
-    "realHoursElapsed": 0.53
+    "realHoursElapsed": 1.04
   },
   "creature": {
-    "decisions": 3,
+    "decisions": 4,
     "name": null,
     "traits": {},
     "identityVersion": 0,
-    "virtualMinutes": 188,
+    "virtualMinutes": 368,
     "paused": false,
     "failures": 0
   },
   "decisions": {
-    "autonomous": 3,
+    "autonomous": 4,
     "models": {
-      "gemini-3.1-flash-lite": 3
+      "gemini-3.1-flash-lite": 4
     },
-    "distinctIntentionShapes": 3,
+    "distinctIntentionShapes": 4,
     "repetitionRatio": 0,
     "toolsProposed": {
-      "atividade": 4,
-      "memoria": 3
+      "atividade": 5,
+      "memoria": 4
     },
     "realMinutesBetweenDecisions": {
       "min": 15,
-      "avg": 15.5,
+      "avg": 15.7,
       "max": 16
     }
   },
@@ -53,7 +53,7 @@
     }
   ],
   "engineRules": {
-    "completedActivities": 3,
+    "completedActivities": 5,
     "protectiveRecovery": 0,
     "budgetFallbacks": 0,
     "failures": []
@@ -62,9 +62,9 @@
     {
       "model": "gemini-3.1-flash-lite",
       "status": "sucesso",
-      "n": 3,
-      "tokens": 12378,
-      "latency": 3294.6666666666665,
+      "n": 4,
+      "tokens": 17601,
+      "latency": 2993.5,
       "note": "reservations incl. failures; tokens as reported by API (0 when unknown)"
     }
   ],
@@ -99,6 +99,16 @@
       ],
       "nextMinutes": 15,
       "text": "Agora que a fome e a sede foram satisfeitas, vou explorar o ambiente para entender minha disposição espacial e o uso dos objetos disponíveis."
+    },
+    {
+      "at": "2026-11-24T01:22:28",
+      "model": "gemini-3.1-flash-lite",
+      "proposed": [
+        "atividade",
+        "memoria"
+      ],
+      "nextMinutes": 30,
+      "text": "Após a observação do espaço, decidi descansar na almofada para consolidar as informações sobre o ambiente e recuperar um pouco da energia."
     }
   ]
 }

@@ -913,7 +913,7 @@ export function App() {
                   disabled={busy}
                   onClick={() => void perform(() => load(true, next))}
                 >
-                  Carregar registros anteriores à próxima página
+                  Carregar registros mais antigos
                 </button>
               ) : null}
             </section>
