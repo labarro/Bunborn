@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { createHabitat } from './habitat';
 import type { HabitatObject, State } from '../shared/domain';
+import { expressionFor } from '../shared/expression';
 export default function HabitatView({
   state,
   onSelect,
@@ -31,7 +32,7 @@ export default function HabitatView({
       role="img"
       aria-label={
         state
-          ? `Habitat do coelho ${state.identity.name ?? 'sem nome'}. Atividade registrada: ${state.activity.kind}.`
+          ? `Habitat do coelho ${state.identity.name ?? 'sem nome'}. Atividade registrada: ${state.activity.kind}. Expressão: ${expressionFor(state).label.toLowerCase()} (${expressionFor(state).reason}).`
           : 'Habitat isométrico vazio, preparado para o nascimento.'
       }
     />

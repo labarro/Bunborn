@@ -22,4 +22,7 @@ Atualizado em 24/11/2026 (UTC). Agente único, sem subagentes. Nascimento perman
 - [x] Secret scan (valores reais + padrões) sem achados.
 - [ ] Análise final das 24h (depende do término em 25/11 00:35Z).
 - [ ] Verificação com o PC desligado (exige o usuário desligar este computador; script pronto).
-- [ ] Nascimento permanente: **somente o usuário** (README → Procedimento de nascimento).
+- [x] Nascimento permanente feito **pelo usuário** em 2026-11-24 01:13:21Z; botão fechado em seguida.
+- [x] Coelho animado (respiração, piscar, orelhas, pulos, poses por atividade) e expressões derivadas do estado simulado.
+- [x] "Entenda este registro": explicações em linguagem simples para visitantes.
+- [x] README reescrito para o público.

@@ -45,6 +45,10 @@ Pesquisa retorna resumos públicos reais e os guarda com fonte e horário. Cache
 
 Reflexão pode gerar diário ou memória autobiográfica mediante evidências. Durante descanso, uma consolidação determinística diária agrupa trechos de memórias selecionadas, identificada como índice sem nova inferência. A narrativa interpretativa precisa ser escrita pelo modelo e permanece declarada, não medida.
 
+## Expressão visual
+
+O rosto, as orelhas e o ícone do coelho são uma projeção legível do estado simulado (`shared/expression.ts`), calculada com limiares fixos de sono/energia, sede, fome, frustração, satisfação+conforto, curiosidade e tédio. Não é um sentimento declarado pela criatura nem uma inferência do modelo; a interface mostra o motivo (por exemplo, "sono 78, energia 22").
+
 ## Retorno de erros
 
 Rejeições de ferramentas trazem código e detalhe factual no ciclo seguinte: referências inexistentes (`missing`) com a lembrança de que campos de contexto e nomes de ferramentas não são registros; atividade em andamento com atividade atual, estação exigida, minutos virtuais restantes e fila. Isso foi introduzido depois de observar, nas 25 decisões reais da primeira criatura descartável, três tentativas seguidas de diário recusadas sem explicação e citações como `"diario"` e `"facts.decisionNumber:24"` como evidência. É informação sobre o ambiente; não sugere o que fazer nem impõe objetivos.

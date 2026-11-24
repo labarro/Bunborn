@@ -1595,3 +1595,11 @@ pre {
 .monitor-facts div { border: 1px solid rgba(41, 34, 56, 0.1); border-radius: 12px; padding: 10px 12px; }
 .monitor-facts dt { font-size: 0.78rem; opacity: 0.75; margin-bottom: 4px; }
 .monitor-facts dd { margin: 0; font-size: 0.88rem; overflow-wrap: anywhere; }
+
+.expression-note { opacity: 0.85; cursor: help; }
+
+.plain-explanation > summary { cursor: pointer; font-weight: 600; }
+.plain-explanation p { margin: 6px 0; line-height: 1.5; }
+.plain-explanation .plain-who { font-style: italic; opacity: 0.85; }
+.technical-details { margin-top: 10px; opacity: 0.8; font-size: 0.85em; }
+.technical-details pre { overflow-x: auto; max-width: 100%; }

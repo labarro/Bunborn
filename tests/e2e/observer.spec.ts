@@ -110,7 +110,7 @@ test.describe.serial('Disposable local Worker + D1 + browser', () => {
     await expect(page.getByText('Tempo em pausa')).toBeVisible();
     await expect(
       page.getByRole('img', {
-        name: 'Habitat do coelho sem nome. Atividade registrada: observar.',
+        name: /^Habitat do coelho sem nome. Atividade registrada: observar. Expressão:/,
       }),
     ).toBeVisible();
     await page.screenshot({ path: 'artifacts/coelho-fixture.png', fullPage: true });

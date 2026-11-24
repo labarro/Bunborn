@@ -6,6 +6,7 @@ import {
   type Point,
   type State,
 } from '../shared/domain';
+import { expressionFor, isActive } from '../shared/expression';
 const iso = (p: Point) => ({ x: 320 + (p.x - p.y) * 20, y: 142 + (p.x + p.y) * 10 });
 const color = (hex: string) => Number.parseInt(hex.replace('#', ''), 16);
 export class HabitatScene extends Phaser.Scene {
@@ -40,90 +41,227 @@ export class HabitatScene extends Phaser.Scene {
       this.objectKey = key;
       this.draw();
     }
-    this.pet?.destroy();
-    this.pet = undefined;
+    this.clearPet();
     if (!state) {
       this.label?.setText('O habitat está pronto. A história ainda não começou.');
       return;
     }
     this.label?.setText('');
-    const active = state.activity.until > state.virtualMinutes;
-    const pos = iso(this.lastPosition);
-    const c = this.add.container(pos.x, pos.y);
-    const g = this.add.graphics();
+    this.buildRabbit(state);
+  }
+  private petTimers: Phaser.Time.TimerEvent[] = [];
+  private petParts: Phaser.GameObjects.GameObject[] = [];
+  private clearPet() {
+    this.petTimers.forEach((t) => t.remove(false));
+    this.petTimers = [];
+    if (this.petParts.length) this.tweens.killTweensOf(this.petParts);
+    this.petParts = [];
+    this.pet?.destroy(true);
+    this.pet = undefined;
+  }
+  private every(min: number, max: number, run: () => void) {
+    const schedule = () => {
+      const timer = this.time.delayedCall(Phaser.Math.Between(min, max), () => {
+        run();
+        schedule();
+      });
+      this.petTimers.push(timer);
+    };
+    schedule();
+  }
+  // Articulated pixel rabbit. Motion reflects REAL state only: position changes come from
+  // recorded actions; idle breathing/blinking is cosmetic; the expression is derived from the
+  // simulated needs/motives (shared/expression.ts), never invented.
+  private buildRabbit(state: State) {
+    const active = isActive(state);
+    const kind = active ? state.activity.kind : 'livre';
+    const mood = expressionFor(state);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const tint = color(state.identity.traits.aparencia?.value ?? '#e8e1ef');
     const shade = Phaser.Display.Color.IntegerToColor(tint).darken(15).color;
-    g.fillStyle(0x191224, 0.25).fillEllipse(0, 3, 29, 9);
-    // A rabbit's silhouette stays recognizable even when it changes its coat color.
-    g.fillStyle(0xf7eef6).fillRect(10, -14, 8, 8).fillRect(12, -16, 4, 11);
-    g.fillStyle(shade).fillRect(-10, -17, 22, 15).fillRect(-7, -20, 16, 5);
-    g.fillStyle(tint)
-      .fillRect(-9, -48, 6, 24)
-      .fillRect(-8, -51, 4, 4)
-      .fillRect(3, -51, 6, 26)
-      .fillRect(4, -54, 4, 4);
-    g.fillStyle(0xd6a5ba).fillRect(-7, -46, 2, 16).fillRect(5, -49, 2, 18);
-    g.fillStyle(tint).fillRect(-12, -30, 24, 19).fillRect(-9, -33, 18, 5).fillRect(-9, -12, 18, 5);
-    g.fillStyle(0xf8f0f5).fillRect(-8, -31, 7, 3).fillRect(-11, -3, 9, 5).fillRect(4, -3, 10, 5);
-    g.fillStyle(0x322b43);
-    if (active && state.activity.kind === 'dormir') {
-      g.fillRect(-7, -23, 4, 1).fillRect(4, -23, 4, 1);
-    } else {
-      g.fillRect(-7, -26, 3, 4).fillRect(4, -26, 3, 4);
-      g.fillStyle(0xffffff).fillRect(-7, -26, 1, 1).fillRect(4, -26, 1, 1);
-    }
-    g.fillStyle(0xd8acbf).fillRect(-10, -19, 4, 2).fillRect(7, -19, 4, 2);
-    g.fillStyle(0xf9f2f6).fillRect(-5, -18, 10, 5);
-    g.fillStyle(0xc48aab).fillRect(-1, -20, 3, 2);
-    g.fillStyle(0x8e759c).fillRect(0, -17, 1, 3).fillRect(-2, -14, 2, 1).fillRect(1, -14, 2, 1);
-    g.fillStyle(0xb5a4bd).fillRect(-16, -18, 5, 1).fillRect(12, -18, 5, 1);
-    c.add(g);
+    const rects = (g: Phaser.GameObjects.Graphics, fill: number, list: number[][], ox = 0, oy = 0) => {
+      g.fillStyle(fill);
+      for (const [x, y, w, h] of list) g.fillRect(x - ox, y - oy, w, h);
+    };
+    const start = iso(this.lastPosition);
+    const c = this.add.container(start.x, start.y);
+    const shadow = this.add.graphics().fillStyle(0x191224, 0.25).fillEllipse(0, 3, 29, 9);
+    const bodyBox = this.add.container(0, 0);
+    const torso = this.add.graphics();
+    rects(torso, 0xf7eef6, [[10, -14, 8, 8], [12, -16, 4, 11]]);
+    rects(torso, shade, [[-10, -17, 22, 15], [-7, -20, 16, 5]]);
+    rects(torso, tint, [[-9, -12, 18, 5]]);
+    rects(torso, 0xf8f0f5, [[-11, -3, 9, 5], [4, -3, 10, 5]]);
+    const head = this.add.container(0, -22);
+    const ear = (px: number, list: number[][], inner: number[][]) => {
+      const box = this.add.container(px, -9);
+      const g = this.add.graphics();
+      rects(g, tint, list, px, -31);
+      rects(g, 0xd6a5ba, inner, px, -31);
+      box.add(g);
+      return box;
+    };
+    const leftEar = ear(-6, [[-9, -48, 6, 24], [-8, -51, 4, 4]], [[-7, -46, 2, 16]]);
+    const rightEar = ear(6, [[3, -51, 6, 26], [4, -54, 4, 4]], [[5, -49, 2, 18]]);
+    const skull = this.add.graphics();
+    rects(skull, tint, [[-12, -30, 24, 19], [-9, -33, 18, 5]], 0, -22);
+    rects(skull, 0xf8f0f5, [[-8, -31, 7, 3]], 0, -22);
+    rects(skull, 0xf9f2f6, [[-5, -18, 10, 5]], 0, -22);
+    rects(skull, 0xc48aab, [[-1, -20, 3, 2]], 0, -22);
+    rects(skull, 0xb5a4bd, [[-16, -18, 5, 1], [12, -18, 5, 1]], 0, -22);
+    const face = this.add.graphics();
+    type Eyes = 'aberto' | 'fechado' | 'meio' | 'feliz' | 'grande';
+    const dark = 0x322b43, mouth = 0x8e759c;
+    const drawFace = (eyes: Eyes) => {
+      face.clear();
+      if (eyes === 'fechado') rects(face, dark, [[-7, -23, 4, 1], [4, -23, 4, 1]], 0, -22);
+      else if (eyes === 'meio') rects(face, dark, [[-7, -24, 3, 2], [4, -24, 3, 2]], 0, -22);
+      else if (eyes === 'feliz')
+        rects(face, dark, [[-7, -24, 1, 1], [-6, -25, 1, 1], [-5, -24, 1, 1], [4, -24, 1, 1], [5, -25, 1, 1], [6, -24, 1, 1]], 0, -22);
+      else if (eyes === 'grande') {
+        rects(face, dark, [[-8, -27, 4, 5], [4, -27, 4, 5]], 0, -22);
+        rects(face, 0xffffff, [[-8, -27, 2, 2], [4, -27, 2, 2]], 0, -22);
+      } else {
+        rects(face, dark, [[-7, -26, 3, 4], [4, -26, 3, 4]], 0, -22);
+        rects(face, 0xffffff, [[-7, -26, 1, 1], [4, -26, 1, 1]], 0, -22);
+      }
+      rects(face, mood.key === 'contente' ? 0xe597b4 : 0xd8acbf, [[-10, -19, 4, 2], [7, -19, 4, 2]], 0, -22);
+      if (mood.key === 'contente')
+        rects(face, mouth, [[0, -17, 1, 2], [-3, -15, 1, 1], [-2, -14, 2, 1], [1, -14, 2, 1], [3, -15, 1, 1]], 0, -22);
+      else if (mood.key === 'frustrada') {
+        rects(face, mouth, [[0, -17, 1, 2], [-2, -14, 5, 1], [-3, -13, 1, 1], [3, -13, 1, 1]], 0, -22);
+        rects(face, dark, [[-8, -29, 2, 1], [-6, -28, 2, 1], [5, -28, 2, 1], [7, -29, 2, 1]], 0, -22);
+      } else if (mood.key === 'entediada' || mood.key === 'sonolenta') rects(face, mouth, [[0, -17, 1, 2], [-1, -14, 3, 1]], 0, -22);
+      else rects(face, mouth, [[0, -17, 1, 3], [-2, -14, 2, 1], [1, -14, 2, 1]], 0, -22);
+    };
+    const baseEyes: Eyes =
+      mood.key === 'dormindo'
+        ? 'fechado'
+        : mood.key === 'sonolenta' || mood.key === 'entediada' || kind === 'descansar'
+          ? 'meio'
+          : mood.key === 'contente'
+            ? 'feliz'
+            : mood.key === 'curiosa'
+              ? 'grande'
+              : 'aberto';
+    drawFace(baseEyes);
+    head.add([leftEar, rightEar, skull, face]);
+    bodyBox.add([torso, head]);
+    c.add([shadow, bodyBox]);
     this.pet = c;
+    this.petParts.push(c, bodyBox, head, leftEar, rightEar);
+    // Ear posture from the derived expression.
+    const droop = mood.key === 'dormindo' ? 1.05 : ['sonolenta', 'frustrada', 'entediada'].includes(mood.key) ? 0.45 : 0;
+    leftEar.setRotation(-droop);
+    rightEar.setRotation(droop);
+    if (mood.key === 'dormindo') bodyBox.setScale(1.06, 0.88);
+    // Small state icon above the head (pixel graphics/text, no remote assets).
+    const icon = this.add.container(15, -58);
+    c.add(icon);
+    this.petParts.push(icon);
+    const ig = this.add.graphics();
+    if (mood.key === 'sedenta') rects(ig, 0x8ec5e8, [[2, 0, 2, 2], [1, 2, 4, 2], [0, 4, 6, 3], [1, 7, 4, 1]]);
+    else if (mood.key === 'faminta') {
+      rects(ig, 0x7fb069, [[3, 0, 1, 3], [5, 0, 1, 3]]);
+      rects(ig, 0xe9964f, [[2, 3, 5, 3], [3, 6, 3, 2], [4, 8, 1, 2]]);
+    } else if (mood.key === 'contente')
+      rects(ig, 0xe597b4, [[1, 0, 2, 2], [4, 0, 2, 2], [0, 1, 7, 2], [1, 3, 5, 1], [2, 4, 3, 1], [3, 5, 1, 1]]);
+    icon.add(ig);
+    const symbols: Record<string, string> = { curiosa: '?', frustrada: '!', entediada: '…' };
+    if (symbols[mood.key]) icon.add(this.add.text(0, -4, symbols[mood.key], { fontFamily: 'system-ui', fontSize: '12px', color: '#ead29e' }));
+    const activitySymbols: Record<string, string> = { pesquisar: '⌕', criar: '✦', diario: '✎', higiene: '✧' };
+    const tool = activitySymbols[kind]
+      ? this.add.text(-24, -50, activitySymbols[kind], { fontFamily: 'system-ui', fontSize: '12px', color: '#ead29e' })
+      : undefined;
+    if (tool) {
+      c.add(tool);
+      this.petParts.push(tool);
+    }
+    // Movement: hop along the real route to the recorded position.
     const target = state.objects.find((o) => o.id === state.activity.target);
     const route = target ? approach(this.lastPosition, target, state.objects) : [];
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (
+    const hops =
       !reduced &&
       route.length > 1 &&
       route[route.length - 1].x === state.position.x &&
-      route[route.length - 1].y === state.position.y
-    ) {
-      this.tweens.chain({
-        targets: c,
-        tweens: route.slice(1).flatMap((p, i) => {
-          const from = iso(route[i]),
-            to = iso(p);
-          return [
-            {
-              x: (from.x + to.x) / 2,
-              y: (from.y + to.y) / 2 - 5,
-              duration: 90,
-              ease: 'Sine.easeOut',
-            },
-            { ...to, duration: 90, ease: 'Sine.easeIn' },
-          ];
-        }),
-      });
-    } else c.setPosition(iso(state.position).x, iso(state.position).y);
+      route[route.length - 1].y === state.position.y;
     this.lastPosition = state.position;
     c.setDepth(500 + state.position.x + state.position.y);
-    if (active) {
-      const label =
-        state.activity.kind === 'dormir'
-          ? 'z z'
-          : state.activity.kind === 'pesquisar'
-            ? '⌕'
-            : state.activity.kind === 'criar'
-              ? '✦'
-              : '';
-      if (label)
-        c.add(
-          this.add.text(17, -55, label, {
-            fontFamily: 'system-ui',
-            fontSize: '12px',
-            color: '#ead29e',
-          }),
-        );
+    const fx = (text: string, x: number, y: number, size: number) => {
+      const t = this.add.text(c.x + x, c.y + y, text, { fontFamily: 'system-ui', fontSize: size + 'px', color: '#ead29e' }).setDepth(c.depth + 1);
+      this.petParts.push(t);
+      return t;
+    };
+    const startLoops = () => {
+      if (reduced) return;
+      const slow = mood.key === 'dormindo' || mood.key === 'sonolenta' ? 1.6 : 1;
+      const baseY = bodyBox.scaleY;
+      this.tweens.add({ targets: bodyBox, scaleY: baseY * (mood.key === 'dormindo' ? 1.05 : 1.035), duration: 1100 * slow, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      if (mood.key === 'dormindo') {
+        this.every(1400, 2200, () => {
+          const z = fx('z', 10, -44, 11);
+          this.tweens.add({ targets: z, y: z.y - 22, x: z.x + 8, alpha: 0, duration: 2200, onComplete: () => z.destroy() });
+        });
+        return;
+      }
+      this.every(2400, 5600, () => {
+        drawFace('fechado');
+        this.time.delayedCall(130, () => {
+          if (face.active) drawFace(baseEyes);
+        });
+      });
+      this.every(3000, 8000, () => {
+        const which = Math.random() < 0.5 ? leftEar : rightEar;
+        this.tweens.add({ targets: which, rotation: which.rotation + (which === leftEar ? -0.28 : 0.28), duration: 140, yoyo: true });
+      });
+      if (icon.length) this.tweens.add({ targets: icon, y: icon.y - 3, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      if (tool) this.tweens.add({ targets: tool, y: tool.y - 3, alpha: 0.5, duration: 700, yoyo: true, repeat: -1 });
+      if (kind === 'comer') this.tweens.add({ targets: head, y: head.y + 2, duration: 170, yoyo: true, repeat: -1, repeatDelay: 120 });
+      else if (kind === 'beber') this.tweens.add({ targets: head, y: head.y + 3, rotation: 0.08, duration: 600, yoyo: true, repeat: -1, repeatDelay: 300 });
+      else if (kind === 'higiene') this.tweens.add({ targets: head, rotation: 0.12, duration: 260, yoyo: true, repeat: -1, repeatDelay: 80 });
+      else if (kind === 'pesquisar' || kind === 'diario') this.tweens.add({ targets: head, y: head.y + 1, duration: 420, yoyo: true, repeat: -1, repeatDelay: 500 });
+      else if (kind === 'criar')
+        this.every(500, 1100, () => {
+          const spark = fx('✦', Phaser.Math.Between(-22, 14), -Phaser.Math.Between(20, 50), 9);
+          this.tweens.add({ targets: spark, alpha: 0, y: spark.y - 8, duration: 900, onComplete: () => spark.destroy() });
+        });
+      else if (kind === 'organizar') this.tweens.add({ targets: bodyBox, y: -4, duration: 200, yoyo: true, repeat: -1, repeatDelay: 700, ease: 'Sine.easeOut' });
+      else if (kind === 'observar' || kind === 'livre') this.every(2800, 6000, () => c.setScale(-c.scaleX, 1));
+    };
+    if (hops) {
+      const steps = route.slice(1).flatMap((p, i) => {
+        const from = iso(route[i]),
+          to = iso(p);
+        return [
+          {
+            targets: bodyBox,
+            scaleX: 1.12,
+            scaleY: 0.86,
+            duration: 60,
+            onStart: () => c.setScale(to.x === from.x ? c.scaleX : to.x > from.x ? -1 : 1, 1),
+          },
+          {
+            targets: c,
+            x: (from.x + to.x) / 2,
+            y: (from.y + to.y) / 2 - 7,
+            duration: 110,
+            ease: 'Sine.easeOut',
+            onStart: () => bodyBox.setScale(0.92, 1.1),
+          },
+          { targets: c, x: to.x, y: to.y, duration: 110, ease: 'Sine.easeIn' },
+          { targets: bodyBox, scaleX: 1.1, scaleY: 0.88, duration: 60, yoyo: true },
+        ];
+      });
+      this.tweens.chain({
+        tweens: steps,
+        onComplete: () => {
+          bodyBox.setScale(1, mood.key === 'dormindo' ? 0.88 : 1);
+          startLoops();
+        },
+      });
+    } else {
+      c.setPosition(iso(state.position).x, iso(state.position).y);
+      startLoops();
     }
   }
   private draw() {

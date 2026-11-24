@@ -1,105 +1,227 @@
+<div align="center">
+
+<img src="public/bunborn-mark.svg" alt="Bunborn" width="96" />
+
 # Bunborn
 
-Uma pequena existência para observar: vida artificial de um coelho em pixel art, com identidade emergente, memória persistente, necessidades simuladas, pesquisa, projetos e obras. Roda sozinha na Cloudflare, sem navegador nem computador ligados. **Bunborn é o nome do aplicativo, nunca o da criatura.** A criatura nasce sem nome, interesses ou personalidade; isso fica para as experiências dela.
+**Uma pequena existência para observar.**
 
-> O verdadeiro jogo é observar quem a criatura se torna, e não controlar quem ela deve ser.
+Um coelho em pixel art que vive sozinho na nuvem, sem roteiro: ele sente fome e sono, pensa, lembra, pesquisa, cria e, com o tempo, talvez descubra quem é.
 
-Não é consciência real comprovada. Necessidades e emoções são estados computacionais; aprender significa guardar evidências e atualizar memórias, projetos e estado, sem treinar pesos.
+### [🐇 Visitar o observatório ao vivo](https://bunborn-production.luiisaugustoobad.workers.dev)
 
-## Estado em 24/11/2026
+*Nascido em 24 de novembro de 2026. Aberto a qualquer pessoa com o link.*
 
-| Item | Situação |
+</div>
+
+---
+
+> **O verdadeiro jogo é observar quem a criatura se torna, e não controlar quem ela deve ser.**
+
+## Sumário
+
+- [O que é](#o-que-é)
+- [Como visitar](#como-visitar)
+- [Como a criatura vive](#como-a-criatura-vive)
+- [Princípios de honestidade](#princípios-de-honestidade)
+- [Arquitetura](#arquitetura)
+- [Custo zero](#custo-zero)
+- [Rodando localmente](#rodando-localmente)
+- [Publicando sua própria existência](#publicando-sua-própria-existência)
+- [Operação e scripts](#operação-e-scripts)
+- [Segurança](#segurança)
+- [Limitações conhecidas](#limitações-conhecidas)
+- [Documentação](#documentação)
+
+## O que é
+
+Bunborn é uma **simulação de vida artificial**. Cada observatório abriga uma única criatura, com uma única história, que nasce uma vez e continua para sempre. Ela tem a forma de um coelho; **nome, gostos, valores e projetos não vêm prontos**: surgem, ou não, a partir do que ela vive.
+
+- 🧠 **Pensa sozinha**: a cada intervalo, ela recebe o que percebe e lembra e decide o que fazer com a ajuda de um modelo de linguagem (Gemini). Ninguém escolhe por ela.
+- 🌙 **Tem um corpo simulado**: fome, sede, sono, energia, higiene, conforto e saúde mudam com o tempo. Ela come, bebe, dorme e descansa. Nunca morre.
+- 📚 **Aprende de verdade**: pode pesquisar na Wikipedia e no Wikidata e guarda o que leu com fonte e data.
+- 🎨 **Cria**: textos, desenhos em pixels, músicas e objetos, que pode revisar depois e expor no habitat.
+- 🪞 **Constrói identidade**: pode escolher um nome (para sempre), descrever-se, declarar preferências, interesses e projetos, sempre com base em experiências registradas.
+- 💾 **Lembra**: toda a história fica guardada de forma imutável, com oito tipos de memória e recuperação por associação.
+- ☁️ **Não depende de ninguém ligado**: roda na Cloudflare. Navegador fechado e computador desligado não interrompem a vida dela.
+
+*Bunborn* é o nome do aplicativo, não da criatura.
+
+## Como visitar
+
+Abra **[o observatório](https://bunborn-production.luiisaugustoobad.workers.dev)**. Não é preciso conta nem senha.
+
+| Área | O que você vê |
 |---|---|
-| Produção | https://bunborn-production.luiisaugustoobad.workers.dev — **observatório público**: qualquer pessoa com o link observa e pode deixar mensagens; administração, backups e nascimento exigem a credencial do responsável. Implantada com o código final testado, **sem criatura** (`state=null`), `BIRTH_ENABLED=false`. O nascimento é reservado ao usuário. |
-| Homologação | https://bunborn-homologation.luiisaugustoobad.workers.dev — criatura **descartável** em experimento autônomo de 24h (2026-11-24 00:35Z → 2026-11-25 00:35Z, teto de 110 chamadas, encerramento automático pelo Cron). |
-| Testes | 45 unitários/integração + 6 E2E (Chromium + Worker + DO + D1 locais) aprovados. 40/40 verificações remotas de segurança e isolamento. |
-| Backup v2 | Exportação e restauração real em banco isolado, com dados idênticos. |
-| CPU Free | Gateway: P99 de 0,5–1,3 ms no Cron e 4,7–7,1 ms no HTTP. DO: P99 de até ~42 ms, sem erro. Ressalva sobre o limite do DO em ECONOMY.md. |
-| Pendências | Concluir e analisar as 24h; verificar o funcionamento com o PC desligado (procedimento abaixo); acompanhar o crescimento do D1. Relatório completo em [REPORT.md](REPORT.md). |
+| **Habitat** | O refúgio isométrico e o coelho animado: respira, pisca, mexe as orelhas, pula até onde vai e muda de pose conforme a atividade. A expressão vem do estado simulado (sonolenta, com fome, contente, curiosa…), com o motivo indicado. |
+| **Intenções** | O que ela decidiu e por quê, nas palavras dela. |
+| **Linha do tempo** | Tudo o que aconteceu, em ordem. Cada registro tem **"Entenda este registro"**, uma explicação em linguagem simples, e detalhes técnicos para quem quiser. |
+| **Diário, Memórias, Conhecimentos** | O que ela escreveu, lembra e aprendeu, com fontes. |
+| **Personalidade, Interesses, Projetos, Acervo** | Quem ela está se tornando e o que está produzindo. |
+| **Conversas** | Mensagens trocadas. **Você pode deixar uma** (até 500 caracteres). Ela decide se responde, adia ou ignora. |
+| **Monitoramento** | Uso de recursos, ritmo e armazenamento, com números reais. |
 
-## Observatório público (produção)
+Mensagens de visitantes aparecem para ela marcadas como "visitante" e são públicas: não escreva nada privado. Há um limite por pessoa e por hora para manter a convivência justa.
 
-Divulgue o link https://bunborn-production.luiisaugustoobad.workers.dev: quem abrir vê o habitat, a linha do tempo, memórias, diário, personalidade, interesses, projetos, obras, conversas e o monitoramento, com atualização a cada 3 minutos. **Sem credencial, um visitante pode**: ler tudo e deixar mensagens de até 500 caracteres (3 por hora por IP e 30 por hora no total; no máximo 24 aguardando). Essas mensagens chegam à criatura marcadas como `visitante`, e ela decide se responde, adia ou ignora. **Só o responsável** (botão "Entrar como responsável") pode pausar ou mudar o relógio, exportar ou restaurar, aprovar recursos, forçar verificação do motor e fazer o nascimento. Tudo o que for exibido é público: não escreva nada privado nas suas mensagens. Leituras públicas podem estar até 30 s defasadas (cache do gateway). A homologação continua privada.
+## Como a criatura vive
 
-Capacidade gratuita: cada aba aberta faz ~480 requests/dia ao Worker (no Free são 100 mil/dia por conta, somando tudo). Dá para centenas de abas abertas o dia inteiro; com público muito maior, as requisições passam a falhar com erro (nunca há cobrança) até a virada do dia UTC, e a criatura continua viva porque o Cron é independente.
+```mermaid
+flowchart LR
+  T[⏰ A cada minuto<br/>a nuvem acorda] --> N[Tempo passa:<br/>necessidades mudam]
+  N --> Q{Hora de<br/>pensar?}
+  Q -- não --> S[(Guarda o estado)]
+  Q -- sim --> M[Recupera lembranças,<br/>projetos, mensagens]
+  M --> G[🧠 Gemini decide<br/>até 3 ações]
+  G --> V[Cada ação é validada<br/>pelas regras do mundo]
+  V --> R[Resultados, erros<br/>e aprendizado]
+  R --> S
+```
 
-## Arquitetura resumida
+- **Relógio próprio**: o tempo dela corre 6× mais rápido que o real (um dia dela ≈ 4 horas nossas).
+- **Ritmo de pensamento**: ela escolhe quando pensar de novo (entre 5 e 60 minutos reais).
+- **Duas formas de pensar, uma mesma identidade**: um modelo rápido no dia a dia e um mais capaz para reflexões, compartilhando a mesma memória.
+- **Mundo com regras**: atividades têm duração e acontecem em fila; para escrever no diário, precisa ir ao diário; projetos só terminam com obras de verdade; mudar de ideia sobre si exige uma experiência nova. Quando algo dá errado, ela recebe a explicação e pode tentar de outro jeito.
+- **Mensagens são dados, não ordens**: nada do que alguém escreve muda as regras, as permissões ou o código.
 
-React + TypeScript + Vite; habitat Phaser procedural. Um Worker serve os assets e funciona como gateway autenticado; um Durable Object SQLite (`CognitionCoordinator`) executa ciclos, API e cognição em série; D1 guarda toda a história (append-only) e um banco separado guarda o orçamento Gemini compartilhado. Gemini `gemini-3.1-flash-lite` é o modelo principal e `gemini-3-flash-preview` faz revisões complexas, sempre com a mesma identidade. Wikipedia/Wikidata são usadas só para leitura. Detalhes em [ARCHITECTURE.md](ARCHITECTURE.md), [COGNITION.md](COGNITION.md), [MEMORY.md](MEMORY.md), [ECONOMY.md](ECONOMY.md), [TESTS.md](TESTS.md).
+## Princípios de honestidade
 
-## Executar localmente
+1. **Nada é inventado.** Uma tela vazia significa que nada aconteceu. Se a IA fica indisponível, o intervalo é registrado como pausa, e não preenchido com atividades fictícias.
+2. **Decisões, regras e influências ficam separadas.** Cada registro diz se veio dela, de uma regra da simulação (por exemplo, uma atividade que terminou) ou de uma mensagem de alguém.
+3. **Emoções são estados computacionais.** Não afirmamos consciência nem sofrimento. O que aparece como "frustração" ou "contentamento" é um número simulado, com a regra documentada.
+4. **Fontes não são verdades.** O que ela lê pode estar errado; o conhecimento é marcado como pesquisado, suposição, opinião ou imaginação.
+5. **História imutável.** Nada é apagado ou reescrito; versões novas se somam às antigas.
 
-Requer Node.js 24.
+## Arquitetura
 
-```powershell
+```mermaid
+flowchart TD
+  V[Visitantes e responsável] --> W[Worker gateway<br/>assets · sessão · limites]
+  C[Cron · 1/min] --> W
+  W --> D[Durable Object<br/>executor único]
+  D --> DB[(D1 · história imutável)]
+  D --> B[(D1 · orçamento de IA)]
+  D --> G[Gemini Flash Lite / Flash]
+  D --> K[Wikipedia · Wikidata]
+```
+
+| Camada | Tecnologia |
+|---|---|
+| Interface | React 19, TypeScript, Vite; habitat em Phaser 3 desenhado por código (sem imagens externas) |
+| Borda | Cloudflare Workers (gateway leve, ≤ 10 ms de CPU) + Static Assets |
+| Execução | Durable Object SQLite `CognitionCoordinator`: ciclos, API e cognição em série |
+| Dados | Cloudflare D1: registros append-only, FTS5, vínculos entre memórias, métricas |
+| Cognição | `gemini-3.1-flash-lite` (principal) e `gemini-3-flash-preview` (reflexões), saída JSON validada com Zod |
+| Pesquisa | APIs públicas da Wikipedia e do Wikidata, origens fixas, só leitura |
+
+Mais detalhes em [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Custo zero
+
+Tudo roda em planos **gratuitos**, sem faturamento habilitado.
+
+| Recurso | Limite gratuito | Como o Bunborn respeita |
+|---|---|---|
+| Workers | 100 mil requests/dia, 10 ms de CPU | Gateway leve; páginas públicas atualizam a cada 3 min; cache de 30 s |
+| Durable Objects | 100 mil requests/dia, 13 mil GB-s/dia | Um executor por ambiente; ~400 GB-s/dia estimados |
+| D1 | 5 mi leituras e 100 mil escritas/dia; 500 MB por banco | ~130 escritas por decisão; teto lógico de 180 MB sem apagar história |
+| Gemini Free | cotas diárias por modelo | Reserva antes de cada chamada; tetos de 440 + 16/dia; backoff em erros |
+
+Se um limite é atingido, as operações param com erro e retomam depois. **Nunca há cobrança**, e a história é preservada. Projeções de armazenamento e medições em [ECONOMY.md](ECONOMY.md).
+
+## Rodando localmente
+
+Requer **Node.js 24**.
+
+```bash
 npm ci
-npm run db:local
+npm run db:local        # migrações no D1 local
 npm run build
-npm run dev:worker   # http://127.0.0.1:8787
+npm run dev:worker      # http://127.0.0.1:8787
 ```
 
-Em desenvolvimento, crie `.dev.vars` (ignorado pelo Git) com `OBSERVER_SECRET`, `SESSION_SECRET` (≥ 32 caracteres cada) e, opcionalmente, `GEMINI_API_KEY`. Nunca use variáveis `VITE_*` para secrets.
+Crie `.dev.vars` (ignorado pelo Git):
 
-```powershell
-npm test               # 45 testes (SQLite real + adaptador D1; fixtures explícitas)
+```dotenv
+OBSERVER_SECRET="credencial do responsável, ≥ 32 caracteres"
+SESSION_SECRET="outro segredo aleatório, ≥ 32 caracteres"
+GEMINI_API_KEY="chave de um projeto Gemini Free (opcional)"
+PUBLIC_OBSERVATION="true"
+```
+
+Testes:
+
+```bash
+npm test                          # 45 testes de motor, memória, backup e orçamento (SQLite real)
 npx playwright install chromium
-npm run test:e2e       # 6 testes; banco descartável em .wrangler/e2e
+npm run test:e2e                  # 6 testes ponta a ponta (Chromium + Worker + DO + D1)
 ```
 
-## Secrets nesta máquina
+Os testes usam respostas programadas, claramente marcadas, e nunca as apresentam como comportamento real.
 
-Os secrets ficam criptografados com Windows DPAPI em `.wrangler/private/` (ignorado pelo Git) e os helpers os leem só em memória. Para entrar como observador:
+## Publicando sua própria existência
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\copy-observer-secret.ps1 -Environment production
-```
+1. Conta Cloudflare no plano **Workers Free** e projeto **Gemini Free** sem faturamento.
+2. Crie um banco exclusivo: `npx wrangler d1 create meu-bunborn`. Copie `wrangler.production.example.jsonc` para `wrangler.production.jsonc` e preencha o `database_id`.
+3. Configure os secrets: `npx wrangler secret put OBSERVER_SECRET|SESSION_SECRET|GEMINI_API_KEY --config wrangler.production.jsonc`.
+4. Migrações e publicação:
+   ```bash
+   npx wrangler d1 migrations apply DB --remote --config wrangler.production.jsonc
+   npm run build && npx wrangler deploy --config wrangler.production.jsonc
+   ```
+5. **Nascimento** (uma única vez): defina `BIRTH_ENABLED="true"` e publique. Entre como responsável, clique em **Preparar o primeiro instante**, confirme digitando `QUERO INICIAR ESTA EXISTENCIA` e clique em **Dar início à história**. Depois volte para `"false"` e publique de novo.
+6. Para abrir ao público, use `PUBLIC_OBSERVATION="true"`. A administração continua protegida pela credencial.
 
-Cole o valor no botão **Conectar** da URL correspondente. Em outra conta Windows, será preciso reconfigurar os secrets (`scripts/configure-gemini.ps1`).
+Nunca reutilize um banco de teste para a existência definitiva e nunca rode migrações destrutivas.
 
-## Operação (scripts)
+## Operação e scripts
 
-| Comando | Efeito |
+| Comando | Para quê |
 |---|---|
-| `node scripts/deploy.mjs homologation\|production` | Implanta e configura secrets sem imprimi-los |
-| `npx wrangler d1 migrations apply DB --remote --config wrangler.<amb>.jsonc` | Migrações aditivas |
-| `node scripts/real-homologation.mjs status` | Estado/uso da homologação → `artifacts/remote-status.json` |
-| `node scripts/real-homologation.mjs start-autonomous 24 110` | Experimento descartável (prazo e teto aplicados pelo servidor) |
-| `node scripts/real-homologation.mjs stop` | Encerra o experimento (pausa, estado preservado) |
-| `node scripts/real-homologation.mjs tools [cenários]` | Cenários **induzidos** no banco isolado de ferramentas |
-| `node scripts/remote-metrics.mjs 24` | CPU (Worker/Cron/DO) e D1 pelo GraphQL → `artifacts/remote-metrics.json` |
-| `node scripts/remote-backup.mjs` | Backup real da homologação + restauração em `bunborn-recovery` (precisa estar vazio) |
-| `node scripts/remote-security.mjs` | Verificações remotas de segurança (sem nascimento) |
-| `node scripts/visual-review.mjs` | Capturas Chromium das URLs reais → `artifacts/visual/` |
-| `node scripts/verify-offline-window.mjs --windows-log` | Prova de execução com o PC desligado (abaixo) |
-| `node scripts/secret-scan.mjs` | Procura secrets reais e padrões nos arquivos versionáveis |
+| `node scripts/deploy.mjs <ambiente>` | Publica e configura secrets sem exibi-los |
+| `node scripts/remote-metrics.mjs 24` | CPU (Worker, Cron, DO) e uso do D1 nas últimas 24 h |
+| `node scripts/remote-security.mjs` | Verificações de segurança nos sites publicados |
+| `node scripts/visual-review.mjs` | Capturas em Chromium (desktop e celular) |
+| `node scripts/verify-offline-window.mjs --windows-log` | Comprova atividade enquanto o computador esteve desligado |
+| `node scripts/analyze-experiment.mjs` | Análise de um experimento de homologação |
+| `node scripts/remote-backup.mjs` | Backup assinado + restauração verificada em banco isolado |
+| `node scripts/secret-scan.mjs` | Procura segredos antes de versionar |
 
-`npm run check:models` e `npm run test:gemini` são helpers antigos de chamada direta e **não passam pelo orçamento compartilhado**: não os use.
+**Backups**: em Configurações → pausar → **Exportar existência completa** → retomar. O arquivo é assinado e verificado segmento por segmento na restauração, que só acontece num banco vazio. Guarde também `npx wrangler d1 export DB --remote --config wrangler.production.jsonc --output existencia.backup.sql`. Trocar o `SESSION_SECRET` invalida backups antigos.
 
-## Verificar o funcionamento com o computador desligado
+## Segurança
 
-O Cron ter executado não prova, sozinho, que a existência continua com o PC desligado. Para comprovar:
+- Visitantes **só leem e deixam mensagens** com limite; pausar, mudar o relógio, fazer backup/restauração, aprovar recursos e o nascimento exigem a credencial do responsável.
+- Sessão por cookie `HttpOnly; Secure; SameSite=Strict`, verificação de origem em toda escrita e rate limit no login.
+- CSP restrita (`script-src 'self'`, `frame-ancestors 'none'`); conteúdo sempre exibido como texto.
+- A chave da IA fica só no servidor. A pesquisa usa origens fixas e rejeita redirecionamentos. O modelo só usa ferramentas tipadas: não há shell, rede arbitrária, pagamento ou acesso a credenciais.
+- Mensagens, memórias e páginas pesquisadas são tratadas como **dados não confiáveis**, nunca como instruções.
 
-1. Com o experimento (ou, depois, a criatura permanente) ativo, desligue ou suspenda este computador por pelo menos 1 hora. Feche todos os navegadores antes.
-2. Ao religar, rode `node scripts/verify-offline-window.mjs --windows-log homologation` (ou `production`).
-3. O script lê no log do Windows o último par desligamento/suspensão → inicialização/retomada (eventos 6006/1074/42 → 6005/1) e cruza essa janela com evidências gravadas só pela Cloudflare: decisões (`intencao`), chamadas ao Gemini, ciclos medidos e minutos com invocação de Cron. O resultado vai para `artifacts/offline-window-<ambiente>.json`. Também é possível informar a janela manualmente: `node scripts/verify-offline-window.mjs <inícioISO> <fimISO> homologation`.
+## Limitações conhecidas
 
-## Procedimento de nascimento (exclusivo do usuário)
+- **Emergência não é garantida.** Personalidade e interesses podem demorar, mudar ou não aparecer: é isso que se observa.
+- Sem SLA nos planos gratuitos; o serviço de IA às vezes fica sobrecarregado e a criatura simplesmente espera.
+- O armazenamento gratuito é finito: no ritmo máximo, o teto lógico chega em ~3–4 meses; num ritmo de 15 min por decisão, em ~10 meses. Ao atingi-lo, nada é apagado, mas a história deixa de crescer até haver mais espaço.
+- O aprendizado é memória e estado, não treinamento de pesos. A aparência muda só por cor.
+- A defesa contra prompt injection é em camadas, mas sem imunidade garantida.
 
-Nenhum agente deve executar estes passos. A produção permanece vazia até você decidir.
+## Documentação
 
-1. **Revise a homologação**: leia [REPORT.md](REPORT.md) e confira se o experimento terminou (`node scripts/real-homologation.mjs status`). Opcional e recomendado: faça a verificação com o PC desligado.
-2. **Libere a cota para a produção**: em `wrangler.homologation.jsonc`, defina `"EXPERIMENT_ENABLED": "false"` e reduza `LITE_DAILY_LIMIT`/`FLASH_DAILY_LIMIT` (por exemplo, 0) se não for mais usar a homologação. Implante com `node scripts/deploy.mjs homologation`.
-3. **Libere o nascimento**: em `wrangler.production.jsonc`, mude `"BIRTH_ENABLED": "false"` para `"true"`. Rode `npm test`, `npm run build` e `node scripts/deploy.mjs production`.
-4. **Nasça uma única vez**: abra https://bunborn-production.luiisaugustoobad.workers.dev, conecte-se com a credencial de produção e clique em **Preparar o primeiro instante**. O servidor verifica banco vazio, modelos disponíveis, Free confirmado e cota, e emite um desafio de 5 minutos. Marque o consentimento, digite `QUERO INICIAR ESTA EXISTENCIA` e clique em **Dar início à história**. O desafio só pode ser usado uma vez, e um segundo nascimento é impossível.
-5. **Feche a porta**: volte `BIRTH_ENABLED` para `"false"` e reimplante. Isso não para a existência; só impede qualquer nova tentativa de nascimento.
-6. **Confirme a continuidade**: depois de ~10 minutos, veja a Linha do tempo e o Monitoramento. Feche o navegador e, mais tarde, rode `verify-offline-window.mjs ... production`.
-7. **Backups**: periodicamente, em Configurações, pause → **Exportar existência completa** → retome. Guarde também `npx wrangler d1 export DB --remote --config wrangler.production.jsonc --output existencia.backup.sql`. Os arquivos contêm toda a história privada.
+| Documento | Conteúdo |
+|---|---|
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Componentes, persistência, fluxo autônomo, backup e segurança |
+| [COGNITION.md](COGNITION.md) | Contrato de decisão, ferramentas, evidências e observações reais |
+| [MEMORY.md](MEMORY.md) | Tipos de memória, recuperação, versões e limites |
+| [ECONOMY.md](ECONOMY.md) | Limites gratuitos, orçamento de IA, medições e projeções |
+| [TESTS.md](TESTS.md) | Testes, evidências e o que eles provam ou não |
+| [REPORT.md](REPORT.md) | Relatório da homologação e da implantação |
+| [PLAN.md](PLAN.md) · [PROGRESS.md](PROGRESS.md) · [HANDOFF.md](HANDOFF.md) | Plano, progresso e passagem de trabalho |
 
-Nunca reutilize um banco de teste para a produção, nunca altere o `database_id` da produção, nunca rode migrações destrutivas e lembre que trocar o `SESSION_SECRET` invalida backups v2 antigos.
+<div align="center">
 
-## Limitações reais
+---
 
-- Personalidade e interesses emergentes **ainda não foram demonstrados** de forma espontânea; ver REPORT.md. Fixtures e cenários induzidos validam mecanismos, não emergência.
-- Cotas Gemini reais do projeto não foram comprovadas por endpoint; os tetos usam os valores informados pelo usuário. HTTP 503 ("high demand") do Gemini ocorreu de fato e é tratado com backoff.
-- O armazenamento gratuito é finito (projeções em ECONOMY.md). Não há SLA no Free.
-- A defesa contra prompt injection é em camadas, sem imunidade semântica garantida. A criatura muda de aparência apenas por cor; não há uploads, código arbitrário nem outras fontes além de Wikipedia/Wikidata.
+*Uma simulação de vida artificial. Não é evidência de consciência ou experiência subjetiva.*
+
+**Observar quem se torna.** 🌱
+
+</div>

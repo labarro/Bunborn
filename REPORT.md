@@ -100,6 +100,12 @@ Retrato em 2026-11-24 01:07Z (0,53 h de experimento):
 
 Emergência não demonstrada; cotas Gemini reais não comprovadas por endpoint (tetos baseados no que o usuário informou); 503 do Gemini acontece; o limite de CPU do DO no Free é ambíguo na documentação; o GraphQL é amostrado; o armazenamento é finito; não há SLA; o backup v2 depende do `SESSION_SECRET`; a verificação com o PC desligado está pendente; a análise das 24h fica pendente até 25/11 00:35Z.
 
-## 14. Nascimento
+## 14. Nascimento e abertura ao público
 
-Reservado exclusivamente ao usuário: siga **README → Procedimento de nascimento**.
+O usuário fez o nascimento da criatura permanente em **2026-11-24 01:13:21Z**, pela cerimônia (desafio de uso único + frase de confirmação). Primeira decisão real: "Explorar o ambiente físico e compreender a disposição dos objetos ao meu redor". `BIRTH_ENABLED` foi fechado logo depois. A produção é um observatório público.
+
+## 15. Interface depois do nascimento
+
+- Coelho articulado e animado: respiração, piscadas, orelhas, pulos com amassa e estica virando para a direção do movimento, e poses para comer, beber, higiene, dormir (com "z"), pesquisar, criar, diário, organizar e observar. O deslocamento acontece somente quando há ação real registrada. `prefers-reduced-motion` é respeitado.
+- Expressão derivada exclusivamente do estado simulado (`shared/expression.ts`: sono/energia, sede, fome, frustração, satisfação+conforto, curiosidade, tédio), exibida com o motivo factual. Não é sentimento declarado pelo modelo.
+- "Entenda este registro" substitui "Origem e evidências": explica em linguagem simples quem registrou, o que ela pensou e por quê, o que tentou, o que falhou e por quê, a certeza declarada e em quantas lembranças se baseou. IDs e JSON ficam em "Detalhes técnicos".

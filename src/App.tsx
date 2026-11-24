@@ -37,6 +37,8 @@ import {
 } from '../shared/domain';
 import { ArtifactView } from './ArtifactView';
 import {BirthRitual} from './BirthRitual';
+import { expressionFor } from '../shared/expression';
+import { Explanation } from './explain';
 import {exportExistence,restoreExistence}from'./backups';
 const Habitat = lazy(() => import('./HabitatView'));
 type Data = {
@@ -518,6 +520,12 @@ export function App() {
                             ? (activityLabels[state.activity.kind] ?? state.activity.kind)
                             : 'Entre atividades'
                           : 'Nenhuma criatura criada. Nenhuma atividade inventada.'}
+                        {state ? (
+                          <span className="expression-note" title={'Derivada do estado simulado: ' + expressionFor(state).reason}>
+                            {' · '}
+                            {expressionFor(state).label}
+                          </span>
+                        ) : null}
                       </p>
                     </div>
                     <span className="simulation-badge">Vida artificial</span>
@@ -894,20 +902,7 @@ export function App() {
                       ) : null}
                       {r.kind === 'intencao' ? <p>{String(r.data.summary ?? '')}</p> : null}
                       <Sources record={r} />
-                      <details>
-                        <summary>Origem e evidências</summary>
-                        <p className="record-id">
-                          {r.id} · {r.origin}
-                        </p>
-                        <p>
-                          Importância {Math.round(r.importance * 100)}% · confiança declarada{' '}
-                          {Math.round(r.confidence * 100)}%
-                        </p>
-                        <pre>{JSON.stringify(r.data, null, 2)}</pre>
-                        {r.associations.length ? (
-                          <p>Associações: {r.associations.join(', ')}</p>
-                        ) : null}
-                      </details>
+                      <Explanation record={r} />
                     </article>
                   ))}
                 </div>
