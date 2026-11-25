@@ -72,6 +72,24 @@ Sono limita a energia disponível: o teto de energia é 100 − 2×(sono − 60)
   - Curiosidade e vontade de criar: crescem com o tédio e diminuem ao pesquisar ou criar.
 - **Backup:** o esquema estrito do estado não aceitava os campos novos `involuntary` e `lastDecisionAt`, e um backup feito depois de 25/11 02:27Z seria recusado na restauração. Corrigido, e o estado real de produção foi conferido contra o esquema.
 
+## Despertar (25/11)
+
+O corpo acorda sozinho quando o sono chega a 3 ou menos, ou antes disso se fome ou sede passarem de 95 com o sono abaixo de 40. Isso vale mesmo que ela tenha escolhido dormir por mais tempo. Também não consegue adormecer com sono abaixo de 25 (`sem_sono`). Antes, um sono de 6 h virtuais continuava com o sono já zerado. Em produção, às 05:17Z ela acordou sozinha, a tentativa de voltar a dormir foi recusada e às 05:22Z ela foi comer.
+
+## Revisão de código (25/11)
+
+Corrigidos:
+- O contador de visitas devolvia um total desatualizado por causa do cache.
+- `POST /api/visit` não tinha limite de requisições (agora são 4 por hora por visitante e 600 por hora no total).
+- As abas públicas mostravam "ainda não nasceu" quando a API dava erro.
+- Os resumos em cache não eram descartados no nascimento nem na restauração.
+- A dica de ação malformada falava sempre em evidência; agora lista os campos com problema, e a ação malformada também aumenta a frustração.
+- O dia do contador no navegador estava em UTC, e não em UTC-3.
+- O diário de bordo atribuía as pausas a uma causa sem base nos registros.
+- O botão de atualizar não fazia nada nas abas novas.
+- As etapas de projeto podiam ser contadas em dobro.
+- A data do diário de bordo dependia do fuso de quem estava vendo.
+
 ## Falhas do provedor (25/11)
 
 Sobrecarga (503), timeout e resposta malformada esperam 5, 10 e depois 20 min, no máximo. Antes, a espera dobrava até 6 h: 7 erros 503 seguidos deixaram Lumi parada por 5h20 em 24/11. Uma intenção longa demais agora é cortada no limite em vez de descartar a decisão. Uma atividade escrita como tipo (`{type:"observar"}`) é lida como `atividade`. Rejeições repetitivas ganharam detalhe: `ja_registrado` para identidade, e etapas de projeto aceitam como evidência qualquer trabalho próprio novo (`etapa_sem_evidencia`).

@@ -195,3 +195,29 @@ describe('review 25/11: idleness, motives and backup compatibility', () => {
     expect(s.motives.tedio).toBeLessThan(before - 15);
   });
 });
+
+describe('waking up (review 25/11 05:15Z)', () => {
+  it('wakes by itself when rested even if a longer sleep was chosen, and then decides again', async () => {
+    let s = born(0);
+    s.needs = { ...s.needs, sono: 30, fome: 20, sede: 20 };
+    s.activity = { kind: 'dormir', until: s.virtualMinutes + 600, target: 'cama', intention: 't' };
+    const r = reconcile(s, 3 * hour);
+    expect(r.events).toEqual(['acordou_descansada']);
+    expect(r.state.activity.until).toBeLessThanOrEqual(r.state.virtualMinutes);
+    expect(r.completed.map((a) => a.kind)).toContain('dormir');
+  });
+  it('hunger or thirst wakes it once sleep pressure is no longer high', () => {
+    let s = born(0);
+    s.needs = { ...s.needs, sono: 45, fome: 100, sede: 100 };
+    s.activity = { kind: 'dormir', until: s.virtualMinutes + 600, target: 'cama', intention: 't' };
+    expect(reconcile(s, hour).events).toEqual(['acordou_com_fome_ou_sede']);
+  });
+  it('cannot fall asleep without sleep pressure', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    await seed(store, (s) => { s.needs.sono = 5; s.activity.until = 0; }, t0);
+    await tick(env, t0 + 1000, fixture([{ type: 'atividade', activity: 'dormir', minutes: 360 }]));
+    expect((await store.records('erro_ferramenta'))[0].data).toMatchObject({ code: 'sem_sono' });
+    expect((await store.state())!.activity.kind).not.toBe('dormir');
+  });
+});

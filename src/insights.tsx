@@ -57,7 +57,10 @@ function usePublic<T>(path: string, every = 180000) {
     let alive = true;
     const load = () =>
       fetch('/api/' + path, { credentials: 'same-origin' })
-        .then((r) => r.json())
+        .then((r) => {
+          if (!r.ok) throw new Error('http_' + r.status);
+          return r.json();
+        })
         .then((d) => alive && (setData(d as T), setError('')))
         .catch(() => alive && setError('Não foi possível carregar agora. Tente novamente em instantes.'));
     void load();
@@ -187,7 +190,7 @@ function daySentences(d: Day): string[] {
   const received = (d.talks.visitante ?? 0) + (d.talks.observador ?? 0);
   if (received || d.talks.criatura) out.push(`Recebeu ${received} mensagem(ns) e escreveu ${d.talks.criatura ?? 0}.`);
   if (d.toolRejections) out.push(`Tentou ${d.toolRejections} coisa(s) que não deram certo e recebeu a explicação de cada uma.`);
-  if (d.pauses) out.push(`Ficou ${d.pauses} vez(es) em pausa porque o serviço de IA estava ocupado ou no limite do dia.`);
+  if (d.pauses) out.push(`Teve ${d.pauses} pausa(s) no pensamento por falha temporária.`);
   return out;
 }
 export function LogbookPanel() {
@@ -200,7 +203,7 @@ export function LogbookPanel() {
       <p className="footnote">Resumo automático de cada dia (horário de Brasília), montado só a partir dos registros reais. Não é escrito pela criatura nem por uma IA.</p>
       {data.days.map((d) => (
         <section className="insight-card" key={d.day}>
-          <h3>{new Date(d.day + 'T12:00:00Z').toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}</h3>
+          <h3>{new Date(d.day + 'T12:00:00Z').toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Sao_Paulo' })}</h3>
           {daySentences(d).map((s, i) => (
             <p key={i}>{s}</p>
           ))}
@@ -216,16 +219,16 @@ export function useVisitors(enabled: boolean) {
     if (!enabled) return;
     let key = '';
     try {
-      key = 'bunborn-visit-' + new Date().toISOString().slice(0, 10);
+      key = 'bunborn-visit-' + new Date(Date.now() - 3 * 3600000).toISOString().slice(0, 10);
       if (sessionStorage.getItem(key)) {
-        void fetch('/api/highlights').then((r) => r.json() as Promise<Highlights>).then((d) => setToday(d.visitors?.today ?? null)).catch(() => undefined);
+        void fetch('/api/highlights').then((r) => (r.ok ? (r.json() as Promise<Highlights>) : Promise.reject(new Error('http_' + r.status)))).then((d) => setToday(d.visitors?.today ?? null)).catch(() => undefined);
         return;
       }
     } catch {
       /* storage unavailable: count anyway */
     }
     void fetch('/api/visit', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' })
-      .then((r) => r.json() as Promise<{ today?: number }>)
+      .then((r) => (r.ok ? (r.json() as Promise<{ today?: number }>) : Promise.reject(new Error('http_' + r.status))))
       .then((d) => {
         setToday(d.today ?? null);
         try {

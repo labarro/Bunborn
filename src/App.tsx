@@ -692,13 +692,13 @@ export function App() {
                       />
                     </label>
                   ) : null}
-                  <button
+                  {['Destaques', 'Diário de bordo'].includes(tab) ? null : <button
                     className="icon-button"
                     aria-label="Atualizar registros"
                     onClick={() => void perform(() => load())}
                   >
                     <Activity size={17} />
-                  </button>
+                  </button>}
                 </div>
               </div>
               {tab === 'Estado interno' ? (

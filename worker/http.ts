@@ -8,7 +8,7 @@ import {runCycle,scheduledRun,startExperiment,stopExperiment,experimentInfo,birt
 import {isFrozen,restoreLocked,beginExport,exportSegment,sealExport,cancelExport,beginRestore,uploadRestoreSegment,applyRestore} from './segmented-backup';
 import {runToolTest} from './tool-tests';
 import {coordinate}from'./coordination';
-import { highlights, logbook, recordVisit, visitorsToday } from './insights';
+import { highlights, logbook, recordVisit, visitorsToday, forgetInsights } from './insights';
 export const json = (value: unknown, status = 200) =>
   Response.json(value, { status, headers: { 'cache-control': 'no-store' } });
 const kinds = [
@@ -98,7 +98,7 @@ export async function api(request: Request, env: Env): Promise<Response> {
     if(path==='/api/backup/cancel'){await cancelExport(target,z.string().uuid().parse(body.id));return json({cancelled:true});}
     if(path==='/api/backup/restore/begin')return json(await beginRestore(target,body));
     if(path==='/api/backup/restore/page')return json(await uploadRestoreSegment(target,body));
-    if(path==='/api/backup/restore/apply')return json(await applyRestore(target,z.string().uuid().parse(body.id)));
+    if(path==='/api/backup/restore/apply'){const applied=await applyRestore(target,z.string().uuid().parse(body.id));forgetInsights(target);return json(applied);}
     return json({error:'rota_inexistente'},404);
   }
   if(request.method==='POST'&&path!=='/api/logout'&&await isFrozen(env))return json({error:'backup_ou_restauracao_em_andamento'},409);
@@ -228,22 +228,25 @@ export async function api(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'metodo_nao_permitido' }, 405);
   if (authenticated && !(await rateLimit(env, 'write', 30, 60000)))
     return json({ error: 'limite_de_operacoes' }, 429);
-  if (path === '/api/visit') return json(await recordVisit(env, request));
+  if (path === '/api/visit') {
+    // Public write: bounded per visitor and globally so a script cannot burn the free quotas.
+    if (!(await rateLimit(env, 'visit:' + (await ipHash(request)), 4, 3600000)) || !(await rateLimit(env, 'visit:global', 600, 3600000)))
+      return json(await visitorsToday(env));
+    return json(await recordVisit(env, request));
+  }
   if (path === '/api/logout')
     return new Response('{}', {
       headers: { 'set-cookie': 'observador=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0' },
     });
-  if (path === '/api/birth') {if(env.ENVIRONMENT_ID)return json({error:'Use a confirmação explícita de nascimento.'},409);return json({ state: await birth(env) });}
+  if (path === '/api/birth') {if(env.ENVIRONMENT_ID)return json({error:'Use a confirmação explícita de nascimento.'},409);const state=await birth(env);forgetInsights(env);return json({ state });}
   if(path==='/api/birth/prepare')return json(await coordinate(env,{kind:'birth-preflight'}));
-  if(path==='/api/birth/confirm'){const b=z.object({challenge:z.string().uuid(),confirmation:z.literal('QUERO INICIAR ESTA EXISTENCIA')}).strict().parse(await boundedJson(request as unknown as Response,1000));return json(await coordinate(env,{kind:'birth-confirm',data:b}));}
+  if(path==='/api/birth/confirm'){const b=z.object({challenge:z.string().uuid(),confirmation:z.literal('QUERO INICIAR ESTA EXISTENCIA')}).strict().parse(await boundedJson(request as unknown as Response,1000));const born=await coordinate(env,{kind:'birth-confirm',data:b});forgetInsights(env);return json(born);}
   if (path === '/api/tick') return json(await coordinate(env,{kind:'cycle'}));
   if(path==='/api/diagnostics/gemini'){const b=z.object({model:z.enum(['lite','flash'])}).strict().parse(await boundedJson(request as unknown as Response,1000));return json(await coordinate(env,{kind:'diagnostic',data:b}));}
   if(path==='/api/diagnostics/tools'){const b=await boundedJson(request as unknown as Response,2000) as Record<string,unknown>;return json(await coordinate(env,{kind:'tools',data:b}));}
   if(path==='/api/experiment'){const b=z.object({action:z.enum(['start','stop','step']),hours:z.number().min(1).max(72).optional(),maxCalls:z.number().int().min(1).max(180).optional(),mode:z.enum(['autonomo','acelerado']).optional(),virtualMinutes:z.number().min(0).max(720).optional(),model:z.enum(['lite','flash']).optional()}).strict().parse(await boundedJson(request as unknown as Response,2000));return json(await coordinate(env,{kind:b.action==='start'?'experiment-start':b.action==='stop'?'experiment-stop':'experiment-step',data:b}));}
   if (path === '/api/restore')
-    {if(env.ENVIRONMENT_ID==='production')return json({error:'Use backup assinado de origem production.'},403);return json(
-      await restoreBackup(env, await boundedJson(request as unknown as Response, 8000000)),
-    );}
+    {if(env.ENVIRONMENT_ID==='production')return json({error:'Use backup assinado de origem production.'},403);const restored=await restoreBackup(env, await boundedJson(request as unknown as Response, 8000000));forgetInsights(env);return json(restored);}
   const body = await boundedJson(request as unknown as Response, 5000);
   if (path === '/api/message') {
     const b = z

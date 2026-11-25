@@ -14,6 +14,10 @@ async function cached<T>(env: Env, key: string, ttl: number, compute: () => Prom
   memo.set(key, { expires: Date.now() + ttl, value });
   return value;
 }
+// History can be replaced (birth, restore): drop every cached summary for this database.
+export function forgetInsights(env: Env) {
+  memos.delete(env.DB);
+}
 const BRT = -3 * 3600000; // Brasília (UTC-3), the audience's calendar day
 export const dayKey = (ms: number) => new Date(ms + BRT).toISOString().slice(0, 10);
 const dayStart = (key: string) => Date.parse(key + 'T00:00:00Z') - BRT;
@@ -51,7 +55,7 @@ export async function highlights(env: Env) {
       lastThought: thought ? { intention: thought.content, summary: (JSON.parse(thought.data) as { summary?: string }).summary ?? null, at: thought.real_at } : null,
       interests: interests.filter((r) => r.data.status !== 'abandonado').map((r) => ({ topic: r.content, strength: +strength(r).toFixed(2), status: r.data.status })).sort((a, b) => b.strength - a.strength).slice(0, 5),
       artifacts: artifacts.map((r) => ({ entityId: r.entityId, title: r.content, format: (r.data.artifact as { format?: string } | undefined)?.format ?? null, version: r.data.version ?? 1, at: r.realAt })),
-      projects: projects.filter((r) => r.data.status === 'ativo' || r.data.status === 'concluido').map((r) => ({ title: r.content, status: r.data.status, steps: (r.data.steps as unknown[] | undefined)?.length ?? 0, done: (r.data.completed as unknown[] | undefined)?.length ?? 0 })),
+      projects: projects.filter((r) => r.data.status === 'ativo' || r.data.status === 'concluido').map((r) => ({ title: r.content, status: r.data.status, steps: (r.data.steps as unknown[] | undefined)?.length ?? 0, done: new Set((r.data.completed as unknown[] | undefined) ?? []).size })),
       changes: changes.results.map(decode).map((r) => ({ kind: r.kind, content: r.content.slice(0, 220), at: r.realAt, role: r.data.role ?? null, field: r.data.field ?? null })),
       last24h: today,
       previous24h: yesterday,
@@ -100,6 +104,7 @@ export async function recordVisit(env: Env, request: Request) {
     env.DB.prepare('INSERT OR IGNORE INTO visits(day, visitor) VALUES(?, ?)').bind(day, visitor),
     env.DB.prepare('DELETE FROM visits WHERE day < ?').bind(oldest),
   ]);
+  memos.get(env.DB)?.delete('visitors:' + day);
   return visitorsToday(env);
 }
 export async function visitorsToday(env: Env) {

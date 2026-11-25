@@ -45,7 +45,7 @@ const activities: Record<string, string> = {
 };
 const errors: Record<string, string> = {
   evidencia_inexistente: 'ela se baseou em uma lembrança que não existe',
-  acao_malformada: 'o pedido veio incompleto ou num formato inválido (por exemplo, sem dizer em que lembrança se baseava)',
+  acao_malformada: 'o pedido veio incompleto ou num formato inválido',
   atividade_em_andamento: 'ela ainda estava ocupada com outra atividade',
   fila_de_atividades_cheia: 'já havia atividades demais planejadas',
   projeto_inexistente: 'o projeto citado não existe',

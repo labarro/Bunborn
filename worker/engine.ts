@@ -3,6 +3,7 @@ import {
   born,
   clamp,
   reconcile,
+  physiology,
   validLayout,
   type Action,
   type RecordEntry,
@@ -151,6 +152,8 @@ async function applyAction(
       break;
     }
     case 'atividade':{
+      if (a.activity === 'dormir' && s.needs.sono < physiology.minSonoToSleep)
+        throw new ToolError('sem_sono', { sono: Math.round(s.needs.sono), minimo: physiology.minSonoToSleep, note: 'o corpo não consegue adormecer sem sono' });
       const status=activate(s, a.activity, a.minutes,true);
       record('atividade', `Atividade ${status}: ${a.activity}.`, { activity:s.queue?.find(item=>item.kind===a.activity)??s.activity,status });
       break;
@@ -534,8 +537,10 @@ export async function tick(
           proposals:decision.actions.map(a=>a.type==='criar'?{...a,artifact:{format:a.artifact.format}}:a),
         }),
       );
-      for (const bad of invalidActions)
-        records.push(entry(s, 'erro_ferramenta', 'Ação rejeitada ou indisponível.', { tool: bad.type, code: 'acao_malformada', detail: { issues: bad.issues, hint: 'Siga o contrato da ferramenta; evidence precisa citar ao menos um registro existente.' } }));
+      for (const bad of invalidActions) {
+        records.push(entry(s, 'erro_ferramenta', 'Ação rejeitada ou indisponível.', { tool: bad.type, code: 'acao_malformada', detail: { issues: bad.issues, hint: 'Corrija os campos listados em issues conforme o contrato da ferramenta: ' + bad.issues.map((i) => (i.path || 'type') + ' (' + i.message + ')').join('; ').slice(0, 400) } }));
+        s.motives.frustracao = clamp(s.motives.frustracao + 4);
+      }
       // Apply each tool against a draft so rejected actions cannot partially mutate state.
       let external = 0;
       for (const a of decision.actions) {
@@ -729,8 +734,13 @@ export function retryDelay(code: string, retryMs: number, failures: number) {
   if (transient) return Math.min(1200000, 300000 * 2 ** Math.min(Math.max(0, failures - 1), 2));
   return Math.min(21600000, Math.max(retryMs, 300000 * 2 ** Math.min(failures - 1, 6)));
 }
+const bodyText: Record<string, string> = {
+  adormeceu_exausta: 'Adormeceu de exaustão: o corpo parou (regra fisiológica, não decisão).',
+  acordou_descansada: 'Acordou sozinha: o sono acabou (regra fisiológica, não decisão).',
+  acordou_com_fome_ou_sede: 'Acordou com fome ou sede críticas (regra fisiológica, não decisão).',
+};
 function bodyEvent(s: State, event: string): RecordEntry {
-  return entry(s, 'corpo', 'Adormeceu de exaustão: o corpo parou (regra fisiológica, não decisão).', { event, needs: { ...s.needs }, activity: s.activity }, { origin: 'simulacao_deterministica' });
+  return entry(s, 'corpo', bodyText[event] ?? 'Reação do corpo (regra fisiológica).', { event, needs: { ...s.needs }, activity: s.activity }, { origin: 'simulacao_deterministica' });
 }
 // Plain facts about the body for the model; no instruction about what to do.
 export function bodyAlerts(s: State): string[] {

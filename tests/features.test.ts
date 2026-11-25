@@ -25,6 +25,7 @@ function setup(extra: Partial<Env> = {}) {
 }
 async function seed(store: Store, now = Date.now()) {
   const s = born(now);
+  s.needs.sono = 60; // enough sleep pressure for the queue tests that use dormir
   const token = await store.acquire(now);
   await store.commit(token!, s, [entry(s, 'nascimento', 'Nascimento DESCARTÁVEL de teste.', { fixture: true }, { importance: 1 })], [], true);
   await store.release(token!);

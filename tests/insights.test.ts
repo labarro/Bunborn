@@ -56,9 +56,11 @@ describe('public highlights, logbook and visitor counter (fixtures)', () => {
   it('counts each visitor once per day without storing the IP', async () => {
     const e = env();
     const req = (ip: string) => new Request('https://x/api/visit', { method: 'POST', headers: { 'cf-connecting-ip': ip } });
-    await recordVisit(e, req('203.0.113.1'));
-    await recordVisit(e, req('203.0.113.1'));
-    await recordVisit(e, req('203.0.113.2'));
+    const { visitorsToday } = await import('../worker/insights');
+    expect((await visitorsToday(e)).today).toBe(0); // primes the 30 s memo, as a highlights GET would
+    expect((await recordVisit(e, req('203.0.113.1'))).today).toBe(1);
+    expect((await recordVisit(e, req('203.0.113.1'))).today).toBe(1);
+    expect((await recordVisit(e, req('203.0.113.2'))).today).toBe(2);
     const rows = (await e.DB.prepare('SELECT visitor FROM visits').all<{ visitor: string }>()).results;
     expect(rows).toHaveLength(2);
     expect(rows.some((r) => r.visitor.includes('203.0.113'))).toBe(false);

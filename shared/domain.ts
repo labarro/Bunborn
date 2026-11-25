@@ -356,6 +356,8 @@ export const physiology = {
   restore: { comer: { fome: -300 }, beber: { sede: -400 }, higiene: { higiene: 300 }, dormir: { sono: -15, energia: 12 }, descansar: { energia: 15, sono: -3 } },
   hungryDrain: 3,
   exhaustion: { sono: 100, energia: 5, sleepMinutes: 240 },
+  wake: { rested: 3, hungerBelowSono: 40 },
+  minSonoToSleep: 25,
 } as const;
 export const energyCap = (sono: number) => clamp(100 - Math.max(0, sono - 60) * 2);
 export function reconcile(input: State, now: number): { state: State; gap: boolean;completed:State['activity'][];events:string[] } {
@@ -413,8 +415,17 @@ export function reconcile(input: State, now: number): { state: State; gap: boole
   const target = (n.energia + n.saude + m.satisfacao) / 3 - m.frustracao / 3;
   m.motivacao = clamp(m.motivacao + (target - m.motivacao) * Math.min(1, hours * 0.2));
   m.interacao = clamp(m.interacao + hours * 0.3);
-  while(s.activity.until<=s.virtualMinutes&&s.queue?.length){s.activity=s.queue.shift()!;const object=s.objects.find(o=>o.id===s.activity.target);if(object){const path=approach(s.position,object,s.objects);if(path.length)s.position=path[path.length-1];}}
+  // The body wakes by itself when rested, or earlier when hunger/thirst are critical and sleep
+  // pressure is no longer high. Before this, a chosen 6 h sleep went on with sono already 0.
   const events: string[] = [];
+  if (s.activity.kind === 'dormir' && s.activity.until > s.virtualMinutes && (n.sono <= p.wake.rested || (n.sono < p.wake.hungerBelowSono && (n.fome >= 95 || n.sede >= 95)))) {
+    const woke = { ...s.activity, until: s.virtualMinutes };
+    completed.push(woke);
+    s.lastCompleted = woke;
+    s.activity = woke;
+    events.push(n.sono <= p.wake.rested ? 'acordou_descansada' : 'acordou_com_fome_ou_sede');
+  }
+  while(s.activity.until<=s.virtualMinutes&&s.queue?.length){s.activity=s.queue.shift()!;const object=s.objects.find(o=>o.id===s.activity.target);if(object){const path=approach(s.position,object,s.objects);if(path.length)s.position=path[path.length-1];}}
   const sleeping = s.activity.kind === 'dormir' && s.activity.until > s.virtualMinutes;
   if (!sleeping && (n.sono >= p.exhaustion.sono || n.energia <= p.exhaustion.energia)) {
     // The body gives out: recorded as physiology, never as a decision.
