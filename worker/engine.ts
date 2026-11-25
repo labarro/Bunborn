@@ -204,11 +204,16 @@ async function applyAction(
       s.motives.satisfacao = clamp(s.motives.satisfacao + 3);
       break;
     }
-    case 'diario':
+    case 'diario': {
+      // The diary keeps what is new to her: an entry that repeats a recent one is refused (she reads why next cycle).
+      const repeated = repeatedDiary(a.content, await store.latest('diario', 6));
+      if (repeated)
+        throw new ToolError('diario_repetido', { similarTo: repeated.content.slice(0, 200), writtenAt: new Date(repeated.realAt).toISOString(), note: 'você já escreveu quase o mesmo no diário' });
       start('diario', 20);
       record('diario', a.content);
       s.motives.tedio = clamp(s.motives.tedio - 5);
       break;
+    }
     case 'relacionar': {
       const [from, to] = await Promise.all([store.entity(a.from), store.entity(a.to)]);
       if (from?.kind !== 'conceito' || to?.kind !== 'conceito' || from.id === to.id)
@@ -833,6 +838,19 @@ export function packContext(input: Record<string, unknown>): Record<string, unkn
     reason: 'Limite técnico de contexto; registros integrais continuam no banco.',
   };
   return packed;
+}
+const diaryWords = (t: string) => new Set(t.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/\p{M}/gu, '').match(/\p{L}{4,}/gu) ?? []);
+/** A recent diary entry that shares ≥60% of the meaningful words of the shorter text, if any. */
+export function repeatedDiary(content: string, recent: { content: string; realAt: number }[]) {
+  const mine = diaryWords(content);
+  if (mine.size < 4) return null;
+  return recent.find((r) => {
+    const other = diaryWords(r.content);
+    if (other.size < 4) return false;
+    let shared = 0;
+    for (const w of mine) if (other.has(w)) shared++;
+    return shared / Math.min(mine.size, other.size) >= 0.6;
+  }) ?? null;
 }
 export function safeError(e: unknown): string {
   if(e instanceof Error&&/Illegal invocation|incorrect.*this|this.*binding/i.test(e.message))return 'fetch_binding_invalido';

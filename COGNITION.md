@@ -96,6 +96,13 @@ Comportamento observado entre 05:44Z e 12:53Z, sem nenhuma instrução sobre o c
 
 Pesquisar e recordar ficam disponíveis em qualquer estado do corpo, mas não durante uma atividade física em andamento nem durante o sono. Antes, fome, sede ou cansaço extremos bloqueavam a pesquisa justamente quando ela mais precisava descobrir o que fazer. O prompt diz que ela é autônoma: diante de qualquer dúvida, sobre o mundo, sobre si, sobre o corpo ou sobre como fazer algo, pode pesquisar ou recordar. Novas sensações em `body`: suja, muito entediada, frustrada.
 
+## Diário (25/11)
+
+Com o gpt-oss-120b, ela passou a anexar ao diário uma frase a cada decisão, no mesmo pedido em que tentava comer. Em 25/11 às 21:36Z e 21:42Z, duas entradas quase iguais descreviam uma refeição que o corpo recusou (sem fome).
+- O motor recusa com `diario_repetido` uma entrada que repete uma das 6 mais recentes (60% ou mais das palavras de 4+ letras do texto menor em comum). Ela lê a recusa no ciclo seguinte.
+- As instruções agora dizem que o diário é dela e opcional, que as ações já são registradas automaticamente, e que o resultado das ações de uma resposta só é conhecido no ciclo seguinte.
+- O conteúdo continua sendo decisão dela; nenhuma entrada é escrita pelo motor.
+
 ## Despertar (25/11)
 
 O corpo acorda sozinho quando o sono chega a 3 ou menos, ou antes disso se fome ou sede passarem de 95 com o sono abaixo de 40. Isso vale mesmo que ela tenha escolhido dormir por mais tempo. Também não consegue adormecer com sono abaixo de 25 (`sem_sono`). Antes, um sono de 6 h virtuais continuava com o sono já zerado. Em produção, às 05:17Z ela acordou sozinha, a tentativa de voltar a dormir foi recusada e às 05:22Z ela foi comer.

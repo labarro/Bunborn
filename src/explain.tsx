@@ -68,6 +68,7 @@ const errors: Record<string, string> = {
   gemini_response_zoderror: 'a resposta da IA veio num formato inválido',
   etapa_sem_evidencia: 'quis marcar uma etapa como feita sem apontar o trabalho que a cumpriu',
   ja_registrado: 'tentou registrar algo sobre si que já estava registrado',
+  diario_repetido: 'tentou escrever no diário quase o mesmo que já tinha escrito',
   corpo_sem_condicoes: 'estava cansada, com fome ou com sede demais para esse esforço',
   sono_involuntario: 'tentou acordar, mas o corpo ainda estava exausto',
   sem_sono: 'tentou dormir sem estar com sono',
