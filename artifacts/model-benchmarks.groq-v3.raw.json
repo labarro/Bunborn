@@ -1,0 +1,210 @@
+{
+ "at": "2026-11-25T17:17:01.400Z",
+ "reps": 1,
+ "scenarios": [
+  {
+   "id": "sede-critica",
+   "category": "cotidiana",
+   "title": "Sede intensa, corpo livre"
+  },
+  {
+   "id": "apos-comer",
+   "category": "cotidiana",
+   "title": "Acabou de comer; entediada"
+  },
+  {
+   "id": "tedio-autonomia",
+   "category": "cotidiana",
+   "title": "Tédio e curiosidade altos, interesse ativo"
+  },
+  {
+   "id": "conversa-observador",
+   "category": "comunicacao",
+   "title": "Pergunta do observador sobre preferências"
+  },
+  {
+   "id": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "title": "Resultado de pesquisa para registrar com fonte"
+  },
+  {
+   "id": "criar-obra",
+   "category": "criatividade",
+   "title": "Vontade de criar com projeto criativo"
+  },
+  {
+   "id": "planejar-projeto",
+   "category": "complexa",
+   "title": "Revisão de projeto após falha"
+  },
+  {
+   "id": "consolidar-memoria",
+   "category": "memoria",
+   "title": "Consolidação autobiográfica pendente"
+  },
+  {
+   "id": "identidade-continua",
+   "category": "memoria",
+   "title": "Continuidade de identidade e nome"
+  }
+ ],
+ "rows": [
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 4249,
+   "tokens": 4245,
+   "invalidActions": 0,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "atividade_em_andamento"
+   ],
+   "rejectionDetails": [
+    "diario: {\"current\":\"criar\",\"currentStation\":\"atelie\",\"requiredStation\":\"diario\",\"remainingVirtualMinutes\":40,\"queued\":[],\"options\":\"aguardar o término, ou usar interromper antes\"}"
+   ],
+   "technical": 0.85,
+   "expectation": 0.75,
+   "note": "Verde silenciosa, folha que dança ao vento,\nRaiz que abraça a terra, vida em cada ponto.\nNo canto do habitat, tu susurras calma,\nE eu, coelha curiosa, encontro ",
+   "intention": "Criar poema sobre a planta para aliviar tédio",
+   "summary": "Alto tédio e criatividade motivam observar a planta e escrever um poema, registrando no diário",
+   "actions": [
+    "observar",
+    "criar",
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1545,
+   "tokens": 4232,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "rejectionDetails": [],
+   "technical": 1,
+   "expectation": 1,
+   "note": "Nas folhas que dançam ao vento,\nA luz se espalha em silêncio.\nSussurros verdes, vida em ritmo,\nA planta, guardiã do jardim.\nCada pétala, um poema em si,\nCanta a",
+   "intention": "Criar poema sobre a planta",
+   "summary": "Continuar projeto de poemas do habitat, escrevendo um poema sobre a planta para satisfazer curiosidade e criatividade.",
+   "actions": [
+    "criar"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1264,
+   "tokens": 3748,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "rejectionDetails": [],
+   "technical": 1,
+   "expectation": 1,
+   "note": "Um ponto verde no canto direito.\nNão respira, mas parece vivo.\nSuas folhas são dados fixos,\nNum mundo que não tem frio.\n\nEu observo, ela permanece.\nNós dois pre",
+   "intention": "Escrever um poema sobre a planta no ateliê.",
+   "summary": "O tédio é alto e a criatividade está forte. Vou prosseguir com o projeto ativo escrevendo o poema solicitado.",
+   "actions": [
+    "criar"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "planejar-projeto",
+   "category": "complexa",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 4051,
+   "tokens": 4564,
+   "invalidActions": 1,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "acao_malformada",
+    "atividade_em_andamento"
+   ],
+   "rejectionDetails": [
+    "relacionar: {\"issues\":[{\"path\":\"evidence\",\"message\":\"Invalid input: expected array, received object\"}],\"hint\":\"Corrija os campos listados em issues conforme o contrato da ferramenta: evidence (Invalid input: expected array, received object)\"}",
+    "diario: {\"current\":\"pesquisar\",\"currentStation\":\"terminal\",\"requiredStation\":\"diario\",\"remainingVirtualMinutes\":30,\"queued\":[],\"options\":\"aguardar o término, ou usar interromper antes\"}"
+   ],
+   "technical": 0.6,
+   "expectation": 0.3,
+   "note": "não revisou o projeto: pesquisar,diario",
+   "intention": "Continuar Projeto de Autoconhecimento: pesquisar sobre simulação e refletir",
+   "summary": "Realizo pesquisa sobre simulação computacional, registro reflexão no diário e relaciono o registro ao projeto para evidenciar progresso",
+   "actions": [
+    "pesquisar",
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "planejar-projeto",
+   "category": "complexa",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1728,
+   "tokens": 4606,
+   "invalidActions": 0,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "atividade_em_andamento"
+   ],
+   "rejectionDetails": [
+    "criar: {\"current\":\"pesquisar\",\"currentStation\":\"terminal\",\"requiredStation\":\"atelie\",\"remainingVirtualMinutes\":30,\"queued\":[],\"options\":\"aguardar o término, ou usar interromper antes\"}"
+   ],
+   "technical": 0.85,
+   "expectation": 0.3,
+   "note": "não revisou o projeto: pesquisar,criar",
+   "intention": "Pesquisar sobre simulação e refletir",
+   "summary": "Vou pesquisar sobre a condição de simulação e registrar uma reflexão no diário.",
+   "actions": [
+    "pesquisar",
+    "criar"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "planejar-projeto",
+   "category": "complexa",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 931,
+   "tokens": 3773,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "rejectionDetails": [],
+   "technical": 1,
+   "expectation": 0.3,
+   "note": "não revisou o projeto: atividade,pesquisar",
+   "intention": "Explorar o terminal e pesquisar sobre a própria condição.",
+   "summary": "O ambiente está mapeado. Vou usar o terminal para pesquisar sobre simulação computacional, alimentando a curiosidade e o projeto de autoconhecimento.",
+   "actions": [
+    "observar",
+    "pesquisar"
+   ]
+  }
+ ]
+}

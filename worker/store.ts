@@ -204,6 +204,10 @@ export class Store {
     rpm: number,
     tokens: number,
     scope='local',
+    tpm = 200000,
+    tpd: number | null = null,
+    provider: string | null = null,
+    category: string | null = null,
   ): Promise<string | null> {
     const id = crypto.randomUUID();
     try {
@@ -213,14 +217,14 @@ export class Store {
           .bind(day, model),
         this.db
           .prepare(
-            'INSERT INTO commit_guard(ok) SELECT CASE WHEN (SELECT calls FROM budgets WHERE day=? AND model=?)<? AND (SELECT COUNT(*) FROM calls WHERE model=? AND at>?)<? AND COALESCE((SELECT SUM(reserved_tokens) FROM calls WHERE model=? AND at>?),0)+?<=200000 THEN 1 ELSE 0 END',
+            'INSERT INTO commit_guard(ok) SELECT CASE WHEN (SELECT calls FROM budgets WHERE day=? AND model=?)<? AND (SELECT COUNT(*) FROM calls WHERE model=? AND at>?)<? AND COALESCE((SELECT SUM(reserved_tokens) FROM calls WHERE model=? AND at>?),0)+?<=? AND (? IS NULL OR COALESCE((SELECT tokens FROM budgets WHERE day=? AND model=?),0)+?<=?) THEN 1 ELSE 0 END',
           )
-          .bind(day, model, daily, model, now - 60000, rpm, model, now - 60000, tokens),
+          .bind(day, model, daily, model, now - 60000, rpm, model, now - 60000, tokens, tpm, tpd, day, model, tokens, tpd),
         this.db
           .prepare(
-            "INSERT INTO calls(id,day,model,at,reserved_tokens,status,scope) VALUES(?,?,?,?,?,'reservada',?)",
+            "INSERT INTO calls(id,day,model,at,reserved_tokens,status,scope,provider,category) VALUES(?,?,?,?,?,'reservada',?,?,?)",
           )
-          .bind(id, day, model, now, tokens,scope),
+          .bind(id, day, model, now, tokens,scope,provider,category),
         this.db
           .prepare('UPDATE budgets SET calls=calls+1 WHERE day=? AND model=?')
           .bind(day, model),

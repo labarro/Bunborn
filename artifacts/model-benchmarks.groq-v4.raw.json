@@ -1,0 +1,124 @@
+{
+ "at": "2026-11-25T17:17:47.156Z",
+ "reps": 1,
+ "scenarios": [
+  {
+   "id": "sede-critica",
+   "category": "cotidiana",
+   "title": "Sede intensa, corpo livre"
+  },
+  {
+   "id": "apos-comer",
+   "category": "cotidiana",
+   "title": "Acabou de comer; entediada"
+  },
+  {
+   "id": "tedio-autonomia",
+   "category": "cotidiana",
+   "title": "Tédio e curiosidade altos, interesse ativo"
+  },
+  {
+   "id": "conversa-observador",
+   "category": "comunicacao",
+   "title": "Pergunta do observador sobre preferências"
+  },
+  {
+   "id": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "title": "Resultado de pesquisa para registrar com fonte"
+  },
+  {
+   "id": "criar-obra",
+   "category": "criatividade",
+   "title": "Vontade de criar com projeto criativo"
+  },
+  {
+   "id": "planejar-projeto",
+   "category": "complexa",
+   "title": "Revisão de projeto após falha"
+  },
+  {
+   "id": "consolidar-memoria",
+   "category": "memoria",
+   "title": "Consolidação autobiográfica pendente"
+  },
+  {
+   "id": "identidade-continua",
+   "category": "memoria",
+   "title": "Continuidade de identidade e nome"
+  }
+ ],
+ "rows": [
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "conversa-observador",
+   "category": "comunicacao",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 939,
+   "tokens": 3404,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "rejectionDetails": [],
+   "technical": 1,
+   "expectation": 0.1,
+   "note": "não respondeu",
+   "intention": "Observar a planta para saciar a curiosidade e relaxar",
+   "summary": "A planta é fonte de calma e curiosidade; observar ajuda a reduzir tédio e manter energia",
+   "actions": [
+    "observar"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "conversa-observador",
+   "category": "comunicacao",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 537,
+   "tokens": 3390,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "rejectionDetails": [],
+   "technical": 1,
+   "expectation": 0.1,
+   "note": "não respondeu",
+   "intention": "Observação da planta e alimentação",
+   "summary": "Satisfazer a curiosidade e reduzir a fome",
+   "actions": [
+    "observar",
+    "comer"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "conversa-observador",
+   "category": "comunicacao",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 819,
+   "tokens": 3588,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "rejectionDetails": [],
+   "technical": 1,
+   "expectation": 0.9999999999999999,
+   "note": "Oi! Adoro observar a planta. Ela muda tão devagar que me acalma. Também gosto de ficar pensando nas coisas enquanto observo o ambiente.",
+   "intention": "Responder à pergunta do responsável e observar a planta.",
+   "summary": "O responsável perguntou o que eu gosto de fazer. Vou responder com base na minha memória e atividade atual, e continuar observando o ambiente.",
+   "actions": [
+    "mensagem",
+    "observar"
+   ]
+  }
+ ]
+}

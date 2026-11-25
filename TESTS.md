@@ -47,6 +47,33 @@ E2E novo: exportação v2 assinada pelo gateway + DO, escrita recusada durante o
 
 `tests/insights.test.ts`: destaques e diário de bordo refletem só os registros armazenados; existência não nascida não gera resumo; o contador de visitas conta cada visitante uma vez por dia e não guarda o IP. `features.test.ts` também cobre a validação por ação, reproduzindo a falha real de produção: a ação válida é executada e a malformada vira `acao_malformada`. O E2E do visitante cobre destaques, diário de bordo e contador sem credencial.
 
+## Multiprovedor (25/11)
+
+**Falhas simuladas** (`tests/routing.test.ts`, 14 testes): todas as respostas de provedor vêm de fetchers de fixture, sem nenhuma chamada real.
+- Categorização determinística.
+- Seleção por qualidade e por categoria, sem ordem fixa de provedores.
+- Exclusões com motivo: não homologado, breaker aberto, cota de tokens, desligado.
+- Termos da NVIDIA fora da produção.
+- Afinidade de continuidade e seleção manual.
+- Pressão de cota.
+- Classificação de erros (503, 429 por minuto, 429 diário, 401/400 de chave, 400) com as chaves mascaradas.
+- Breaker com espera crescente, jitter e `Retry-After`, desabilitação por credencial, tolerância a uma resposta inválida isolada e recuperação.
+- Persistência do breaker depois de um reinício (novo `Store` sobre o mesmo D1).
+- No motor real:
+  - Gemini 503 → outro modelo responde no mesmo ciclo, com **uma única decisão aplicada**;
+  - JSON inválido → próximo modelo; credencial inválida não é repetida no ciclo seguinte;
+  - **todos os provedores fora**: estado preservado, `cognicao_indisponivel` com a rota, nenhuma decisão inventada, o corpo continua e a cognição volta sozinha depois do breaker;
+  - o mesmo contexto de identidade chega ao Gemini e à Groq;
+  - orçamento reservado por modelo, com provedor e categoria.
+
+**E2E:** `/api/ai` e `/api/ai/config` dão 401 sem sessão. Com sessão, a resposta não contém nenhuma chave, e a configuração é validada: modelo desconhecido é rejeitado.
+
+**Chamadas reais:**
+- `scripts/ai-discover.mjs`: catálogos dos três provedores (`artifacts/ai-discovery.json`).
+- `scripts/ai-smoke.ts`: disponibilidade, JSON, latência e tokens de 14 modelos (`artifacts/ai-smoke.json`).
+- Benchmark do Bunborn (`scripts/benchmark.mjs`): cenários num motor real com bancos descartáveis (`artifacts/model-benchmarks.json`, ver [MODEL_BENCHMARKS.md](MODEL_BENCHMARKS.md)).
+- Homologação ponta a ponta na criatura descartável da homologação (`scripts/multiprovider-homologation.mjs`, `artifacts/multiprovider-homologation.json`).
+
 ## Restauração real (homologação → recuperação isolada)
 
 Execução 2 (definitiva), 24/11/2026 00:33Z, backup `25224e31…`: 182.522 bytes, 16 segmentos; 179 registros, 316 vínculos, 126 recuperações, 36 chamadas, 2 orçamentos, 26 métricas, 1 experimento, 2 operações. Export 9,6 s; restauração 11,4 s (6 chamadas de apply). Digests de todos os segmentos, estado (mesma ordem de chaves), identidade, idade virtual (1.718,43 min), necessidades, 25 decisões, medidor (152.153 bytes / 179) e contagens por tipo: **idênticos**. A execução 1 (`backup-restore-real-run1.json`) revelou que o estado restaurado tinha as chaves reordenadas pelo Zod (conteúdo igual). Corrigido: agora se persiste o JSON assinado exato, e o manifesto é estrito.

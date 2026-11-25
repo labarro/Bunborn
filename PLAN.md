@@ -62,3 +62,15 @@ Habitat central em uma janela de observação, ameixa #292238, névoa #eee9f2, m
 - **Piso de 15 min na homologação** para o experimento de 24h caber em 80 Lite/dia locais e 110 chamadas; produção mantém 5 min.
 - **Nova criatura descartável para as 24h**: a primeira nasceu com um código anterior, cujo texto de nascimento era o da existência principal, e acumulou tempo acelerado. Foi arquivada (restaurada e verificada em `bunborn-recovery` + arquivos assinados locais). Os contadores de cota da homologação foram preservados.
 - Referências revalidadas em 24/11/2026: [Workers limits](https://developers.cloudflare.com/workers/platform/limits/), [DO limits](https://developers.cloudflare.com/durable-objects/platform/limits/), [DO pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/), [D1 limits](https://developers.cloudflare.com/d1/platform/limits/), [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/).
+
+
+## Multiprovedor (25/11/2026)
+
+Decisões:
+- Nenhum provedor é fixo como principal; o roteamento é determinístico, sem chamada de IA para escolher o modelo.
+- Qualidade vem do benchmark do Bunborn, e não de rankings genéricos.
+- A NVIDIA fica fora da produção pelos termos de trial.
+- Uma decisão continua sendo uma chamada.
+- O ritmo de decisões não aumentou.
+
+Detalhes em [COGNITIVE_ROUTING.md](COGNITIVE_ROUTING.md), [AI_PROVIDERS.md](AI_PROVIDERS.md) e [MODEL_BENCHMARKS.md](MODEL_BENCHMARKS.md).

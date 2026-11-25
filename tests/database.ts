@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 // Real SQLite/FTS5 with a small D1 binding adapter. Network and model are never implied real.
 export function database() {
   const sqlite = new DatabaseSync(':memory:');
-  for (const file of ['0001_initial.sql', '0002_capacity.sql','0003_operational.sql','0004_restore_progress.sql','0005_cycle_measurements.sql','0006_storage_headroom.sql','0007_backup_segments.sql','0008_message_author.sql','0009_insights_visits.sql'])
+  for (const file of ['0001_initial.sql', '0002_capacity.sql','0003_operational.sql','0004_restore_progress.sql','0005_cycle_measurements.sql','0006_storage_headroom.sql','0007_backup_segments.sql','0008_message_author.sql','0009_insights_visits.sql','0010_model_health.sql'])
     sqlite.exec(readFileSync(new URL('../migrations/' + file, import.meta.url), 'utf8'));
   class Statement {
     constructor(

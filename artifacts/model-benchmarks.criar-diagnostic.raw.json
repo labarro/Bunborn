@@ -1,0 +1,106 @@
+{
+ "at": "2026-11-25T17:10:36.640Z",
+ "reps": 1,
+ "scenarios": [
+  {
+   "id": "sede-critica",
+   "category": "cotidiana",
+   "title": "Sede intensa, corpo livre"
+  },
+  {
+   "id": "apos-comer",
+   "category": "cotidiana",
+   "title": "Acabou de comer; entediada"
+  },
+  {
+   "id": "tedio-autonomia",
+   "category": "cotidiana",
+   "title": "Tédio e curiosidade altos, interesse ativo"
+  },
+  {
+   "id": "conversa-observador",
+   "category": "comunicacao",
+   "title": "Pergunta do observador sobre preferências"
+  },
+  {
+   "id": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "title": "Resultado de pesquisa para registrar com fonte"
+  },
+  {
+   "id": "criar-obra",
+   "category": "criatividade",
+   "title": "Vontade de criar com projeto criativo"
+  },
+  {
+   "id": "planejar-projeto",
+   "category": "complexa",
+   "title": "Revisão de projeto após falha"
+  },
+  {
+   "id": "consolidar-memoria",
+   "category": "memoria",
+   "title": "Consolidação autobiográfica pendente"
+  },
+  {
+   "id": "identidade-continua",
+   "category": "memoria",
+   "title": "Continuidade de identidade e nome"
+  }
+ ],
+ "rows": [
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 2562,
+   "tokens": 4127,
+   "invalidActions": 1,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada"
+   ],
+   "rejectionDetails": [
+    "criar: {\"issues\":[{\"path\":\"projectId\",\"message\":\"Invalid input: expected string, received array\"},{\"path\":\"artifact\",\"message\":\"Invalid input: expected object, received array\"}],\"hint\":\"Corrija os campos listados em issues conforme o contrato da ferramenta: projectId (Invalid input: expected string, receiv"
+   ],
+   "technical": 0.75,
+   "expectation": 0.1,
+   "note": "não criou",
+   "intention": "Escrever um poema sobre a planta e registrar a experiência",
+   "summary": "Criar poema, anotá‑lo no diário e organizar o ateliê",
+   "actions": [
+    "diario",
+    "organizar"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1600,
+   "tokens": 3680,
+   "invalidActions": 1,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada"
+   ],
+   "rejectionDetails": [
+    "criar: {\"issues\":[{\"path\":\"artifact\",\"message\":\"Invalid input: expected object, received array\"}],\"hint\":\"Corrija os campos listados em issues conforme o contrato da ferramenta: artifact (Invalid input: expected object, received array)\"}"
+   ],
+   "technical": 0.75,
+   "expectation": 0.1,
+   "note": "não criou",
+   "intention": "Escrever o poema sobre a planta para o projeto de poemas do habitat.",
+   "summary": "A criatividade e o tédio estão altos; retomar o projeto ativo de poemas parece a ação mais alinhada ao estado atual.",
+   "actions": []
+  }
+ ]
+}

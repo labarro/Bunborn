@@ -181,23 +181,6 @@ describe('shared budget across environments (HTTP fixture, never real Gemini)', 
     const deniedLocal = await prod.db.prepare("SELECT COUNT(*) AS n FROM calls WHERE status='negada_global'").first<{ n: number }>();
     expect(deniedLocal!.n).toBe(3);
   });
-  it('falls back to the principal model when the Flash budget is exhausted, recording why', async () => {
-    const { env, store } = setup({ FLASH_DAILY_LIMIT: '1' });
-    const t0 = Date.now();
-    const s = await seed(store, t0);
-    await store.db.prepare('INSERT INTO budgets(day,model,calls,tokens) VALUES(?,?,1,0)').bind(quotaDay(Date.now()), 'gemini-3-flash-preview').run();
-    const token = (await store.acquire(t0))!;
-    const current = (await store.state())!;
-    current.complexNext = true;
-    current.decisions = 3;
-    await store.commit(token, current, []);
-    await store.release(token);
-    const seen = { complex: [] as boolean[] };
-    await tick(env, t0 + 1000, fixture([], seen));
-    expect(seen.complex).toEqual([false]);
-    expect((await store.records('orcamento')).length).toBe(1);
-    void s;
-  });
 });
 describe('malformed actions (HTTP fixture reproducing a real production failure)', () => {
   it('runs the valid actions and records the malformed one instead of discarding the decision', async () => {

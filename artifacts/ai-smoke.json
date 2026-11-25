@@ -1,0 +1,128 @@
+{
+ "at": "2026-11-25T16:33:03.734Z",
+ "results": [
+  {
+   "model": "gemini-3.1-flash-lite",
+   "provider": "gemini",
+   "ok": false,
+   "failure": "sobrecarga",
+   "status": 503,
+   "detail": "{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later"
+  },
+  {
+   "model": "gemini-3-flash-preview",
+   "provider": "gemini",
+   "ok": false,
+   "failure": "sobrecarga",
+   "status": 503,
+   "detail": "{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later"
+  },
+  {
+   "model": "openai/gpt-oss-120b",
+   "provider": "groq",
+   "ok": true,
+   "latencyMs": 356,
+   "tokensIn": 134,
+   "tokensOut": 41,
+   "sample": "Coelhos pulam leves como a brisa da manhã."
+  },
+  {
+   "model": "openai/gpt-oss-20b",
+   "provider": "groq",
+   "ok": true,
+   "latencyMs": 303,
+   "tokensIn": 134,
+   "tokensOut": 47,
+   "sample": "Coelhos saltam alegremente pelos campos."
+  },
+  {
+   "model": "qwen/qwen3.8-27b",
+   "provider": "groq",
+   "ok": true,
+   "latencyMs": 338,
+   "tokensIn": 49,
+   "tokensOut": 36,
+   "sample": "Coelhos são conhecidos por suas orelhas longas e saltos ágeis."
+  },
+  {
+   "model": "gemini-3.5-flash-lite",
+   "provider": "gemini",
+   "ok": true,
+   "latencyMs": 2193,
+   "tokensIn": 33,
+   "tokensOut": 23,
+   "sample": "Os coelhos saltam velozmente pelos campos verdes."
+  },
+  {
+   "model": "gemma-4-31b-it",
+   "provider": "gemini",
+   "ok": true,
+   "latencyMs": 32214,
+   "tokensIn": 33,
+   "tokensOut": 216,
+   "sample": "Coelhos são animais fofos e saltitantes."
+  },
+  {
+   "model": "moonshotai/kimi-k3.1-pro",
+   "provider": "nvidia",
+   "ok": true,
+   "latencyMs": 40436,
+   "tokensIn": 186,
+   "tokensOut": 184,
+   "sample": "Os coelhos têm orelhas longas e adoram saltar."
+  },
+  {
+   "model": "z-ai/glm-5.3-flash",
+   "provider": "nvidia",
+   "ok": false,
+   "failure": "timeout",
+   "status": 0,
+   "detail": "sem resposta em 60000 ms"
+  },
+  {
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "provider": "nvidia",
+   "ok": true,
+   "latencyMs": 5414,
+   "tokensIn": 49,
+   "tokensOut": 50,
+   "sample": "Os coelhos adoram cenouras e saltam felizes pelo jardim."
+  },
+  {
+   "model": "mistralai/mistral-large-4-1t-a52b",
+   "provider": "nvidia",
+   "ok": true,
+   "latencyMs": 28284,
+   "tokensIn": 70,
+   "tokensOut": 312,
+   "sample": "Os coelhos adoram pular e comer cenouras frescas."
+  },
+  {
+   "model": "minimaxai/minimax-m3.1-flash",
+   "provider": "nvidia",
+   "ok": true,
+   "latencyMs": 4880,
+   "tokensIn": 205,
+   "tokensOut": 22,
+   "sample": "Coelhos são bichos-hoppingues e adoráveis."
+  },
+  {
+   "model": "stepfun-ai/step-5-preview",
+   "provider": "nvidia",
+   "ok": true,
+   "latencyMs": 22599,
+   "tokensIn": 55,
+   "tokensOut": 72,
+   "sample": "Coelhos são animais ágeis e sociáveis que se comunicam por sinais sutis."
+  },
+  {
+   "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+   "provider": "nvidia",
+   "ok": true,
+   "latencyMs": 3826,
+   "tokensIn": 49,
+   "tokensOut": 528,
+   "sample": "Coelhos pulam rápido pelo gramado."
+  }
+ ]
+}

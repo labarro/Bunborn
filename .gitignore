@@ -10,3 +10,4 @@ playwright-report/
 *.backup.json
 *.backup.sql
 *.private.json
+scripts/.tmp-*

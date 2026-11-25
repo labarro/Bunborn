@@ -39,6 +39,17 @@ flowchart TD
 
 **Validação por ação**: a resposta do modelo é validada no envelope (intenção, justificativa, intervalo) e em cada ação separadamente. Ações válidas são executadas; ações malformadas viram `erro_ferramenta` com código `acao_malformada` e detalhe do campo. Antes, uma única ação inválida descartava a decisão inteira (aconteceu em produção às 01:39Z de 24/11: `evidence` vazio).
 
+## Cognição multiprovedor (25/11)
+
+`worker/ai/` separa a cognição do provedor:
+- `adapters.ts`: Gemini (JSON Schema nativo) e chat compatível com OpenAI (Groq, NVIDIA, com `json_object`). Também classifica os erros em sobrecarga, limite de taxa, cota esgotada, timeout, rede, autenticação, modelo inexistente, requisição inválida e resposta inválida.
+- `health.ts`: circuit breaker persistente (tabela `model_health`, migração 0010).
+- `router.ts`: categorias e pontuação determinística.
+- `cognition.ts`: orçamento por modelo, até 3 tentativas e registro `route`.
+- `admin.ts`: painel do responsável.
+
+O motor (`engine.ts`) só monta o contexto a partir do estado persistente, pede uma decisão ao `RoutedProvider` e valida e aplica a resposta, como antes. Detalhes em [COGNITIVE_ROUTING.md](COGNITIVE_ROUTING.md) e [AI_PROVIDERS.md](AI_PROVIDERS.md).
+
 ## Persistência
 
 `records` é append-only por contrato. Cada versão de entidade é uma nova linha com o mesmo `entity_id`, e `seq` dá paginação estável. Commits são um único `batch` transacional do D1: `commit_guard` confere token de lease vigente e revisão esperada; se falhar, o batch inteiro é abortado. Uma execução atrasada não persiste nada depois de perder a lease. A chave primária de `world` impede um segundo nascimento.

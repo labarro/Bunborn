@@ -28,8 +28,8 @@
     "relation": "string maxLength 160",
     "status": "hipotese|opiniao|fonte_consultada",
     "evidence": {
-      "items": "string maxLength 100",
-      "maxItems": 8
+      "LISTA_DE": "string maxLength 100",
+      "maxItens": 8
     }
   },
   {
@@ -47,8 +47,8 @@
     "confidence": "number min 0 max 1",
     "status": "hipotese|opiniao|ficcao|incerto|fonte_consultada|observacao|fato_do_ambiente",
     "evidence": {
-      "items": "string maxLength 100",
-      "maxItems": 8
+      "LISTA_DE": "string maxLength 100",
+      "maxItens": 8
     }
   },
   {
@@ -56,8 +56,8 @@
     "field": "nome|autodescricao|preferencia|valor|crenca|estilo|aparencia",
     "value": "string maxLength 160",
     "evidence": {
-      "items": "string maxLength 100",
-      "maxItems": 8
+      "LISTA_DE": "string maxLength 100",
+      "maxItens": 8
     }
   },
   {
@@ -67,8 +67,8 @@
     "change": "number min -0.1 max 0.1",
     "status": "ativo|adormecido|abandonado",
     "evidence": {
-      "items": "string maxLength 100",
-      "maxItems": 8
+      "LISTA_DE": "string maxLength 100",
+      "maxItens": 8
     }
   },
   {
@@ -76,18 +76,18 @@
     "id": "string maxLength 160",
     "title": "string maxLength 160",
     "steps": {
-      "items": "string maxLength 160",
-      "maxItems": 12
+      "LISTA_DE": "string maxLength 160",
+      "maxItens": 12
     },
     "completed": {
-      "items": "integer min 0 max 11",
-      "maxItems": 12
+      "LISTA_DE": "integer min 0 max 11",
+      "maxItens": 12
     },
     "status": "ativo|suspenso|abandonado|concluido",
     "horizon": "curto|medio|longo",
     "evidence": {
-      "items": "string maxLength 100",
-      "maxItems": 8
+      "LISTA_DE": "string maxLength 100",
+      "maxItens": 8
     }
   },
   {
@@ -95,46 +95,45 @@
     "id": "string maxLength 160",
     "title": "string maxLength 160",
     "motivation": "string maxLength 160",
-    "projectId": [
-      "string maxLength 160",
-      "null"
-    ],
-    "artifact": [
-      {
-        "format": "texto",
-        "content": "string maxLength 12000"
-      },
-      {
-        "format": "pixels",
-        "palette": {
-          "items": "string",
-          "maxItems": 16
+    "projectId": "string maxLength 160 | null",
+    "artifact": {
+      "UM_DESTES_OBJETOS (escolha exatamente um; o valor é um objeto, nunca uma lista)": [
+        {
+          "format": "texto",
+          "content": "string maxLength 12000"
         },
-        "pixels": {
-          "items": {
-            "items": "integer min 0 max 15",
-            "maxItems": 32
+        {
+          "format": "pixels",
+          "palette": {
+            "LISTA_DE": "string",
+            "maxItens": 16
           },
-          "maxItems": 32
+          "pixels": {
+            "LISTA_DE": {
+              "LISTA_DE": "integer min 0 max 15",
+              "maxItens": 32
+            },
+            "maxItens": 32
+          }
+        },
+        {
+          "format": "musica",
+          "tempo": "integer min 40 max 200",
+          "notes": {
+            "LISTA_DE": {
+              "pitch": "integer min 36 max 96",
+              "beats": "number min 0.125 max 8"
+            },
+            "maxItens": 128
+          }
+        },
+        {
+          "format": "objeto",
+          "color": "string",
+          "shape": "vaso|escultura|quadro"
         }
-      },
-      {
-        "format": "musica",
-        "tempo": "integer min 40 max 200",
-        "notes": {
-          "items": {
-            "pitch": "integer min 36 max 96",
-            "beats": "number min 0.125 max 8"
-          },
-          "maxItems": 128
-        }
-      },
-      {
-        "format": "objeto",
-        "color": "string",
-        "shape": "vaso|escultura|quadro"
-      }
-    ]
+      ]
+    }
   },
   {
     "type": "mover",

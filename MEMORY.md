@@ -48,3 +48,10 @@ O backup v2 depende do `SESSION_SECRET` do ambiente. Trocar esse secret invalida
 ## Limites de armazenamento
 
 Teto lógico de 180 MB (gatilho no D1) e guarda física de 400 MB (verificada pelo Worker antes da cognição). Ao atingir qualquer um, novas operações geradoras de história são suspensas; **nada é apagado** e não há limite arbitrário de quantidade de registros. O medidor lógico é heurístico (bytes de conteúdo + dados + associações + 500 por registro), e o tamanho físico real, com FTS e índices, é ~1,8× maior nas medições. Projeções em ECONOMY.md: no ritmo máximo da produção, o teto lógico chega em ~104 dias; a 15 min por decisão, em ~312 dias. Memória histórica infinita não é possível em cotas finitas.
+
+
+## Continuidade entre modelos (25/11)
+
+A memória e a identidade vivem só no estado persistente do Bunborn: registros, traços e projetos. Cada ciclo monta o mesmo contexto, seja qual for o modelo (Gemini, Groq ou NVIDIA em homologação). Nenhum provedor guarda conversa ou sessão.
+
+Cada decisão registra em `route` qual mecanismo a processou, como dado técnico, separado das intenções dela. A afinidade de modelo por categoria reduz trocas desnecessárias em conversas e projetos sem prender a criatura a um provedor fora do ar.

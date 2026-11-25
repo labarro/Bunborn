@@ -8,6 +8,7 @@ import {runCycle,scheduledRun,startExperiment,stopExperiment,experimentInfo,birt
 import {isFrozen,restoreLocked,beginExport,exportSegment,sealExport,cancelExport,beginRestore,uploadRestoreSegment,applyRestore} from './segmented-backup';
 import {runToolTest} from './tool-tests';
 import {coordinate}from'./coordination';
+import { aiOverview, saveAiConfig } from './ai/admin';
 import { highlights, logbook, recordVisit, visitorsToday, forgetInsights } from './insights';
 export const json = (value: unknown, status = 200) =>
   Response.json(value, { status, headers: { 'cache-control': 'no-store' } });
@@ -223,11 +224,20 @@ export async function api(request: Request, env: Env): Promise<Response> {
           'Cotas efetivas e CPU em produção exigem homologação. Nenhum serviço pago é acionado automaticamente.',
       });
     }
+    if (path === '/api/ai') {
+      if (!authenticated) return json({ error: 'nao_autorizado' }, 401);
+      return json(await aiOverview(env));
+    }
     return json({ error: 'rota_inexistente' }, 404);
   }
   if (request.method !== 'POST') return json({ error: 'metodo_nao_permitido' }, 405);
   if (authenticated && !(await rateLimit(env, 'write', 30, 60000)))
     return json({ error: 'limite_de_operacoes' }, 429);
+  if (path === '/api/ai/config') {
+    // Only the responsible observer; the creature has no tool that reaches this.
+    if (!authenticated) return json({ error: 'nao_autorizado' }, 401);
+    return json(await saveAiConfig(env, await boundedJson(request as unknown as Response, 20000)));
+  }
   if (path === '/api/visit') {
     // Public write: bounded per visitor and globally so a script cannot burn the free quotas.
     if (!(await rateLimit(env, 'visit:' + (await ipHash(request)), 4, 3600000)) || !(await rateLimit(env, 'visit:global', 600, 3600000)))

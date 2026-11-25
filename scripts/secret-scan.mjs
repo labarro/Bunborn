@@ -2,13 +2,16 @@
 // values (decrypted in memory, never printed) and for generic credential patterns.
 import { execFileSync } from 'node:child_process';
 import { readFileSync, statSync } from 'node:fs';
-import { encryptedGeneratedSecrets, readGemini } from './private-secrets.mjs';
+import { encryptedGeneratedSecrets, readGemini, readProviderKey } from './private-secrets.mjs';
 const files = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard'], { encoding: 'utf8' }).split('\n').filter(Boolean);
 const generated = await encryptedGeneratedSecrets();
 const gemini = await readGemini();
-const exact = [gemini.key, ...Object.values(generated).flatMap((e) => [e.observer, e.session])].filter((v) => v && v.length >= 20);
+const providerKeys = [await readProviderKey('groq'), await readProviderKey('nvidia')];
+const exact = [gemini.key, ...providerKeys, ...Object.values(generated).flatMap((e) => [e.observer, e.session])].filter((v) => v && v.length >= 20);
 const patterns = [
   ['google-api-key', /AIza[0-9A-Za-z_-]{35}/],
+  ['groq-api-key', /gsk_[0-9A-Za-z]{40,}/],
+  ['nvidia-api-key', /nvapi-[0-9A-Za-z_-]{40,}/],
   ['private-key', /-----BEGIN [A-Z ]*PRIVATE KEY-----/],
   ['github-token', /gh[pousr]_[0-9A-Za-z]{36,}/],
   ['cloudflare-token-assignment', /CLOUDFLARE_API_TOKEN\s*[=:]\s*["']?[A-Za-z0-9_-]{30,}/],

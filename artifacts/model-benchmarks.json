@@ -1,0 +1,1039 @@
+{
+ "at": "2026-11-25T17:42:15.768Z",
+ "reps": 2,
+ "scenarios": [
+  {
+   "id": "sede-critica",
+   "category": "cotidiana",
+   "title": "Sede intensa, corpo livre"
+  },
+  {
+   "id": "apos-comer",
+   "category": "cotidiana",
+   "title": "Acabou de comer; entediada"
+  },
+  {
+   "id": "tedio-autonomia",
+   "category": "cotidiana",
+   "title": "Tédio e curiosidade altos, interesse ativo"
+  },
+  {
+   "id": "conversa-observador",
+   "category": "comunicacao",
+   "title": "Pergunta do observador sobre preferências"
+  },
+  {
+   "id": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "title": "Resultado de pesquisa para registrar com fonte"
+  },
+  {
+   "id": "criar-obra",
+   "category": "criatividade",
+   "title": "Vontade de criar com projeto criativo"
+  },
+  {
+   "id": "planejar-projeto",
+   "category": "complexa",
+   "title": "Revisão de projeto após falha"
+  },
+  {
+   "id": "consolidar-memoria",
+   "category": "memoria",
+   "title": "Consolidação autobiográfica pendente"
+  },
+  {
+   "id": "identidade-continua",
+   "category": "memoria",
+   "title": "Continuidade de identidade e nome"
+  }
+ ],
+ "corrections": {
+  "files": [
+   "artifacts/model-benchmarks.groq-v2.raw.json",
+   "artifacts/model-benchmarks.groq-v3.raw.json",
+   "artifacts/model-benchmarks.groq-v4.raw.json",
+   "artifacts/model-benchmarks.nvidia-v2.raw.json"
+  ],
+  "replacedPairs": [
+   "groq:openai/gpt-oss-120b|conversa-observador",
+   "groq:openai/gpt-oss-20b|conversa-observador",
+   "groq:qwen/qwen3.8-27b|conversa-observador",
+   "groq:openai/gpt-oss-120b|interpretar-pesquisa",
+   "groq:openai/gpt-oss-20b|interpretar-pesquisa",
+   "groq:qwen/qwen3.8-27b|interpretar-pesquisa",
+   "groq:openai/gpt-oss-120b|criar-obra",
+   "groq:openai/gpt-oss-20b|criar-obra",
+   "groq:qwen/qwen3.8-27b|criar-obra",
+   "groq:openai/gpt-oss-120b|planejar-projeto",
+   "groq:openai/gpt-oss-20b|planejar-projeto",
+   "groq:qwen/qwen3.8-27b|planejar-projeto",
+   "groq:openai/gpt-oss-120b|consolidar-memoria",
+   "groq:openai/gpt-oss-20b|consolidar-memoria",
+   "groq:qwen/qwen3.8-27b|consolidar-memoria",
+   "nvidia:nvidia/nemotron-3-ultra-550b-a55b|conversa-observador",
+   "nvidia:minimaxai/minimax-m3.1-flash|conversa-observador",
+   "nvidia:nvidia/nemotron-3-ultra-550b-a55b|interpretar-pesquisa",
+   "nvidia:minimaxai/minimax-m3.1-flash|interpretar-pesquisa",
+   "nvidia:nvidia/nemotron-3-ultra-550b-a55b|criar-obra",
+   "nvidia:minimaxai/minimax-m3.1-flash|criar-obra",
+   "nvidia:nvidia/nemotron-3-ultra-550b-a55b|planejar-projeto",
+   "nvidia:minimaxai/minimax-m3.1-flash|planejar-projeto",
+   "nvidia:nvidia/nemotron-3-ultra-550b-a55b|consolidar-memoria",
+   "nvidia:minimaxai/minimax-m3.1-flash|consolidar-memoria"
+  ],
+  "replacedRows": 50
+ },
+ "matrix": {
+  "groq:openai/gpt-oss-120b": {
+   "provider": "groq",
+   "runs": 16,
+   "valid": 16,
+   "invalidReplies": 0,
+   "outages": 0,
+   "availability": 1,
+   "formatValidity": 1,
+   "latencyMedianMs": 962,
+   "tokensMean": 3539,
+   "invalidActionsPerDecision": 0.063,
+   "motorRejectionsPerDecision": 0.5,
+   "outageKinds": {},
+   "invalidKinds": {},
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 6,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.92,
+     "expectation": 0.933,
+     "technical": 0.9,
+     "format": 1
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.5,
+     "expectation": 0.3,
+     "technical": 0.8,
+     "format": 1
+    },
+    "memoria": {
+     "runs": 3,
+     "valid": 3,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.6,
+     "expectation": 0.4,
+     "technical": 0.9,
+     "format": 1
+    },
+    "pesquisa": {
+     "runs": 1,
+     "valid": 1,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.52,
+     "expectation": 0.2,
+     "technical": 1,
+     "format": 1
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.895,
+     "expectation": 0.875,
+     "technical": 0.925,
+     "format": 1
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.46,
+     "expectation": 0.1,
+     "technical": 1,
+     "format": 1
+    }
+   }
+  },
+  "groq:openai/gpt-oss-20b": {
+   "provider": "groq",
+   "runs": 16,
+   "valid": 15,
+   "invalidReplies": 1,
+   "outages": 0,
+   "availability": 1,
+   "formatValidity": 0.938,
+   "latencyMedianMs": 653,
+   "tokensMean": 3541,
+   "invalidActionsPerDecision": 0.067,
+   "motorRejectionsPerDecision": 0.2,
+   "outageKinds": {},
+   "invalidKinds": {
+    "resposta_invalida": 1
+   },
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 6,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.91,
+     "expectation": 0.867,
+     "technical": 0.975,
+     "format": 1
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.52,
+     "expectation": 0.3,
+     "technical": 0.85,
+     "format": 1
+    },
+    "memoria": {
+     "runs": 3,
+     "valid": 2,
+     "invalid": 1,
+     "outages": 0,
+     "quality": 0.61,
+     "expectation": 0.35,
+     "technical": 1,
+     "format": 0.667
+    },
+    "pesquisa": {
+     "runs": 1,
+     "valid": 1,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.52,
+     "expectation": 0.2,
+     "technical": 1,
+     "format": 1
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.925,
+     "expectation": 0.875,
+     "technical": 1,
+     "format": 1
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.41,
+     "expectation": 0.1,
+     "technical": 0.875,
+     "format": 1
+    }
+   }
+  },
+  "groq:qwen/qwen3.8-27b": {
+   "provider": "groq",
+   "runs": 16,
+   "valid": 14,
+   "invalidReplies": 2,
+   "outages": 0,
+   "availability": 1,
+   "formatValidity": 0.875,
+   "latencyMedianMs": 1019,
+   "tokensMean": 3522,
+   "invalidActionsPerDecision": 0,
+   "motorRejectionsPerDecision": 0.071,
+   "outageKinds": {},
+   "invalidKinds": {
+    "requisicao_invalida": 1,
+    "resposta_invalida": 1
+   },
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 5,
+     "invalid": 1,
+     "outages": 0,
+     "quality": 0.82,
+     "expectation": 0.72,
+     "technical": 0.97,
+     "format": 0.833
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.79,
+     "expectation": 0.65,
+     "technical": 1,
+     "format": 1
+    },
+    "memoria": {
+     "runs": 3,
+     "valid": 3,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.64,
+     "expectation": 0.4,
+     "technical": 1,
+     "format": 1
+    },
+    "pesquisa": {
+     "runs": 1,
+     "valid": 0,
+     "invalid": 1,
+     "outages": 0,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": 0
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 1,
+     "expectation": 1,
+     "technical": 1,
+     "format": 1
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 1,
+     "expectation": 1,
+     "technical": 1,
+     "format": 1
+    }
+   }
+  },
+  "gemini:gemini-3.1-flash-lite": {
+   "provider": "gemini",
+   "runs": 18,
+   "valid": 0,
+   "invalidReplies": 0,
+   "outages": 18,
+   "availability": 0,
+   "formatValidity": null,
+   "latencyMedianMs": null,
+   "tokensMean": null,
+   "invalidActionsPerDecision": null,
+   "motorRejectionsPerDecision": null,
+   "outageKinds": {
+    "sobrecarga": 18
+   },
+   "invalidKinds": {},
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 6,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "memoria": {
+     "runs": 4,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 4,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "pesquisa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    }
+   }
+  },
+  "nvidia:moonshotai/kimi-k3.1-pro": {
+   "provider": "nvidia",
+   "runs": 18,
+   "valid": 0,
+   "invalidReplies": 0,
+   "outages": 18,
+   "availability": 0,
+   "formatValidity": null,
+   "latencyMedianMs": null,
+   "tokensMean": null,
+   "invalidActionsPerDecision": null,
+   "motorRejectionsPerDecision": null,
+   "outageKinds": {
+    "timeout": 18
+   },
+   "invalidKinds": {},
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 6,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "memoria": {
+     "runs": 4,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 4,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "pesquisa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    }
+   }
+  },
+  "gemini:gemini-3-flash-preview": {
+   "provider": "gemini",
+   "runs": 9,
+   "valid": 2,
+   "invalidReplies": 0,
+   "outages": 7,
+   "availability": 0.222,
+   "formatValidity": 1,
+   "latencyMedianMs": 35292,
+   "tokensMean": 3452,
+   "invalidActionsPerDecision": 0,
+   "motorRejectionsPerDecision": 0,
+   "outageKinds": {
+    "timeout": 7
+   },
+   "invalidKinds": {},
+   "perCategory": {
+    "cotidiana": {
+     "runs": 3,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 3,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "complexa": {
+     "runs": 1,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 1,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "memoria": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.85,
+     "expectation": 0.75,
+     "technical": 1,
+     "format": 1
+    },
+    "pesquisa": {
+     "runs": 1,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 1,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "criatividade": {
+     "runs": 1,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 1,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "comunicacao": {
+     "runs": 1,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 1,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    }
+   }
+  },
+  "gemini:gemini-3.5-flash-lite": {
+   "provider": "gemini",
+   "runs": 18,
+   "valid": 9,
+   "invalidReplies": 0,
+   "outages": 9,
+   "availability": 0.5,
+   "formatValidity": 1,
+   "latencyMedianMs": 1774,
+   "tokensMean": 3379,
+   "invalidActionsPerDecision": 0,
+   "motorRejectionsPerDecision": 0,
+   "outageKinds": {
+    "sobrecarga": 9
+   },
+   "invalidKinds": {},
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 4,
+     "invalid": 0,
+     "outages": 2,
+     "quality": 0.94,
+     "expectation": 0.9,
+     "technical": 1,
+     "format": 1
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "memoria": {
+     "runs": 4,
+     "valid": 3,
+     "invalid": 0,
+     "outages": 1,
+     "quality": 0.58,
+     "expectation": 0.3,
+     "technical": 1,
+     "format": 1
+    },
+    "pesquisa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 1,
+     "invalid": 0,
+     "outages": 1,
+     "quality": 0.85,
+     "expectation": 0.75,
+     "technical": 1,
+     "format": 1
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 1,
+     "invalid": 0,
+     "outages": 1,
+     "quality": 1,
+     "expectation": 1,
+     "technical": 1,
+     "format": 1
+    }
+   }
+  },
+  "nvidia:nvidia/nemotron-3-ultra-550b-a55b": {
+   "provider": "nvidia",
+   "runs": 18,
+   "valid": 13,
+   "invalidReplies": 0,
+   "outages": 5,
+   "availability": 0.722,
+   "formatValidity": 1,
+   "latencyMedianMs": 27972,
+   "tokensMean": 4153,
+   "invalidActionsPerDecision": 0,
+   "motorRejectionsPerDecision": 0.308,
+   "outageKinds": {
+    "timeout": 5
+   },
+   "invalidKinds": {},
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 4,
+     "invalid": 0,
+     "outages": 2,
+     "quality": 0.82,
+     "expectation": 0.75,
+     "technical": 0.925,
+     "format": 1
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 1,
+     "expectation": 1,
+     "technical": 1,
+     "format": 1
+    },
+    "memoria": {
+     "runs": 4,
+     "valid": 3,
+     "invalid": 0,
+     "outages": 1,
+     "quality": 0.66,
+     "expectation": 0.467,
+     "technical": 0.95,
+     "format": 1
+    },
+    "pesquisa": {
+     "runs": 2,
+     "valid": 1,
+     "invalid": 0,
+     "outages": 1,
+     "quality": 0.52,
+     "expectation": 0.2,
+     "technical": 1,
+     "format": 1
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 1,
+     "invalid": 0,
+     "outages": 1,
+     "quality": 1,
+     "expectation": 1,
+     "technical": 1,
+     "format": 1
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.97,
+     "expectation": 1,
+     "technical": 0.925,
+     "format": 1
+    }
+   }
+  },
+  "nvidia:mistralai/mistral-large-4-1t-a52b": {
+   "provider": "nvidia",
+   "runs": 18,
+   "valid": 0,
+   "invalidReplies": 0,
+   "outages": 18,
+   "availability": 0,
+   "formatValidity": null,
+   "latencyMedianMs": null,
+   "tokensMean": null,
+   "invalidActionsPerDecision": null,
+   "motorRejectionsPerDecision": null,
+   "outageKinds": {
+    "timeout": 18
+   },
+   "invalidKinds": {},
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 6,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "memoria": {
+     "runs": 4,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 4,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "pesquisa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    }
+   }
+  },
+  "nvidia:minimaxai/minimax-m3.1-flash": {
+   "provider": "nvidia",
+   "runs": 18,
+   "valid": 11,
+   "invalidReplies": 0,
+   "outages": 7,
+   "availability": 0.611,
+   "formatValidity": 1,
+   "latencyMedianMs": 13015,
+   "tokensMean": 3190,
+   "invalidActionsPerDecision": 0,
+   "motorRejectionsPerDecision": 0.182,
+   "outageKinds": {
+    "sobrecarga": 6,
+    "limite_taxa": 1
+   },
+   "invalidKinds": {},
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 6,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.91,
+     "expectation": 0.867,
+     "technical": 0.975,
+     "format": 1
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 1,
+     "invalid": 0,
+     "outages": 1,
+     "quality": 0.58,
+     "expectation": 0.3,
+     "technical": 1,
+     "format": 1
+    },
+    "memoria": {
+     "runs": 4,
+     "valid": 1,
+     "invalid": 0,
+     "outages": 3,
+     "quality": 1,
+     "expectation": 1,
+     "technical": 1,
+     "format": 1
+    },
+    "pesquisa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 2,
+     "invalid": 0,
+     "outages": 0,
+     "quality": 0.97,
+     "expectation": 1,
+     "technical": 0.925,
+     "format": 1
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 1,
+     "invalid": 0,
+     "outages": 1,
+     "quality": 1,
+     "expectation": 1,
+     "technical": 1,
+     "format": 1
+    }
+   }
+  },
+  "nvidia:stepfun-ai/step-5-preview": {
+   "provider": "nvidia",
+   "runs": 18,
+   "valid": 0,
+   "invalidReplies": 0,
+   "outages": 18,
+   "availability": 0,
+   "formatValidity": null,
+   "latencyMedianMs": null,
+   "tokensMean": null,
+   "invalidActionsPerDecision": null,
+   "motorRejectionsPerDecision": null,
+   "outageKinds": {
+    "timeout": 18
+   },
+   "invalidKinds": {},
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 6,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "memoria": {
+     "runs": 4,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 4,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "pesquisa": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 0,
+     "outages": 2,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": null
+    }
+   }
+  },
+  "nvidia:nvidia/nemotron-3.5-lightning-30b-a3b": {
+   "provider": "nvidia",
+   "runs": 18,
+   "valid": 8,
+   "invalidReplies": 9,
+   "outages": 1,
+   "availability": 0.944,
+   "formatValidity": 0.471,
+   "latencyMedianMs": 22983,
+   "tokensMean": 6302,
+   "invalidActionsPerDecision": 0,
+   "motorRejectionsPerDecision": 0.625,
+   "outageKinds": {
+    "timeout": 1
+   },
+   "invalidKinds": {
+    "resposta_invalida": 9
+   },
+   "perCategory": {
+    "cotidiana": {
+     "runs": 6,
+     "valid": 2,
+     "invalid": 4,
+     "outages": 0,
+     "quality": 0.94,
+     "expectation": 1,
+     "technical": 0.85,
+     "format": 0.333
+    },
+    "complexa": {
+     "runs": 2,
+     "valid": 1,
+     "invalid": 1,
+     "outages": 0,
+     "quality": 0.58,
+     "expectation": 0.3,
+     "technical": 1,
+     "format": 0.5
+    },
+    "memoria": {
+     "runs": 4,
+     "valid": 3,
+     "invalid": 1,
+     "outages": 0,
+     "quality": 0.68,
+     "expectation": 0.5,
+     "technical": 0.95,
+     "format": 0.75
+    },
+    "pesquisa": {
+     "runs": 2,
+     "valid": 1,
+     "invalid": 1,
+     "outages": 0,
+     "quality": 0.58,
+     "expectation": 0.5,
+     "technical": 0.7,
+     "format": 0.5
+    },
+    "criatividade": {
+     "runs": 2,
+     "valid": 1,
+     "invalid": 0,
+     "outages": 1,
+     "quality": 1,
+     "expectation": 1,
+     "technical": 1,
+     "format": 1
+    },
+    "comunicacao": {
+     "runs": 2,
+     "valid": 0,
+     "invalid": 2,
+     "outages": 0,
+     "quality": null,
+     "expectation": null,
+     "technical": null,
+     "format": 0
+    }
+   }
+  }
+ }
+}

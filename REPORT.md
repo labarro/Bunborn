@@ -118,3 +118,80 @@ Abas **Destaques** e **Diário de bordo** (sem IA, só registros), linha do temp
 - Coelho articulado e animado: respiração, piscadas, orelhas, pulos com amassa e estica virando para a direção do movimento, e poses para comer, beber, higiene, dormir (com "z"), pesquisar, criar, diário, organizar e observar. O deslocamento acontece somente quando há ação real registrada. `prefers-reduced-motion` é respeitado.
 - Expressão derivada exclusivamente do estado simulado (`shared/expression.ts`: sono/energia, sede, fome, frustração, satisfação+conforto, curiosidade, tédio), exibida com o motivo factual. Não é sentimento declarado pelo modelo.
 - "Entenda este registro" substitui "Origem e evidências": explica em linguagem simples quem registrou, o que ela pensou e por quê, o que tentou, o que falhou e por quê, a certeza declarada e em quantas lembranças se baseou. IDs e JSON ficam em "Detalhes técnicos".
+
+## 18. Arquitetura multiprovedor (25/11)
+
+Os detalhes estão em [AI_PROVIDERS.md](AI_PROVIDERS.md), [COGNITIVE_ROUTING.md](COGNITIVE_ROUTING.md) e [MODEL_BENCHMARKS.md](MODEL_BENCHMARKS.md).
+
+**Diagnóstico e impacto**
+1. **Erros 503:** 38 das 145 chamadas de produção (26%), todas no Gemini, concentradas entre 11 e 16h UTC. Também houve 16 falhas de execução (timeout e resposta fora do esquema).
+2. **Impacto na criatura:**
+   - janelas sem cognição de 10,7 h (24/11, agravada pela espera exponencial já corrigida), 3,8 h ou mais (25/11) e outras 8 curtas;
+   - o corpo seguiu as regras durante as quedas;
+   - 27,6 mil tokens (4,5%) gastos em respostas inválidas;
+   - não houve loops.
+
+**Provedores e modelos**
+3. **Integrados:** Gemini, Groq e NVIDIA. A NVIDIA também está em produção, por autorização explícita do responsável, apesar dos termos de trial.
+4. **Disponíveis na chave:** Gemini 49, Groq 11 (3 modelos de texto gratuitos), NVIDIA 30 (`artifacts/ai-discovery.json`).
+5. **Avaliados:**
+   - Gemini: 3.1 Flash Lite, 3 Flash e 3.5 Flash Lite.
+   - Groq: gpt-oss-120b, gpt-oss-20b e Qwen 3.8 27B.
+   - NVIDIA: Kimi K3.1 Pro, Nemotron 3 Ultra, Mistral Large 4, MiniMax M3.1, Step 5 e Nemotron 3.5 Lightning.
+6. **Descartados:**
+   - Kimi, Mistral e Step: timeout em 18 de 18;
+   - Nemotron Lightning: formato válido em só 47%;
+   - GLM 5.3 e Gemma 4: lentos demais;
+   - safeguard e allam: classificador e janela de 4 mil tokens.
+
+**Cotas e benchmark**
+7. **Cotas:**
+   - Groq (documentado): 30 RPM, 1K RPD, 8K TPM e 200K TPD por modelo.
+   - Gemini (painel do responsável): Flash Lite 15/500, Flash 5/20.
+   - NVIDIA: cerca de 40 RPM, sem limite diário publicado.
+8. **Benchmark:** 9 cenários, 2 repetições, chamadas reais pelo motor real (matriz em MODEL_BENCHMARKS.md). O benchmark encontrou e corrigiu um defeito no contrato das ferramentas: as alternativas apareciam como listas.
+9. **Melhor modelo por categoria:**
+   - cotidiana: gpt-oss-120b;
+   - complexa: Qwen 3.8, ou Nemotron Ultra se a latência não pesar;
+   - memória: Qwen, gpt-oss-120b ou Nemotron;
+   - pesquisa: nenhum homologado (Gemini Lite provisório e regra de segurança);
+   - criatividade: Qwen, gpt-oss-20b ou MiniMax;
+   - comunicação: Qwen.
+
+**Roteamento e resiliência**
+10. **Roteamento determinístico por categoria:** 0,55 de qualidade, 0,25 de confiabilidade, 0,10 de velocidade e 0,10 de folga de cota, menos penalidades.
+11. **Critérios:** exclusões com motivo, afinidade de continuidade e modo manual.
+12. **Fallback:** até 3 tentativas por ciclo, nenhum efeito antes de uma resposta válida, alternativa geral depois de falhas na categoria e suspensão segura quando tudo falha.
+13. **Circuit breaker** persistente (`model_health`), com espera crescente, jitter, `Retry-After`, desabilitação por credencial e reintegração gradual.
+
+**Consumo e capacidade**
+14. **Tokens:** cerca de 3,5 mil por decisão no benchmark; cerca de 7,9 mil na Lumi, que tem um contexto maior. O contexto foi compactado em 25/11.
+15. **Capacidade diária por provedor:**
+   - Groq: cerca de 55 por modelo (cerca de 160 somados), limitados pelos tokens por dia; em contextos maiores, cai.
+   - Gemini: até 440 + 16, quando disponível.
+   - NVIDIA: limite interno de 300 por modelo.
+16. **Capacidade combinada:** bem acima do ritmo de produção (no máximo 288 decisões por dia, a cada 5 min).
+
+**Testes e evidências**
+17. **Testes reais:**
+   - descoberta e teste rápido de 14 modelos;
+   - benchmark;
+   - homologação ponta a ponta: 15 decisões em 16 ciclos com 5 modelos de 2 provedores, porque o Gemini ficou fora durante todo o teste.
+18. **Testes de falhas:** 15 testes de roteamento e resiliência com falhas simuladas, mais E2E da área administrativa.
+19. **Continuidade:** na homologação, o Nemotron (NVIDIA) respondeu ao observador às 17:52, e o Qwen (Groq) respondeu à pergunta "lembra do que me contou?" às 17:57 retomando os mesmos fatos. A identidade ficou sem mudanças.
+20. **Monitoramento:** aba Provedores (só para o responsável) e o modelo de cada decisão nos detalhes técnicos da linha do tempo.
+
+**Implantação**
+21. Produção e homologação implantadas.
+   - Migração aditiva 0010 aplicada nos 5 bancos, depois de um **backup assinado da produção** (`.wrangler/private/backups/production-b989f1dc….backup.json`).
+   - Os secrets agora são gravados antes do código no deploy.
+22. **Criatura permanente preservada.** Nada foi resetado nem restaurado. A Lumi voltou a decidir às 18:03Z (Nemotron Ultra, depois de o MiniMax responder 503), comeu (fome 100 → 0) e às 18:10Z decidiu dormir.
+
+**Limitações e custo**
+23. **Limitações:**
+   - duas repetições por cenário;
+   - pesquisa sem modelo homologado;
+   - o contexto da Lumi (cerca de 7,9 mil tokens) chega perto do limite de 8 mil tokens por minuto da Groq; o roteador exclui a Groq quando não cabe e mostra o motivo;
+   - os modelos da NVIDIA são lentos (10 a 45 s);
+   - a NVIDIA em produção contraria os termos de trial (risco assumido pelo responsável).
+24. **Custo zero:** contas sem faturamento vinculado (confirmação explícita do responsável); nenhum serviço pago contratado; bundle do Worker com 179 KiB comprimidos; ritmo de decisões sem aumento.

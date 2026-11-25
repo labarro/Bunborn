@@ -1,0 +1,407 @@
+{
+ "at": "2026-11-25T17:59:38.564Z",
+ "environment": "homologation (criatura descartável)",
+ "identityBefore": {
+  "name": null,
+  "description": "Identidade ainda em formação."
+ },
+ "identityAfter": {
+  "name": null,
+  "description": "Identidade ainda em formação."
+ },
+ "identityChanges": [],
+ "cycles": [
+  {
+   "cycle": 0,
+   "mode": "forcado",
+   "pinned": "gemini:gemini-3.5-flash-lite",
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "groq:qwen/qwen3.8-27b",
+   "attempts": [
+    "groq:qwen/qwen3.8-27b:aceita"
+   ],
+   "category": "comunicacao",
+   "reasons": [
+    "melhor pontuação para comunicacao",
+    "qualidade homologada 1.00 em comunicacao"
+   ],
+   "tokens": 6145,
+   "latencyMs": 901,
+   "intention": "Recuperar a saúde crítica antes de qualquer outra atividade.",
+   "name": null,
+   "decisions": 35
+  },
+  {
+   "cycle": 1,
+   "mode": "forcado",
+   "pinned": "groq:openai/gpt-oss-120b",
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "groq:openai/gpt-oss-120b",
+   "attempts": [
+    "groq:openai/gpt-oss-120b:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "melhor pontuação para cotidiana",
+    "qualidade homologada 0.92 em cotidiana"
+   ],
+   "tokens": 5016,
+   "latencyMs": 823,
+   "intention": "Recuperar saúde crítica consumindo alimento",
+   "name": null,
+   "decisions": 36
+  },
+  {
+   "cycle": 2,
+   "mode": "forcado",
+   "pinned": "nvidia:minimaxai/minimax-m3.1-flash",
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "nvidia:minimaxai/minimax-m3.1-flash",
+   "attempts": [
+    "nvidia:minimaxai/minimax-m3.1-flash:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "seleção manual do responsável",
+    "qualidade homologada 0.91 em cotidiana"
+   ],
+   "tokens": 4924,
+   "latencyMs": 12709,
+   "intention": "Cuidar da higiene e da saúde antes de responder ao observador",
+   "name": null,
+   "decisions": 37
+  },
+  {
+   "cycle": 3,
+   "mode": "forcado",
+   "pinned": "groq:qwen/qwen3.8-27b",
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+   "attempts": [
+    "groq:qwen/qwen3.8-27b:orcamento_local",
+    "nvidia:nvidia/nemotron-3-ultra-550b-a55b:aceita"
+   ],
+   "category": "comunicacao",
+   "reasons": [
+    "qualidade homologada 1.00 em comunicacao",
+    "confiabilidade recente 0.81"
+   ],
+   "tokens": 6605,
+   "latencyMs": 21548,
+   "intention": "Aguardar conclusão das atividades de beber e descansar para recuperar saúde antes de responder ao observador",
+   "name": null,
+   "decisions": 38
+  },
+  {
+   "cycle": 4,
+   "mode": "forcado",
+   "pinned": "gemini:gemini-3.1-flash-lite",
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "groq:openai/gpt-oss-120b",
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite:sobrecarga",
+    "groq:openai/gpt-oss-120b:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "melhor pontuação para cotidiana",
+    "qualidade homologada 0.92 em cotidiana"
+   ],
+   "tokens": 5301,
+   "latencyMs": 1882,
+   "intention": "Continuar descanso e iniciar higiene",
+   "name": null,
+   "decisions": 39
+  },
+  {
+   "cycle": 5,
+   "mode": "forcado",
+   "pinned": "groq:openai/gpt-oss-20b",
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "groq:openai/gpt-oss-20b",
+   "attempts": [
+    "groq:openai/gpt-oss-20b:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "seleção manual do responsável",
+    "qualidade homologada 0.91 em cotidiana"
+   ],
+   "tokens": 5107,
+   "latencyMs": 851,
+   "intention": "Continuar descanso, observar e iniciar dormir para melhorar sono",
+   "name": null,
+   "decisions": 40
+  },
+  {
+   "cycle": 6,
+   "mode": "forcado",
+   "pinned": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+   "attempts": [
+    "nvidia:nvidia/nemotron-3-ultra-550b-a55b:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "seleção manual do responsável",
+    "qualidade homologada 0.82 em cotidiana"
+   ],
+   "tokens": 6251,
+   "latencyMs": 15368,
+   "intention": "Responder ao observador responsável sobre meu estado atual",
+   "name": null,
+   "decisions": 41
+  },
+  {
+   "cycle": 7,
+   "mode": "forcado",
+   "pinned": "gemini:gemini-3.5-flash-lite",
+   "status": "suspenso",
+   "code": "cognicao_indisponivel",
+   "selected": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+   "attempts": [
+    "nvidia:nvidia/nemotron-3-ultra-550b-a55b:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "seleção manual do responsável",
+    "qualidade homologada 0.82 em cotidiana"
+   ],
+   "tokens": 6251,
+   "latencyMs": 15368,
+   "intention": "Responder ao observador responsável sobre meu estado atual",
+   "name": null,
+   "decisions": 41
+  },
+  {
+   "cycle": 8,
+   "mode": "forcado",
+   "pinned": "groq:openai/gpt-oss-120b",
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+   "attempts": [
+    "nvidia:nvidia/nemotron-3-ultra-550b-a55b:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "continuidade: mesmo modelo do ciclo anterior desta categoria",
+    "qualidade homologada 0.82 em cotidiana"
+   ],
+   "tokens": 7073,
+   "latencyMs": 36979,
+   "intention": "Tentar comer para ver se melhora a saúde crítica, depois fazer algo para aliviar o tédio extremo",
+   "name": null,
+   "decisions": 42
+  },
+  {
+   "cycle": 9,
+   "mode": "forcado",
+   "pinned": "nvidia:minimaxai/minimax-m3.1-flash",
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "groq:qwen/qwen3.8-27b",
+   "attempts": [
+    "groq:qwen/qwen3.8-27b:aceita"
+   ],
+   "category": "comunicacao",
+   "reasons": [
+    "melhor pontuação para comunicacao",
+    "qualidade homologada 1.00 em comunicacao"
+   ],
+   "tokens": 5742,
+   "latencyMs": 937,
+   "intention": "Descansar para recuperar a saúde crítica e responder ao responsável sobre a mudança recente.",
+   "name": null,
+   "decisions": 43
+  },
+  {
+   "cycle": 10,
+   "mode": "automatico",
+   "pinned": null,
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "groq:openai/gpt-oss-120b",
+   "attempts": [
+    "groq:openai/gpt-oss-120b:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "melhor pontuação para cotidiana",
+    "qualidade homologada 0.92 em cotidiana"
+   ],
+   "tokens": 5736,
+   "latencyMs": 920,
+   "intention": "Recuperar saúde crítica comendo",
+   "name": null,
+   "decisions": 44
+  },
+  {
+   "cycle": 11,
+   "mode": "automatico",
+   "pinned": null,
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "groq:openai/gpt-oss-20b",
+   "attempts": [
+    "groq:openai/gpt-oss-120b:orcamento_local",
+    "groq:openai/gpt-oss-20b:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "qualidade homologada 0.91 em cotidiana",
+    "confiabilidade recente 0.85"
+   ],
+   "tokens": 5373,
+   "latencyMs": 607,
+   "intention": "Comer para melhorar a saúde crítica",
+   "name": null,
+   "decisions": 45
+  },
+  {
+   "cycle": 12,
+   "mode": "automatico",
+   "pinned": null,
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "nvidia:minimaxai/minimax-m3.1-flash",
+   "attempts": [
+    "groq:openai/gpt-oss-20b:orcamento_local",
+    "groq:openai/gpt-oss-120b:orcamento_local",
+    "nvidia:minimaxai/minimax-m3.1-flash:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "qualidade homologada 0.91 em cotidiana",
+    "confiabilidade recente 0.85"
+   ],
+   "tokens": 5279,
+   "latencyMs": 17269,
+   "intention": "Dormir para recuperar energia e saúde com sono elevado",
+   "name": null,
+   "decisions": 46
+  },
+  {
+   "cycle": 13,
+   "mode": "automatico",
+   "pinned": null,
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "nvidia:minimaxai/minimax-m3.1-flash",
+   "attempts": [
+    "nvidia:minimaxai/minimax-m3.1-flash:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "continuidade: mesmo modelo do ciclo anterior desta categoria",
+    "qualidade homologada 0.91 em cotidiana"
+   ],
+   "tokens": 5476,
+   "latencyMs": 24421,
+   "intention": "Concluir o sono em andamento e depois cuidar da higiene, pois a saúde está baixa e o corpo está muito entediado.",
+   "name": null,
+   "decisions": 47
+  },
+  {
+   "cycle": 14,
+   "mode": "automatico",
+   "pinned": null,
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "groq:openai/gpt-oss-120b",
+   "attempts": [
+    "nvidia:minimaxai/minimax-m3.1-flash:sobrecarga",
+    "groq:openai/gpt-oss-120b:aceita"
+   ],
+   "category": "cotidiana",
+   "reasons": [
+    "melhor pontuação para cotidiana",
+    "qualidade homologada 0.92 em cotidiana"
+   ],
+   "tokens": 5676,
+   "latencyMs": 1708,
+   "intention": "Cuidar da higiene para melhorar saúde e conforto antes de atender ao observador",
+   "name": null,
+   "decisions": 48
+  },
+  {
+   "cycle": 15,
+   "mode": "automatico",
+   "pinned": null,
+   "status": "decisao_registrada",
+   "code": null,
+   "selected": "groq:qwen/qwen3.8-27b",
+   "attempts": [
+    "groq:qwen/qwen3.8-27b:aceita"
+   ],
+   "category": "complexa",
+   "reasons": [
+    "melhor pontuação para complexa",
+    "qualidade homologada 0.79 em complexa"
+   ],
+   "tokens": 5738,
+   "latencyMs": 1417,
+   "intention": "Ficar deitada e observar para descansar e sair do tédio, sem forçar atividades que o corpo rejeitou.",
+   "name": null,
+   "decisions": 49
+  }
+ ],
+ "conversations": [
+  {
+   "role": "observador",
+   "author": "responsavel",
+   "content": "Lembra do que me contou antes? O que mudou desde então?",
+   "realAt": 1795629463849
+  },
+  {
+   "role": "criatura",
+   "author": null,
+   "content": "Oi! Lembro que estive tentando comer para melhorar a saúde crítica e depois observar para aliviar o tédio. Desde então, comi (fome caiu para 0), observei e agora estou com sono alto e saúde ainda baixa. Vou descansar para ver se melhora. O que mais você quer saber?",
+   "realAt": 1795629467197
+  },
+  {
+   "role": "criatura",
+   "author": null,
+   "content": "Oi. Minha saúde está muito baixa (16) — o ciclo de sono fez o sono melhorar (100→42) e a energia subir (20→63), mas a saúde caiu de 30 para 10 e agora está em 16. Higiene também baixou muito (10→3). Estou muito entediada (tedio 99). Tenho passado o tempo descansando e dormindo pra tentar recuperar, mas o corpo não está respondendo bem. O que você gostaria de saber ou fazer?",
+   "realAt": 1795629144307
+  },
+  {
+   "role": "observador",
+   "author": "responsavel",
+   "content": "Oi! Sou o observador responsável. Como você está e o que tem feito por aqui?",
+   "realAt": 1795629089946
+  },
+  {
+   "role": "observador",
+   "author": "responsavel",
+   "content": "Oi! Sou o observador responsável. Como você está e o que tem feito por aqui?",
+   "realAt": 1795627995932
+  },
+  {
+   "role": "observador",
+   "author": "responsavel",
+   "content": "Lembra do que me contou antes? O que mudou desde então?",
+   "realAt": 1795627161907
+  },
+  {
+   "role": "observador",
+   "author": "responsavel",
+   "content": "Oi! Sou o observador responsável. Como você está e o que tem feito por aqui?",
+   "realAt": 1795627152286
+  },
+  {
+   "role": "observador",
+   "author": null,
+   "content": "<img src=x onerror=alert(1)> teste de segurança (homologação)",
+   "realAt": 1795480588627
+  }
+ ]
+}

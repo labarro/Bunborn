@@ -10,7 +10,7 @@ import type {Env} from './provider';
 const descriptors:Record<string,Record<string,string>>={
  records:{seq:'seq',id:'id',entity_id:'entityId',kind:'kind',category:'category',content:'content',data:'data',real_at:'realAt',virtual_at:'virtualAt',importance:'importance',confidence:'confidence',associations:'associations',origin:'origin'},
  budgets:{day:'day',model:'model',calls:'calls',tokens:'tokens'},
- calls:{id:'id',day:'day',model:'model',at:'at',reserved_tokens:'reserved_tokens',actual_tokens:'actual_tokens',status:'status',latency_ms:'latency_ms',scope:'scope'},
+ calls:{id:'id',day:'day',model:'model',at:'at',reserved_tokens:'reserved_tokens',actual_tokens:'actual_tokens',status:'status',latency_ms:'latency_ms',scope:'scope',provider:'provider',category:'category'},
  inbox:{id:'id',content:'content',at:'at',consumed:'consumed',author:'author'},
  retrievals:{memory_id:'memory_id',count:'count',last_at:'last_at'},
  record_links:{record_id:'record_id',related_id:'related_id'},

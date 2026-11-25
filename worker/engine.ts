@@ -12,6 +12,9 @@ import {
   quotaDay,
 } from '../shared/domain';
 import { CognitiveError, GeminiProvider, type CognitionProvider, type Env } from './provider';
+import { RoutedProvider, type RouteRecord } from './ai/cognition';
+import { categorize } from './ai/router';
+import type { Category } from '../shared/ai-catalog';
 import { research } from './research';
 import { entry, Store, ToolError } from './store';
 const targetFor: Record<string, string> = {
@@ -463,7 +466,6 @@ export async function tick(
     const perceptions = (await store.latest('percepcao', 6)).map((r) => ({ id: r.id, content: r.content }));
     let complex =
       (s.complexNext || (s.decisions > 0 && s.decisions % 24 === 0)) && s.decisions > 0;
-    if(complex){if(!(await flashAvailable(env,store,0))){complex=false;records.push(entry(s,'orcamento','Revisão complexa adiada por cota; continuidade com o cérebro principal.',{model:env.MODEL_LITE},{origin:'controle_orcamento'}));}}
     const context = {
       facts: {
         simulation: true,
@@ -476,16 +478,18 @@ export async function tick(
         minimumRealMinutesBetweenDecisions: decisionFloor(env) / 60000,
         timeUnits: `atividade.minutes é tempo VIRTUAL; nextMinutes é tempo REAL. 1 minuto real = ${s.multiplier} minutos virtuais (dormir 60 dura ${Math.round(60 / s.multiplier)} min reais). Quando a atividade e a fila terminam, a próxima decisão vem cedo; nextMinutes é só a espera máxima enquanto ocupada.`,
       },
-      identity: s.identity,
-      needs: s.needs,
+      // Compact but complete identity: every trait value stays; evidence lists are capped.
+      identity: { name: s.identity.name, description: s.identity.description, version: s.identity.version, traits: Object.fromEntries(Object.entries(s.identity.traits).map(([k, v]) => [k, { value: v.value, evidence: v.evidence.slice(0, 3), version: v.version }])) },
+      needs: Object.fromEntries(Object.entries(s.needs).map(([k, v]) => [k, Math.round(v)])),
       body: bodyAlerts(s),
       perceptions,
-      motives: s.motives,
-      activity: s.activity,
+      motives: Object.fromEntries(Object.entries(s.motives).map(([k, v]) => [k, Math.round(v)])),
+      activity: brief(s.activity),
       activityStatus: s.activity.until > s.virtualMinutes ? { ongoing: true, remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes), remainingRealMinutes: Math.round((s.activity.until - s.virtualMinutes) / s.multiplier) } : { ongoing: false, note: 'nenhuma atividade em andamento' },
-      queuedActivities:s.queue??[],
-      lastCompletedActivity:s.lastCompleted??null,
-      objects: s.objects,
+      queuedActivities:(s.queue??[]).map(brief),
+      lastCompletedActivity:s.lastCompleted?brief(s.lastCompleted):null,
+      // Object positions only; names and uses are in the system instructions.
+      objects: s.objects.map((o) => ({ id: o.id, x: o.x, y: o.y, ...(o.artifactId ? { artifactId: o.artifactId } : {}) })),
       concepts: concepts.map((r) => ({
         id: r.id,
         entityId: r.entityId,
@@ -495,21 +499,19 @@ export async function tick(
       memories: memories.map((r) => ({
         id: r.id,
         category: r.category,
-        content: r.content.slice(0, 1600),
+        content: r.content.slice(0, 700),
         confidence: r.confidence,
         status: r.data.status,
         evidence: r.associations.slice(0, 4),
       })),
       interests: interests.map((r) => ({
-        ...r,
-        data: {
-          ...r.data,
-          effectiveStrength:
-            Number(r.data.strength) *
-            Math.exp(-Math.max(0, s.virtualMinutes - r.virtualAt) / 43200),
-        },
+        id: r.id,
+        entityId: r.entityId,
+        topic: r.content,
+        status: r.data.status,
+        effectiveStrength: Math.round(Number(r.data.strength) * Math.exp(-Math.max(0, s.virtualMinutes - r.virtualAt) / 43200) * 100) / 100,
       })),
-      projects,
+      projects: projects.map((r) => ({ id: r.id, entityId: r.entityId, title: r.content, steps: r.data.steps, completed: r.data.completed, status: r.data.status, horizon: r.data.horizon, version: r.data.version })),
       artifacts: artifacts.map((r) => ({
         id: r.id,
         entityId: r.entityId,
@@ -519,8 +521,8 @@ export async function tick(
       recent: recent.map((r) => ({
         id: r.id,
         kind: r.kind,
-        content: r.content.slice(0, 1000),
-        result: ['leitura','erro_ferramenta','pesquisa'].includes(r.kind) ? JSON.stringify(r.data).slice(0, 6000) : undefined,
+        content: r.content.slice(0, 500),
+        result: ['leitura','erro_ferramenta','pesquisa'].includes(r.kind) ? JSON.stringify(r.data).slice(0, 2500) : undefined,
       })),
       inbox,
       working: s.working,
@@ -528,24 +530,27 @@ export async function tick(
         id: r.id,
         realAt: r.realAt,
         content: r.content,
-        result: JSON.stringify(r.data).slice(0, 12000),
+        result: JSON.stringify(r.data).slice(0, 5000),
       })),
     };
     try {
-      const brain = provider ?? new GeminiProvider(env, store);
-      const packed = packContext(context);
-      let reply: Awaited<ReturnType<CognitionProvider['decide']>>;
-      try {
-        reply = await brain.decide(packed, complex, now);
-      } catch (first) {
-        // When the principal model is overloaded (503/timeout), the same mind continues on the
-        // other free Gemini model in this cycle, keeping a reserve for complex reviews. Before
-        // this, a 3 h Lite outage (25/11 12:58Z) left the creature unable to think.
-        if (complex || !(first instanceof CognitiveError) || !/^gemini_(http_5\d\d|fetch_)/.test(first.code) || !(await flashAvailable(env, store, 3))) throw first;
-        records.push(entry(s, 'orcamento', 'Cérebro principal sobrecarregado; este ciclo foi atendido pelo modelo Flash.', { failed: first.code, model: env.MODEL_FLASH }, { origin: 'controle_orcamento' }));
-        reply = await brain.decide(packed, true, now);
-      }
-      const { decision, model, invalidActions = [] } = reply;
+      // Category steers model choice only; the decision is still ONE request with the same context.
+      const lastIntent = (await store.latest('intencao', 1))[0];
+      const lastRoute = lastIntent?.data.route as { selected?: string; category?: Category } | undefined;
+      const { category, reason: categoryReason } = categorize({
+        inbox: inbox.length,
+        complexNext: complex,
+        decisionNumber: s.decisions,
+        consolidationDue: s.virtualMinutes - s.lastConsolidation > 1440,
+        recentResearch: recent.slice(0, 6).some((r) => r.kind === 'pesquisa' || r.kind === 'leitura'),
+        creativity: s.motives.criatividade,
+        boredom: s.motives.tedio,
+        activeCreativeProject: projects.some((p) => p.data.status === 'ativo' && artifacts.some((a) => a.data.projectId === p.entityId)),
+      });
+      const hint = { category, categoryReason, lastModel: lastRoute?.selected && lastRoute.category ? { key: lastRoute.selected, category: lastRoute.category } : null, hasMessages: inbox.length > 0 };
+      const brain = provider ?? new RoutedProvider(env, store, fetcher);
+      const reply = (await brain.decide(packContext(context), complex, now, hint)) as Awaited<ReturnType<CognitionProvider['decide']>> & { route?: RouteRecord };
+      const { decision, model, invalidActions = [], route } = reply;
       s.lastModel = model;
       s.activity.intention = decision.intention;
       records.push(
@@ -556,6 +561,8 @@ export async function tick(
           nextMinutes:decision.nextMinutes,
           complexNext:decision.complexNext,
           proposals:decision.actions.map(a=>a.type==='criar'?{...a,artifact:{format:a.artifact.format}}:a),
+          // Technical routing metadata (why this model), never the creature's own intention.
+          ...(route ? { route } : {}),
         }),
       );
       for (const bad of invalidActions) {
@@ -727,6 +734,7 @@ export async function tick(
           code,
           failures: s.failures,
           nextAttempt: s.nextDecisionAt,
+          ...((e as { route?: RouteRecord }).route ? { route: (e as { route?: RouteRecord }).route } : {}),
         }),
       );
       // Protective deterministic homeostasis only; explicitly recorded as a rule, not a choice.
@@ -747,20 +755,12 @@ export async function tick(
     await store.release(token);
   }
 }
-// Flash calls left today (local and shared ledger), keeping `reserve` for complex reviews.
-async function flashAvailable(env: Env, store: Store, reserve: number) {
-  const today = quotaDay(Date.now());
-  const local = (await store.usage()) as { day: string; model: string; calls: number }[];
-  const global = env.BUDGET_DB ? ((await new Store(env.BUDGET_DB).usage()) as typeof local) : local;
-  const used = (rows: typeof local) => rows.find((r) => r.day === today && r.model === env.MODEL_FLASH)?.calls ?? 0;
-  // The provider allows at most 12 Flash calls/day without pending messages.
-  const cap = Math.min(12, Number(env.FLASH_DAILY_LIMIT ?? 0), Number(env.FLASH_GLOBAL_LIMIT ?? 16));
-  return used(local) < cap - reserve && used(global) < cap - reserve;
-}
 // Overload (503), timeouts and malformed replies are transient: retry in 5, then every 10 min.
 // Budget/configuration problems keep their own longer delay. Before this, 7 consecutive 503s
 // grew the wait to 5h20 and the creature stood still for hours.
 export function retryDelay(code: string, retryMs: number, failures: number) {
+  // The router already computed when the earliest model recovers.
+  if (code === 'cognicao_indisponivel' || code === 'nenhum_modelo_elegivel') return Math.max(120000, Math.min(1800000, retryMs));
   const transient = /^gemini_(http_(5\d\d|429)|fetch_|response_)|^resposta_incompleta|^falha/.test(code);
   if (transient) return Math.min(600000, 300000 * 2 ** Math.min(Math.max(0, failures - 1), 1));
   return Math.min(21600000, Math.max(retryMs, 300000 * 2 ** Math.min(failures - 1, 6)));
@@ -803,6 +803,7 @@ export function bodyAlerts(s: State): string[] {
 function decisionFloor(env: Env) {
   return env.ENVIRONMENT_ID === 'homologation' || env.ENVIRONMENT_ID === 'tool-tests' ? Math.max(0, Number(env.MIN_DECISION_MINUTES ?? 5)) * 60000 : 300000;
 }
+const brief = (a: State['activity']) => ({ kind: a.kind, until: Math.round(a.until), target: a.target, intention: a.intention, ...(a.involuntary ? { involuntary: true } : {}) });
 export function packContext(input: Record<string, unknown>): Record<string, unknown> {
   const packed = structuredClone(input);
   const encoder = new TextEncoder();

@@ -182,6 +182,16 @@ export function Explanation({ record }: { record: RecordEntry }) {
         <p>
           Importância {Math.round(record.importance * 100)}% · confiança declarada {Math.round(record.confidence * 100)}%
         </p>
+        {(() => {
+          // Which computational mechanism processed this cycle — a technical fact, not her intention.
+          const route = record.data.route as { selected?: string | null; category?: string; fallbacks?: number } | undefined;
+          return route ? (
+            <p>
+              Processado por {route.selected ? route.selected.split(':').slice(1).join(':') : 'nenhum modelo (cognição suspensa)'} · categoria {route.category}
+              {route.fallbacks ? ` · ${route.fallbacks} modelo(s) indisponível(is) antes` : ''}. É sempre a mesma criatura; o modelo é só o mecanismo daquele ciclo.
+            </p>
+          ) : null;
+        })()}
         <pre>{JSON.stringify(record.data, null, 2)}</pre>
         {record.associations.length ? <p>Associações: {record.associations.join(', ')}</p> : null}
       </details>

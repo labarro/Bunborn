@@ -274,29 +274,3 @@ describe('autonomy: research is always available', () => {
   });
 });
 
-describe('principal model overloaded (review 25/11 16:15Z)', () => {
-  const env2 = (e: Env) => ({ ...e, FLASH_DAILY_LIMIT: '12' }) as Env;
-  it('the same mind continues on Flash in the same cycle when Lite returns 503', async () => {
-    const { env, store } = setup();
-    const t0 = Date.now();
-    await seed(store, (s) => { s.activity.until = 0; }, t0);
-    const seen: boolean[] = [];
-    const provider: CognitionProvider = { async decide(_c, complex) { seen.push(complex); if (!complex) throw new CognitiveError('gemini_http_503', 300000); return { decision: { intention: 'Fixture', summary: 'teste', nextMinutes: 5, complexNext: false, actions: [] }, model: 'gemini-3-flash-preview' }; } };
-    const result = await tick(env2(env), t0 + 1000, provider);
-    expect(seen).toEqual([false, true]);
-    expect(result.status).toBe('decisao_registrada');
-    expect((await store.records('orcamento'))[0].content).toContain('Flash');
-  });
-  it('keeps the Flash reserve: without budget the failure is recorded as before', async () => {
-    const { env, store } = setup();
-    const t0 = Date.now();
-    await seed(store, (s) => { s.activity.until = 0; }, t0);
-    const { quotaDay } = await import('../shared/domain');
-    await store.db.prepare('INSERT INTO budgets(day,model,calls,tokens) VALUES(?,?,10,0)').bind(quotaDay(Date.now()), 'gemini-3-flash-preview').run();
-    const seen: boolean[] = [];
-    const provider: CognitionProvider = { async decide(_c, complex) { seen.push(complex); throw new CognitiveError('gemini_http_503', 300000); } };
-    const result = await tick(env2(env), t0 + 1000, provider);
-    expect(seen).toEqual([false]);
-    expect(result.status).toBe('suspenso');
-  });
-});

@@ -4,6 +4,15 @@ Atualizado em 24/11/2026 (UTC). Agente único, sem subagentes. Nascimento perman
 
 ## Homologação Bunborn
 
+### Multiprovedor (25/11)
+- [x] Diagnóstico dos 503 do Gemini com dados reais (COGNITIVE_ROUTING.md).
+- [x] Chaves da Groq e da NVIDIA guardadas via DPAPI pelo responsável; descoberta real dos catálogos.
+- [x] Termos verificados: NVIDIA trial proíbe uso em produção, então fica só em homologação.
+- [x] Adaptadores, classificação de erros, circuit breaker persistente, roteador por categoria, orçamento por modelo (TPM/TPD), fallback de até 3 tentativas, rota registrada em cada decisão.
+- [x] Benchmark próprio com chamadas reais pelo motor real; homologação por categoria (MODEL_BENCHMARKS.md).
+- [x] Correção do contrato das ferramentas: as uniões apareciam como listas, e os modelos compatíveis com OpenAI enviavam `artifact` como lista.
+- [x] Painel Provedores (só para o responsável), testes simulados, E2E e homologação remota alternando provedores.
+
 - [x] Handoff e oito documentos lidos; código local revisado contra as versões implantadas.
 - [x] Backup v2 corrigido: heartbeat durante o congelamento, perda de entradas em páginas concorrentes, retomada parcial, aplicação concorrente, leituras parciais, limite da UI (100 → 400 MB), canonicalização independente de locale, manifesto estrito.
 - [x] Testes novos: backup v2 (6) e funcionalidades (10). Total final: 45 unitários + 6 E2E.

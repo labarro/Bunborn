@@ -1,0 +1,153 @@
+{
+ "generatedAt": "2026-11-25T18:09:44.664Z",
+ "method": "Benchmark do Bunborn com chamadas reais pelo motor real (tests/benchmark.live.test.ts); regras em scripts/benchmark-summary.mjs e MODEL_BENCHMARKS.md.",
+ "models": {
+  "groq:openai/gpt-oss-120b": {
+   "scores": {
+    "cotidiana": 0.92,
+    "complexa": 0.5,
+    "memoria": 0.6,
+    "pesquisa": 0.52,
+    "criatividade": 0.895,
+    "comunicacao": 0.46
+   },
+   "homologated": [
+    "cotidiana",
+    "memoria",
+    "criatividade"
+   ]
+  },
+  "groq:openai/gpt-oss-20b": {
+   "scores": {
+    "cotidiana": 0.91,
+    "complexa": 0.52,
+    "memoria": 0.61,
+    "pesquisa": 0.52,
+    "criatividade": 0.925,
+    "comunicacao": 0.41
+   },
+   "homologated": [
+    "cotidiana",
+    "criatividade"
+   ]
+  },
+  "groq:qwen/qwen3.8-27b": {
+   "scores": {
+    "cotidiana": 0.82,
+    "complexa": 0.79,
+    "memoria": 0.64,
+    "criatividade": 1,
+    "comunicacao": 1
+   },
+   "homologated": [
+    "cotidiana",
+    "complexa",
+    "memoria",
+    "criatividade",
+    "comunicacao"
+   ]
+  },
+  "gemini:gemini-3.1-flash-lite": {
+   "scores": {
+    "cotidiana": 0.6,
+    "complexa": 0.5,
+    "memoria": 0.6,
+    "pesquisa": 0.6,
+    "criatividade": 0.5,
+    "comunicacao": 0.6
+   },
+   "homologated": [
+    "cotidiana",
+    "complexa",
+    "memoria",
+    "pesquisa",
+    "criatividade",
+    "comunicacao"
+   ],
+   "note": "Sem resposta no benchmark (Gemini sobrecarregado, HTTP 503); mantida a evidência de produção desde 24/11 com pontuação neutra."
+  },
+  "gemini:gemini-3-flash-preview": {
+   "scores": {
+    "memoria": 0.85
+   },
+   "homologated": [
+    "memoria"
+   ]
+  },
+  "gemini:gemini-3.5-flash-lite": {
+   "entry": {
+    "label": "Gemini 3.5 Flash Lite",
+    "free": "verificado",
+    "limits": {
+     "rpm": 8,
+     "rpd": 200,
+     "tpm": 200000,
+     "tpd": null,
+     "source": "interno",
+     "resetsAt": "00:00 Pacífico"
+    },
+    "documentedLimits": "não informado no painel; limite interno conservador (respondeu sem faturamento vinculado)"
+   },
+   "scores": {
+    "cotidiana": 0.94,
+    "memoria": 0.58,
+    "criatividade": 0.85,
+    "comunicacao": 1
+   },
+   "homologated": [
+    "cotidiana",
+    "memoria"
+   ]
+  },
+  "nvidia:nvidia/nemotron-3-ultra-550b-a55b": {
+   "entry": {
+    "label": "nvidia/nemotron-3-ultra-550b-a55b"
+   },
+   "scores": {
+    "cotidiana": 0.82,
+    "complexa": 1,
+    "memoria": 0.66,
+    "pesquisa": 0.52,
+    "criatividade": 1,
+    "comunicacao": 0.97
+   },
+   "homologated": [
+    "cotidiana",
+    "complexa",
+    "memoria",
+    "comunicacao"
+   ]
+  },
+  "nvidia:minimaxai/minimax-m3.1-flash": {
+   "entry": {
+    "label": "minimaxai/minimax-m3.1-flash"
+   },
+   "scores": {
+    "cotidiana": 0.91,
+    "complexa": 0.58,
+    "memoria": 1,
+    "criatividade": 0.97,
+    "comunicacao": 1
+   },
+   "homologated": [
+    "cotidiana",
+    "criatividade"
+   ]
+  },
+  "nvidia:nvidia/nemotron-3.5-lightning-30b-a3b": {
+   "entry": {
+    "label": "nvidia/nemotron-3.5-lightning-30b-a3b"
+   },
+   "scores": {
+    "cotidiana": 0.94,
+    "complexa": 0.58,
+    "memoria": 0.68,
+    "pesquisa": 0.58,
+    "criatividade": 1
+   },
+   "homologated": [
+    "memoria"
+   ]
+  }
+ }
+}

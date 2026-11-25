@@ -1,0 +1,465 @@
+{
+ "at": "2026-11-25T16:28:13.413Z",
+ "providers": {
+  "gemini": {
+   "status": 200,
+   "models": [
+    {
+     "id": "gemini-2.5-flash",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-2.5-pro",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-2.5-flash-preview-tts",
+     "context": 8192,
+     "maxOutput": 16384
+    },
+    {
+     "id": "gemini-2.5-pro-preview-tts",
+     "context": 8192,
+     "maxOutput": 16384
+    },
+    {
+     "id": "gemma-4-26b-a4b-it",
+     "context": 262144,
+     "maxOutput": 32768
+    },
+    {
+     "id": "gemma-4-31b-it",
+     "context": 262144,
+     "maxOutput": 32768
+    },
+    {
+     "id": "gemini-flash-latest",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-flash-lite-latest",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-pro-latest",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-2.5-flash-lite",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-2.5-flash-image",
+     "context": 32768,
+     "maxOutput": 32768
+    },
+    {
+     "id": "gemini-3-flash-preview",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.1-pro-preview",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.1-pro-preview-customtools",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.1-flash-lite-preview",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.1-flash-lite",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3-pro-image-preview",
+     "context": 131072,
+     "maxOutput": 32768
+    },
+    {
+     "id": "gemini-3-pro-image",
+     "context": 131072,
+     "maxOutput": 32768
+    },
+    {
+     "id": "nano-banana-pro-preview",
+     "context": 131072,
+     "maxOutput": 32768
+    },
+    {
+     "id": "gemini-3.1-flash-image-preview",
+     "context": 65536,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.1-flash-image",
+     "context": 65536,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.1-flash-lite-image",
+     "context": 65536,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-nano-banana-2.1",
+     "context": 65536,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.5-flash",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.5-flash-lite",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-omni-flash-preview",
+     "context": 131072,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-omni-1.1-flash",
+     "context": 131072,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-omni-1.2-flash",
+     "context": 131072,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.5-transcribe",
+     "context": 98304,
+     "maxOutput": 32768
+    },
+    {
+     "id": "gemini-3.6-flash",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.7-flash",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.8-flash",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-4-argon",
+     "context": 1048576,
+     "maxOutput": 32768
+    },
+    {
+     "id": "gemini-4-carbon",
+     "context": 1048576,
+     "maxOutput": 32768
+    },
+    {
+     "id": "gemini-4-hydrogen",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-4-neon",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "lyria-3-clip-preview",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "lyria-3-pro-preview",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "lyria-3.5",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-3.1-flash-tts-preview",
+     "context": 8192,
+     "maxOutput": 16384
+    },
+    {
+     "id": "gemini-3.8-flash-tts",
+     "context": 8192,
+     "maxOutput": 16384
+    },
+    {
+     "id": "gemini-3.8-flash-lite-tts",
+     "context": 8192,
+     "maxOutput": 16384
+    },
+    {
+     "id": "gemini-robotics-er-2-preview",
+     "context": 131072,
+     "maxOutput": 65536
+    },
+    {
+     "id": "gemini-2.5-computer-use-preview-10-2025",
+     "context": 131072,
+     "maxOutput": 65536
+    },
+    {
+     "id": "antigravity-preview-05-2026",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "antigravity-preview-09-2026",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "antigravity-preview-latest",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "deep-research-max-preview-04-2026",
+     "context": 1048576,
+     "maxOutput": 65536
+    },
+    {
+     "id": "deep-research-preview-04-2026",
+     "context": 1048576,
+     "maxOutput": 65536
+    }
+   ],
+   "error": null
+  },
+  "groq": {
+   "status": 200,
+   "models": [
+    {
+     "id": "meta-llama/llama-prompt-guard-2-86m",
+     "owner": "Meta",
+     "context": 512,
+     "maxOutput": 512,
+     "active": true
+    },
+    {
+     "id": "openai/gpt-oss-safeguard-20b",
+     "owner": "OpenAI",
+     "context": 131072,
+     "maxOutput": 65536,
+     "active": true
+    },
+    {
+     "id": "meta-llama/llama-prompt-guard-2-22m",
+     "owner": "Meta",
+     "context": 512,
+     "maxOutput": 512,
+     "active": true
+    },
+    {
+     "id": "whisper-large-v3-turbo",
+     "owner": "OpenAI",
+     "context": 448,
+     "maxOutput": 448,
+     "active": true
+    },
+    {
+     "id": "whisper-large-v3",
+     "owner": "OpenAI",
+     "context": 448,
+     "maxOutput": 448,
+     "active": true
+    },
+    {
+     "id": "allam-2-7b",
+     "owner": "SDAIA",
+     "context": 4096,
+     "maxOutput": 4096,
+     "active": true
+    },
+    {
+     "id": "canopylabs/orpheus-arabic-saudi",
+     "owner": "Canopy Labs",
+     "context": 4000,
+     "maxOutput": 50000,
+     "active": true
+    },
+    {
+     "id": "qwen/qwen3.8-27b",
+     "owner": "Alibaba Cloud",
+     "context": 131072,
+     "maxOutput": 16384,
+     "active": true
+    },
+    {
+     "id": "openai/gpt-oss-20b",
+     "owner": "OpenAI",
+     "context": 131072,
+     "maxOutput": 65536,
+     "active": true
+    },
+    {
+     "id": "canopylabs/orpheus-v1-english",
+     "owner": "Canopy Labs",
+     "context": 4000,
+     "maxOutput": 50000,
+     "active": true
+    },
+    {
+     "id": "openai/gpt-oss-120b",
+     "owner": "OpenAI",
+     "context": 131072,
+     "maxOutput": 65536,
+     "active": true
+    }
+   ],
+   "error": null
+  },
+  "nvidia": {
+   "status": 200,
+   "models": [
+    {
+     "id": "bigcode/starcoder2-15b",
+     "owner": "bigcode"
+    },
+    {
+     "id": "fastino/gliner2-pii",
+     "owner": "fastino"
+    },
+    {
+     "id": "google/gemma-3-12b-it",
+     "owner": "google"
+    },
+    {
+     "id": "google/gemma-3-4b-it",
+     "owner": "google"
+    },
+    {
+     "id": "minimaxai/minimax-m3.1-flash",
+     "owner": "minimaxai"
+    },
+    {
+     "id": "mistralai/mistral-large-4-1t-a52b",
+     "owner": "mistralai"
+    },
+    {
+     "id": "moonshotai/kimi-k3.1-pro",
+     "owner": "moonshotai"
+    },
+    {
+     "id": "nvidia/ai-synthetic-video-detector",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/cosmos-reason2-8b",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/embed-qa-4",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/ising-calibration-1.5-31b",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/llama-3.1-nemoguard-8b-topic-control",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/llama-3.2-nv-embedqa-1b-v1",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/nemotron-3-ultra-550b-a55b",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/nemotron-3.5-bolt-e4b",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/nemotron-3.5-content-safety",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/nemotron-3.5-embed-1b",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/nemotron-3.5-embed-8b",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/nemotron-3.5-lightning-30b-a3b",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/nemotron-3.5-super-vl-120b-a12b",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/nv-embedqa-mistral-7b-v2",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/nvclip",
+     "owner": "nvidia"
+    },
+    {
+     "id": "nvidia/riva-translate-4b-instruct-v2",
+     "owner": "nvidia"
+    },
+    {
+     "id": "poolside/laguna-xs-2.1",
+     "owner": "poolside"
+    },
+    {
+     "id": "snowflake/arctic-embed-l",
+     "owner": "snowflake"
+    },
+    {
+     "id": "stepfun-ai/step-5-preview",
+     "owner": "stepfun-ai"
+    },
+    {
+     "id": "z-ai/glm-5.3-flash",
+     "owner": "z-ai"
+    }
+   ],
+   "error": null
+  }
+ }
+}

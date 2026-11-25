@@ -102,8 +102,11 @@ flowchart TD
   W --> D[Durable Object<br/>executor único]
   D --> DB[(D1 · história imutável)]
   D --> B[(D1 · orçamento de IA)]
-  D --> G[Gemini Flash Lite / Flash]
-  D --> K[Wikipedia · Wikidata]
+  D --> R{Roteador cognitivo<br/>categoria · qualidade · saúde · cota}
+  R --> G[Gemini]
+  R --> Q[Groq · gpt-oss / Qwen]
+  R -.homologação.-> N[NVIDIA trial]
+  D --> K[Wikipedia · Wikidata · Wikcionário · Open Library · arXiv]
 ```
 
 | Camada | Tecnologia |
@@ -112,8 +115,8 @@ flowchart TD
 | Borda | Cloudflare Workers (gateway leve, ≤ 10 ms de CPU) + Static Assets |
 | Execução | Durable Object SQLite `CognitionCoordinator`: ciclos, API e cognição em série |
 | Dados | Cloudflare D1: registros append-only, FTS5, vínculos entre memórias, métricas |
-| Cognição | `gemini-3.1-flash-lite` (principal) e `gemini-3-flash-preview` (reflexões), saída JSON validada com Zod |
-| Pesquisa | APIs públicas da Wikipedia e do Wikidata, origens fixas, só leitura |
+| Cognição | Multiprovedor: Gemini, Groq e NVIDIA. A NVIDIA (trial) é usada em produção por decisão explícita do responsável, para este projeto pessoal. Um roteador determinístico escolhe o modelo por categoria, usando um benchmark próprio, saúde recente (circuit breaker) e cota. Saída JSON validada com Zod; a mesma identidade vem sempre do estado persistente. Ver [COGNITIVE_ROUTING.md](COGNITIVE_ROUTING.md). |
+| Pesquisa | Wikipedia (pt/en), Wikidata, Wikcionário, Open Library e arXiv; origens fixas, só leitura |
 
 Mais detalhes em [ARCHITECTURE.md](ARCHITECTURE.md).
 
@@ -126,7 +129,9 @@ Tudo roda em planos **gratuitos**, sem faturamento habilitado.
 | Workers | 100 mil requests/dia, 10 ms de CPU | Gateway leve; páginas públicas atualizam a cada 3 min; cache de 30 s |
 | Durable Objects | 100 mil requests/dia, 13 mil GB-s/dia | Um executor por ambiente; ~400 GB-s/dia estimados |
 | D1 | 5 mi leituras e 100 mil escritas/dia; 500 MB por banco | ~130 escritas por decisão; teto lógico de 180 MB sem apagar história |
-| Gemini Free | cotas diárias por modelo | Reserva antes de cada chamada; tetos de 440 + 16/dia; backoff em erros |
+| Gemini Free | cotas diárias por modelo | Reserva antes de cada chamada; tetos internos por modelo |
+| Groq Free | 1K req e 200 mil tokens/dia por modelo | Orçamento por modelo com tokens/min e tokens/dia; ~55 decisões/dia por modelo |
+| NVIDIA trial | cerca de 40 req/min; termos de trial | Usada por decisão do responsável; limites internos de 20 req/min e 300 por dia por modelo |
 
 Se um limite é atingido, as operações param com erro e retomam depois. **Nunca há cobrança**, e a história é preservada. Projeções de armazenamento e medições em [ECONOMY.md](ECONOMY.md).
 

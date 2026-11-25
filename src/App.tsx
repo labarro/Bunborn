@@ -28,7 +28,9 @@ import {
   User,
   Volume2,
   X,
+  Cpu,
 } from 'lucide-react';
+import { ProvidersPanel } from './providers';
 import {
   categoryLabels,
   initialObjects,
@@ -69,7 +71,8 @@ type Tab =
   | 'Acervo'
   | 'Conversas'
   | 'Recursos'
-  | 'Monitoramento';
+  | 'Monitoramento'
+  | 'Provedores';
 const groups = [
   {
     title: 'A pequena existência',
@@ -105,6 +108,7 @@ const groups = [
       ['Conversas', MessageCircle],
       ['Recursos', Flower2],
       ['Monitoramento', Activity],
+      ['Provedores', Cpu],
     ],
   },
 ] as const;
@@ -281,7 +285,7 @@ export function App() {
   }, [auth, publicObs, refresh]);
   const load = useCallback(
     async (append = false, after = 0) => {
-      if ((!auth && !publicObs) || ['Habitat', 'Destaques', 'Diário de bordo'].includes(tab)) return;
+      if ((!auth && !publicObs) || ['Habitat', 'Destaques', 'Diário de bordo', 'Provedores'].includes(tab)) return;
       const latest = [
         'Projetos',
         'Interesses',
@@ -396,7 +400,7 @@ export function App() {
           {groups.map((group) => (
             <div className="nav-group" key={group.title}>
               <p>{group.title}</p>
-              {group.items.map(([name, Icon]) => (
+              {group.items.filter(([name]) => name !== 'Provedores' || auth).map(([name, Icon]) => (
                 <button
                   key={name}
                   className={tab === name ? 'nav-item active' : 'nav-item'}
@@ -664,7 +668,7 @@ export function App() {
             <section className="records-panel">
               <div className="records-toolbar">
                 <div className="section-heading">
-                  {['Destaques', 'Diário de bordo', 'Monitoramento'].includes(tab) ? null : <span className="record-count">{visible.length}</span>}
+                  {['Destaques', 'Diário de bordo', 'Monitoramento', 'Provedores'].includes(tab) ? null : <span className="record-count">{visible.length}</span>}
                   <h2>{tab === 'Linha do tempo' ? 'Registro completo' : tab}</h2>
                 </div>
                 <div className="filters">
@@ -692,7 +696,7 @@ export function App() {
                       />
                     </label>
                   ) : null}
-                  {['Destaques', 'Diário de bordo'].includes(tab) ? null : <button
+                  {['Destaques', 'Diário de bordo', 'Provedores'].includes(tab) ? null : <button
                     className="icon-button"
                     aria-label="Atualizar registros"
                     onClick={() => void perform(() => load())}
@@ -817,7 +821,8 @@ export function App() {
               ) : null}
               {tab === 'Destaques' ? <HighlightsPanel /> : null}
               {tab === 'Diário de bordo' ? <LogbookPanel /> : null}
-              {['Monitoramento', 'Destaques', 'Diário de bordo'].includes(tab) ? null : !visible.length ? (
+              {tab === 'Provedores' && auth ? <ProvidersPanel /> : null}
+              {['Monitoramento', 'Destaques', 'Diário de bordo', 'Provedores'].includes(tab) ? null : !visible.length ? (
                 <Empty
                   title={
                     tab === 'Diário'

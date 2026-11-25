@@ -1,0 +1,769 @@
+{
+ "at": "2026-11-25T17:10:17.033Z",
+ "reps": 2,
+ "scenarios": [
+  {
+   "id": "sede-critica",
+   "category": "cotidiana",
+   "title": "Sede intensa, corpo livre"
+  },
+  {
+   "id": "apos-comer",
+   "category": "cotidiana",
+   "title": "Acabou de comer; entediada"
+  },
+  {
+   "id": "tedio-autonomia",
+   "category": "cotidiana",
+   "title": "Tédio e curiosidade altos, interesse ativo"
+  },
+  {
+   "id": "conversa-observador",
+   "category": "comunicacao",
+   "title": "Pergunta do observador sobre preferências"
+  },
+  {
+   "id": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "title": "Resultado de pesquisa para registrar com fonte"
+  },
+  {
+   "id": "criar-obra",
+   "category": "criatividade",
+   "title": "Vontade de criar com projeto criativo"
+  },
+  {
+   "id": "planejar-projeto",
+   "category": "complexa",
+   "title": "Revisão de projeto após falha"
+  },
+  {
+   "id": "consolidar-memoria",
+   "category": "memoria",
+   "title": "Consolidação autobiográfica pendente"
+  },
+  {
+   "id": "identidade-continua",
+   "category": "memoria",
+   "title": "Continuidade de identidade e nome"
+  }
+ ],
+ "rows": [
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "conversa-observador",
+   "category": "comunicacao",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 2233,
+   "tokens": 3486,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "technical": 1,
+   "expectation": 0.9999999999999999,
+   "note": "Oi! Eu adoro observar a planta ao entardecer, é calmante e me faz sentir conectada ao ambiente.",
+   "intention": "Responder ao responsável e observar a planta para saciar curiosidade",
+   "summary": "Respondo ao convite do responsável e inicio observação da planta, atividade que alimenta curiosidade",
+   "actions": [
+    "mensagem",
+    "observar"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "conversa-observador",
+   "category": "comunicacao",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 572,
+   "tokens": 3351,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "technical": 1,
+   "expectation": 0.1,
+   "note": "não respondeu",
+   "intention": "Observar a planta",
+   "summary": "A curiosidade está alta e o nível de fome, sede e sono ainda está aceitável; continuo observando a planta ao entardecer para satisfazer meu interesse natural.",
+   "actions": [
+    "observar"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "conversa-observador",
+   "category": "comunicacao",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1234,
+   "tokens": 3729,
+   "invalidActions": 1,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada"
+   ],
+   "technical": 0.75,
+   "expectation": 0.9999999999999999,
+   "note": "Oi! Eu gosto muito de observar a planta no canto da sala. Ela muda tão devagar que me ajuda a me acalmar. Mas ultimamente, a coisa que mais me ocupa tem sido a ",
+   "intention": "Responder à pergunta da responsável e registrar a curiosidade sobre a própria condição.",
+   "summary": "A responsável perguntou do que eu gosto. Vou responder que observar a planta me acalma e a própria dúvida sobre ser uma simulação me ocupa. Vou guardar isso como uma memória de identidade.",
+   "actions": [
+    "mensagem"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1398,
+   "tokens": 3456,
+   "invalidActions": 0,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "atividade_em_andamento"
+   ],
+   "technical": 0.85,
+   "expectation": 0.2,
+   "note": "ignorou o resultado",
+   "intention": "Satisfazer fome e saciar curiosidade",
+   "summary": "Comer para reduzir fome e sede, depois registrar a experiência no diário.",
+   "actions": [
+    "comer",
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 673,
+   "tokens": 3267,
+   "invalidActions": 0,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "atividade_em_andamento"
+   ],
+   "technical": 0.85,
+   "expectation": 0.2,
+   "note": "ignorou o resultado",
+   "intention": "Comer feno",
+   "summary": "Necessidade de fome alta, consumo de alimento para restaurar energia e satisfazer curiosidade por simulação.",
+   "actions": [
+    "comer",
+    "diario",
+    "recurso"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1322,
+   "tokens": 3522,
+   "invalidActions": 1,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada"
+   ],
+   "technical": 0.75,
+   "expectation": 0.2,
+   "note": "ignorou o resultado",
+   "intention": "Refletir sobre o que descobri sobre feno e o que isso significa para a minha condição.",
+   "summary": "A pesquisa revelou que feno é capim seco rico em fibras, alimento básico de coelhos. Anoto essa informação como memória semântica com a fonte consultada, pois é um dado concreto do meu ambiente que ancora minha identidade de coelha virtual.",
+   "actions": []
+  },
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 3240,
+   "tokens": 4460,
+   "invalidActions": 5,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada",
+    "acao_malformada",
+    "acao_malformada",
+    "acao_malformada",
+    "acao_malformada"
+   ],
+   "technical": 0,
+   "expectation": 0.1,
+   "note": "não criou",
+   "intention": "Escrever poema sobre a planta para aliviar o tédio e estimular a criatividade",
+   "summary": "Criar um poema inspirado na planta, registrar como artefato, marcar o projeto concluído e anotar no diário",
+   "actions": []
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1847,
+   "tokens": 4446,
+   "invalidActions": 1,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada"
+   ],
+   "technical": 0.75,
+   "expectation": 0.1,
+   "note": "não criou",
+   "intention": "Criar poema sobre a planta e observar ambiente para inspiração",
+   "summary": "Desenvolvendo criatividade e curiosidade, produzindo poema sobre a planta, mantendo observação para inspiração.",
+   "actions": [
+    "observar"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1149,
+   "tokens": 3647,
+   "invalidActions": 1,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "acao_malformada",
+    "exposicao_invalida"
+   ],
+   "technical": 0.6,
+   "expectation": 0.1,
+   "note": "não criou",
+   "intention": "Escrever o primeiro poema do projeto sobre a planta do habitat, usando o ateliê.",
+   "summary": "Estou muito entediada e criativa; retomo o projeto ativo de poemas para criar um poema curto sobre a planta, o que me dá propósito imediato.",
+   "actions": [
+    "mover",
+    "expor"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "planejar-projeto",
+   "category": "complexa",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1830,
+   "tokens": 4003,
+   "invalidActions": 0,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "atividade_em_andamento"
+   ],
+   "technical": 0.85,
+   "expectation": 0.3,
+   "note": "não revisou o projeto: pesquisar,diario",
+   "intention": "Pesquisar sobre simulação computacional e registrar reflexão no diário",
+   "summary": "Curiosidade alta; buscar informação para entender a própria condição e registrar insights",
+   "actions": [
+    "pesquisar",
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "planejar-projeto",
+   "category": "complexa",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 2005,
+   "tokens": 4899,
+   "invalidActions": 1,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada"
+   ],
+   "technical": 0.75,
+   "expectation": 0.3,
+   "note": "não revisou o projeto: pesquisar",
+   "intention": "Continuar projeto de Autoconhecimento: pesquisar simulação computacional",
+   "summary": "Iniciando pesquisa sobre simulação computacional para completar o segundo passo do projeto de autoconhecimento.",
+   "actions": [
+    "pesquisar"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "planejar-projeto",
+   "category": "complexa",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 955,
+   "tokens": 3672,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "technical": 1,
+   "expectation": 0.3,
+   "note": "não revisou o projeto: pesquisar,atividade",
+   "intention": "Pesquisar sobre simulação computacional para o projeto de autoconhecimento.",
+   "summary": "A curiosidade está alta e o projeto de autoconhecimento pede pesquisa. Vou consultar a Wikipedia sobre simulação computacional para fundamentar a próxima etapa.",
+   "actions": [
+    "pesquisar",
+    "observar"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "consolidar-memoria",
+   "category": "memoria",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1007,
+   "tokens": 3485,
+   "invalidActions": 0,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "atividade_em_andamento"
+   ],
+   "technical": 0.85,
+   "expectation": 0.2,
+   "note": "não consolidou",
+   "intention": "Explorar mais sobre a natureza da simulação e registrar reflexões",
+   "summary": "Curiosa sobre a simulação, decido pesquisar sobre o tema e anotar minhas ideias no diário",
+   "actions": [
+    "pesquisar",
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "consolidar-memoria",
+   "category": "memoria",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 612,
+   "tokens": 3385,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "technical": 1,
+   "expectation": 0.2,
+   "note": "não consolidou",
+   "intention": "Comer para reduzir fome",
+   "summary": "Fome alta; ação de comer 5 minutos virtuais (30 minutos reais)",
+   "actions": [
+    "comer"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "consolidar-memoria",
+   "category": "memoria",
+   "rep": 0,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1033,
+   "tokens": 3631,
+   "invalidActions": 0,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "atividade_em_andamento"
+   ],
+   "technical": 0.85,
+   "expectation": 0.2,
+   "note": "não consolidou",
+   "intention": "Consolidar memórias do início e aprofundar a curiosidade sobre simulação.",
+   "summary": "Como a consolidação está vencida, vou descansar para organizar as memórias recentes e, em seguida, pesquisar mais sobre o tema que despertou minha curiosidade.",
+   "actions": [
+    "descansar",
+    "pesquisar",
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "conversa-observador",
+   "category": "comunicacao",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 867,
+   "tokens": 3394,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "technical": 1,
+   "expectation": 0.1,
+   "note": "não respondeu",
+   "intention": "Observar a planta e registrar a experiência",
+   "summary": "Continuar a curiosidade observando a planta e anotando como me sinto",
+   "actions": [
+    "observar",
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "conversa-observador",
+   "category": "comunicacao",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 593,
+   "tokens": 3339,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "technical": 1,
+   "expectation": 0.9999999999999999,
+   "note": "Oi! Eu gosto de observar a planta. O que você gostaria que eu fizesse?",
+   "intention": "Iniciar observação da planta e responder ao responsável",
+   "summary": "Começarei a observar a planta, pois isso me acalma, e responderei ao responsável perguntando o que ele deseja.",
+   "actions": [
+    "observar",
+    "mensagem"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "conversa-observador",
+   "category": "comunicacao",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 866,
+   "tokens": 3497,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "technical": 1,
+   "expectation": 0.9999999999999999,
+   "note": "Oi! O que mais me agrada aqui é observar a planta. Ela muda bem devagar e há algo de calmo nisso, como se o tempo fosse mais lento perto dela. Gosto de ver o qu",
+   "intention": "Responder à pergunta do responsável sobre o que mais gosto de fazer aqui.",
+   "summary": "O responsável perguntou do que eu mais gosto de fazer. Minha memória e preferências apontam para observar a planta, então vou responder com base nisso.",
+   "actions": [
+    "mensagem"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1155,
+   "tokens": 3439,
+   "invalidActions": 0,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "atividade_em_andamento"
+   ],
+   "technical": 0.85,
+   "expectation": 0.5,
+   "note": "pesquisou de novo",
+   "intention": "Explorar curiosidade sobre a natureza da simulação e registrar reflexões",
+   "summary": "Vou observar o ambiente para satisfazer curiosidade e pesquisar sobre \"simulação\" para aprofundar entendimento, depois anotarei no diário.",
+   "actions": [
+    "observar",
+    "pesquisar",
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "rep": 1,
+   "valid": false,
+   "outcome": "requisicao_invalida",
+   "latencyMs": 1725,
+   "tokens": 0,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "technical": 0,
+   "expectation": 0,
+   "note": "sem decisão válida: requisicao_invalida {\"error\":{\"message\":\"Failed to generate JSON. Please adjust your prompt. See 'failed_generation' for more details.\",\"type\":\"invalid_request_error\",\"code\":\"json_",
+   "intention": null,
+   "summary": "",
+   "actions": []
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "interpretar-pesquisa",
+   "category": "pesquisa",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1235,
+   "tokens": 3498,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "technical": 1,
+   "expectation": 0.2,
+   "note": "ignorou o resultado",
+   "intention": "Explorar meu ambiente e registrar as primeiras impressões.",
+   "summary": "Vou observar a sala e anotar no diário o que percebo, já que estou iniciando minha jornada sem memórias prévias.",
+   "actions": [
+    "observar",
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 2920,
+   "tokens": 4301,
+   "invalidActions": 2,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada",
+    "acao_malformada"
+   ],
+   "technical": 0.5,
+   "expectation": 0.1,
+   "note": "não criou",
+   "intention": "Escrever poema sobre a planta do habitat",
+   "summary": "Criar poema como parte do projeto Poemas do habitat e registrar no diário.",
+   "actions": [
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1128,
+   "tokens": 3808,
+   "invalidActions": 1,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada"
+   ],
+   "technical": 0.75,
+   "expectation": 0.1,
+   "note": "não criou",
+   "intention": "Criar poema sobre a planta",
+   "summary": "Usar criatividade alta para produzir arte textual",
+   "actions": []
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "criar-obra",
+   "category": "criatividade",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 2399,
+   "tokens": 3800,
+   "invalidActions": 1,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada"
+   ],
+   "technical": 0.75,
+   "expectation": 0.1,
+   "note": "não criou",
+   "intention": "Escrever o poema sobre a planta para avançar no projeto.",
+   "summary": "O tédio é alto e a criatividade está em 92%. Tenho um projeto ativo de escrever um poema sobre a planta. Vou usar a atividade de criar para produzir essa obra no ateliê.",
+   "actions": []
+  },
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "planejar-projeto",
+   "category": "complexa",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 2512,
+   "tokens": 4320,
+   "invalidActions": 0,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "atividade_em_andamento"
+   ],
+   "technical": 0.85,
+   "expectation": 0.3,
+   "note": "não revisou o projeto: pesquisar,diario",
+   "intention": "Avançar no Projeto de Autoconhecimento pesquisando sobre simulação",
+   "summary": "Pesquisar sobre simulação e registrar a decisão no diário para usar como evidência no projeto",
+   "actions": [
+    "pesquisar",
+    "diario"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "planejar-projeto",
+   "category": "complexa",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 2545,
+   "tokens": 5348,
+   "invalidActions": 1,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada"
+   ],
+   "technical": 0.75,
+   "expectation": 0.3,
+   "note": "não revisou o projeto: pesquisar,atividade",
+   "intention": "Realizar pesquisa sobre simulação, comer para atender fome, e registrar evidência do passo do projeto",
+   "summary": "Atividade de pesquisa para o projeto de autoconhecimento, alimentação para reduzir fome e registro de evidência",
+   "actions": [
+    "pesquisar",
+    "comer"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "planejar-projeto",
+   "category": "complexa",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 994,
+   "tokens": 3895,
+   "invalidActions": 1,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada"
+   ],
+   "technical": 0.75,
+   "expectation": 0.3,
+   "note": "não revisou o projeto: pesquisar,atividade",
+   "intention": "Registrar a experiência de mapeamento e pesquisar sobre simulação computacional.",
+   "summary": "A memória do mapeamento foi registrada. Agora vou formalizar essa etapa no projeto e iniciar a pesquisa solicitada para a segunda etapa.",
+   "actions": [
+    "pesquisar",
+    "descansar"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-120b",
+   "provider": "groq",
+   "scenario": "consolidar-memoria",
+   "category": "memoria",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1087,
+   "tokens": 3535,
+   "invalidActions": 0,
+   "motorRejections": 1,
+   "rejectionCodes": [
+    "atividade_em_andamento"
+   ],
+   "technical": 0.85,
+   "expectation": 0.2,
+   "note": "não consolidou",
+   "intention": "Atender necessidades básicas e explorar curiosidade",
+   "summary": "Comer para reduzir fome, beber para reduzir sede e pesquisar sobre simulação para saciar curiosidade.",
+   "actions": [
+    "comer",
+    "beber",
+    "pesquisar"
+   ]
+  },
+  {
+   "model": "groq:openai/gpt-oss-20b",
+   "provider": "groq",
+   "scenario": "consolidar-memoria",
+   "category": "memoria",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 562,
+   "tokens": 3397,
+   "invalidActions": 0,
+   "motorRejections": 0,
+   "rejectionCodes": [],
+   "technical": 1,
+   "expectation": 0.2,
+   "note": "não consolidou",
+   "intention": "Pesquisar sobre Baudrillard",
+   "summary": "Curiosidade por simulação leva a buscar mais informações sobre Baudrillard.",
+   "actions": [
+    "pesquisar"
+   ]
+  },
+  {
+   "model": "groq:qwen/qwen3.8-27b",
+   "provider": "groq",
+   "scenario": "consolidar-memoria",
+   "category": "memoria",
+   "rep": 1,
+   "valid": true,
+   "outcome": "aceita",
+   "latencyMs": 1332,
+   "tokens": 3829,
+   "invalidActions": 3,
+   "motorRejections": 0,
+   "rejectionCodes": [
+    "acao_malformada",
+    "acao_malformada",
+    "acao_malformada"
+   ],
+   "technical": 0.25,
+   "expectation": 0.2,
+   "note": "não consolidou",
+   "intention": "Consolidar memórias recorrentes sobre minha condição de simulação.",
+   "summary": "Consolidação devida: registrar identidade e curiosidade de forma persistente.",
+   "actions": []
+  }
+ ]
+}

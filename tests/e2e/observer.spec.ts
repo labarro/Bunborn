@@ -33,6 +33,8 @@ test.describe.serial('Disposable local Worker + D1 + browser', () => {
     for (const path of ['/api/settings', '/api/backup/begin', '/api/birth/prepare', '/api/tick', '/api/resource'])
       expect((await request.post(path, { headers: { origin }, data: {} })).status(), path).toBe(401);
     expect((await request.get('/api/export')).status()).toBe(401);
+    expect((await request.get('/api/ai')).status()).toBe(401);
+    expect((await request.post('/api/ai/config', { headers: { origin }, data: {} })).status()).toBe(401);
     expect((await request.post('/api/login', { data: { secret: 'wrong' } })).status()).toBe(403);
     const login = await request.post('/api/login', {
       headers: { origin },
@@ -40,6 +42,16 @@ test.describe.serial('Disposable local Worker + D1 + browser', () => {
     });
     expect(login.status()).toBe(200);
     expect(login.headers()['set-cookie']).toContain('HttpOnly');
+    // Multiprovider admin: responsible observer only; never returns keys.
+    const ai = await request.get('/api/ai');
+    expect(ai.status()).toBe(200);
+    const overview = await ai.json();
+    expect(overview.providers.map((p: { id: string }) => p.id)).toEqual(['gemini', 'groq', 'nvidia']);
+    expect(JSON.stringify(overview)).not.toMatch(/gsk_|nvapi-|AIza|fixture-observer|fixture-session/);
+    const config = { ...overview.config, disabledModels: ['groq:openai/gpt-oss-20b'] };
+    expect((await request.post('/api/ai/config', { headers: { origin }, data: config })).status()).toBe(200);
+    expect((await request.post('/api/ai/config', { headers: { origin }, data: { ...config, disabledModels: ['inexistente:x'] } })).status()).toBe(409);
+    expect((await (await request.get('/api/ai')).json()).config.disabledModels).toEqual(['groq:openai/gpt-oss-20b']);
     const birth = await request.post('/api/birth', { headers: { origin }, data: {} });
     expect(birth.status()).toBe(409);
     expect((await birth.json()).error).toBe('configuracao_pendente');
