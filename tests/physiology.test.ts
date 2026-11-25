@@ -80,8 +80,8 @@ describe('physiology (deterministic body rules)', () => {
 describe('recovery from provider failures', () => {
   it('transient overload retries within 20 minutes instead of growing to hours', () => {
     const delays = [1, 2, 3, 4, 5, 6, 7].map((f) => retryDelay('gemini_http_503', 300000, f) / 60000);
-    expect(delays).toEqual([5, 10, 20, 20, 20, 20, 20]);
-    expect(retryDelay('gemini_fetch_timeouterror', 300000, 7)).toBe(1200000);
+    expect(delays).toEqual([5, 10, 10, 10, 10, 10, 10]);
+    expect(retryDelay('gemini_fetch_timeouterror', 300000, 7)).toBe(600000);
     expect(retryDelay('orcamento_suspenso', 3600000, 1)).toBe(3600000);
   });
   it('a 503 streak no longer leaves the creature still for hours', async () => {
@@ -91,7 +91,7 @@ describe('recovery from provider failures', () => {
     const failing: CognitionProvider = { async decide() { throw new CognitiveError('gemini_http_503', 300000); } };
     await tick(env, t0 + 1000, failing);
     const state = (await store.state())!;
-    expect(state.nextDecisionAt - (t0 + 1000)).toBeLessThanOrEqual(1200000);
+    expect(state.nextDecisionAt - (t0 + 1000)).toBeLessThanOrEqual(600000);
   });
 });
 
@@ -271,5 +271,32 @@ describe('autonomy: research is always available', () => {
     await tick(env, t0 + 1000, fixture([{ type: 'pesquisar', source: 'wikipedia', query: 'o que reduz a fome' }, { type: 'criar', id: 'x', title: 'x', motivation: 'x', projectId: null, artifact: { format: 'texto', content: 'x' } }]), fetcher);
     expect((await store.records('pesquisa')).length).toBe(1);
     expect((await store.records('erro_ferramenta')).map((r) => r.data.code)).toEqual(['corpo_sem_condicoes']);
+  });
+});
+
+describe('principal model overloaded (review 25/11 16:15Z)', () => {
+  const env2 = (e: Env) => ({ ...e, FLASH_DAILY_LIMIT: '12' }) as Env;
+  it('the same mind continues on Flash in the same cycle when Lite returns 503', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    await seed(store, (s) => { s.activity.until = 0; }, t0);
+    const seen: boolean[] = [];
+    const provider: CognitionProvider = { async decide(_c, complex) { seen.push(complex); if (!complex) throw new CognitiveError('gemini_http_503', 300000); return { decision: { intention: 'Fixture', summary: 'teste', nextMinutes: 5, complexNext: false, actions: [] }, model: 'gemini-3-flash-preview' }; } };
+    const result = await tick(env2(env), t0 + 1000, provider);
+    expect(seen).toEqual([false, true]);
+    expect(result.status).toBe('decisao_registrada');
+    expect((await store.records('orcamento'))[0].content).toContain('Flash');
+  });
+  it('keeps the Flash reserve: without budget the failure is recorded as before', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    await seed(store, (s) => { s.activity.until = 0; }, t0);
+    const { quotaDay } = await import('../shared/domain');
+    await store.db.prepare('INSERT INTO budgets(day,model,calls,tokens) VALUES(?,?,10,0)').bind(quotaDay(Date.now()), 'gemini-3-flash-preview').run();
+    const seen: boolean[] = [];
+    const provider: CognitionProvider = { async decide(_c, complex) { seen.push(complex); throw new CognitiveError('gemini_http_503', 300000); } };
+    const result = await tick(env2(env), t0 + 1000, provider);
+    expect(seen).toEqual([false]);
+    expect(result.status).toBe('suspenso');
   });
 });

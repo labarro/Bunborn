@@ -463,7 +463,7 @@ export async function tick(
     const perceptions = (await store.latest('percepcao', 6)).map((r) => ({ id: r.id, content: r.content }));
     let complex =
       (s.complexNext || (s.decisions > 0 && s.decisions % 24 === 0)) && s.decisions > 0;
-    if(complex){const today=quotaDay(Date.now());const local=await store.usage() as {day:string;model:string;calls:number}[];const global=env.BUDGET_DB?await new Store(env.BUDGET_DB).usage() as typeof local:local;const used=(rows:typeof local)=>rows.find(r=>r.day===today&&r.model===env.MODEL_FLASH)?.calls??0;if(used(local)>=Math.min(16,Number(env.FLASH_DAILY_LIMIT))||used(global)>=Math.min(16,Number(env.FLASH_GLOBAL_LIMIT??16))){complex=false;records.push(entry(s,'orcamento','Revisão complexa adiada por cota; continuidade com o cérebro principal.',{model:env.MODEL_LITE},{origin:'controle_orcamento'}));}}
+    if(complex){if(!(await flashAvailable(env,store,0))){complex=false;records.push(entry(s,'orcamento','Revisão complexa adiada por cota; continuidade com o cérebro principal.',{model:env.MODEL_LITE},{origin:'controle_orcamento'}));}}
     const context = {
       facts: {
         simulation: true,
@@ -532,11 +532,20 @@ export async function tick(
       })),
     };
     try {
-      const { decision, model, invalidActions = [] } = await (provider ?? new GeminiProvider(env, store)).decide(
-        packContext(context),
-        complex,
-        now,
-      );
+      const brain = provider ?? new GeminiProvider(env, store);
+      const packed = packContext(context);
+      let reply: Awaited<ReturnType<CognitionProvider['decide']>>;
+      try {
+        reply = await brain.decide(packed, complex, now);
+      } catch (first) {
+        // When the principal model is overloaded (503/timeout), the same mind continues on the
+        // other free Gemini model in this cycle, keeping a reserve for complex reviews. Before
+        // this, a 3 h Lite outage (25/11 12:58Z) left the creature unable to think.
+        if (complex || !(first instanceof CognitiveError) || !/^gemini_(http_5\d\d|fetch_)/.test(first.code) || !(await flashAvailable(env, store, 3))) throw first;
+        records.push(entry(s, 'orcamento', 'Cérebro principal sobrecarregado; este ciclo foi atendido pelo modelo Flash.', { failed: first.code, model: env.MODEL_FLASH }, { origin: 'controle_orcamento' }));
+        reply = await brain.decide(packed, true, now);
+      }
+      const { decision, model, invalidActions = [] } = reply;
       s.lastModel = model;
       s.activity.intention = decision.intention;
       records.push(
@@ -738,12 +747,22 @@ export async function tick(
     await store.release(token);
   }
 }
-// Overload (503), timeouts and malformed replies are transient: retry in 5, 10, 20, 20... min.
+// Flash calls left today (local and shared ledger), keeping `reserve` for complex reviews.
+async function flashAvailable(env: Env, store: Store, reserve: number) {
+  const today = quotaDay(Date.now());
+  const local = (await store.usage()) as { day: string; model: string; calls: number }[];
+  const global = env.BUDGET_DB ? ((await new Store(env.BUDGET_DB).usage()) as typeof local) : local;
+  const used = (rows: typeof local) => rows.find((r) => r.day === today && r.model === env.MODEL_FLASH)?.calls ?? 0;
+  // The provider allows at most 12 Flash calls/day without pending messages.
+  const cap = Math.min(12, Number(env.FLASH_DAILY_LIMIT ?? 0), Number(env.FLASH_GLOBAL_LIMIT ?? 16));
+  return used(local) < cap - reserve && used(global) < cap - reserve;
+}
+// Overload (503), timeouts and malformed replies are transient: retry in 5, then every 10 min.
 // Budget/configuration problems keep their own longer delay. Before this, 7 consecutive 503s
 // grew the wait to 5h20 and the creature stood still for hours.
 export function retryDelay(code: string, retryMs: number, failures: number) {
   const transient = /^gemini_(http_(5\d\d|429)|fetch_|response_)|^resposta_incompleta|^falha/.test(code);
-  if (transient) return Math.min(1200000, 300000 * 2 ** Math.min(Math.max(0, failures - 1), 2));
+  if (transient) return Math.min(600000, 300000 * 2 ** Math.min(Math.max(0, failures - 1), 1));
   return Math.min(21600000, Math.max(retryMs, 300000 * 2 ** Math.min(failures - 1, 6)));
 }
 const bodyText: Record<string, string> = {

@@ -82,6 +82,16 @@ Regras físicas novas:
 - Uma atividade física escolhida substitui uma atividade passiva quando a fila está vazia.
 - A saúde se recupera 3 por hora virtual quando o corpo está bem.
 
+## Modelo principal sobrecarregado (25/11, 16:15Z)
+
+Em 25/11, das 12:58Z até depois das 16h, o Gemini Flash Lite respondeu só 503 ("high demand"), e Lumi ficou mais de 3 h sem pensar. Agora, quando o Lite falha por sobrecarga (503) ou timeout, o mesmo ciclo é atendido pelo Gemini Flash, que é a mesma criatura, o mesmo provedor e a mesma chave gratuita. Isso acontece só se sobrarem chamadas de Flash no dia, com 3 reservadas para revisões complexas (no máximo 12 por dia sem mensagens). A troca fica registrada (`orcamento`: "Cérebro principal sobrecarregado…"). Falhas temporárias tentam de novo em 5 min e depois a cada 10 min.
+
+Comportamento observado entre 05:44Z e 12:53Z, sem nenhuma instrução sobre o corpo:
+- aprendeu pelas recusas e percepções a comer só com fome, beber com sede e dormir com sono;
+- a saúde subiu de 10 para 100;
+- pesquisou sobre simulação e escreveu 7 entradas no diário;
+- avançou o próprio projeto de autoconhecimento.
+
 ## Autonomia para pesquisar (25/11)
 
 Pesquisar e recordar ficam disponíveis em qualquer estado do corpo, mas não durante uma atividade física em andamento nem durante o sono. Antes, fome, sede ou cansaço extremos bloqueavam a pesquisa justamente quando ela mais precisava descobrir o que fazer. O prompt diz que ela é autônoma: diante de qualquer dúvida, sobre o mundo, sobre si, sobre o corpo ou sobre como fazer algo, pode pesquisar ou recordar. Novas sensações em `body`: suja, muito entediada, frustrada.
