@@ -66,6 +66,9 @@ export async function birth(env: Env, now = Date.now()) {
     await store.release(token);
   }
 }
+// Passive voluntary activities give way to a concrete tool use (searching, writing, creating,
+// moving furniture); the replacement is recorded as an interruption, never hidden.
+const passive = ['observar', 'descansar', 'organizar', 'diario'];
 function activate(s: State, kind: string, minutes = 30,allowQueue=false) {
   const target = targetFor[kind] ?? 'mesa';
   const object = s.objects.find((o) => o.id === target);
@@ -74,6 +77,7 @@ function activate(s: State, kind: string, minutes = 30,allowQueue=false) {
   if (!route.length) throw new Error('objeto_inacessivel');
   if(s.activity.until>s.virtualMinutes){
     if(s.activity.kind===kind&&s.activity.target===target)return 'continuada';
+    if(!allowQueue&&passive.includes(s.activity.kind)&&!s.activity.involuntary){s.position=route[route.length-1];s.activity={kind,until:s.virtualMinutes+minutes,target,intention:s.activity.intention};return 'substituida';}
     if(!allowQueue)throw new ToolError('atividade_em_andamento',{current:s.activity.kind,currentStation:s.activity.target,requiredStation:target,remainingVirtualMinutes:Math.round(s.activity.until-s.virtualMinutes),queued:(s.queue??[]).map(q=>q.kind),options:'aguardar o término, ou usar interromper antes'});
     s.queue??=[];if(s.queue.some(a=>a.kind===kind&&a.target===target))return 'ja_agendada';if(s.queue.length>=4)throw new Error('fila_de_atividades_cheia');const tail=s.queue[s.queue.length-1]??s.activity;s.queue.push({kind,until:tail.until+minutes,target,intention:s.activity.intention});return 'agendada';
   }
@@ -98,6 +102,17 @@ async function applyAction(
     const r = entry(s, kind, content, data, { origin: 'criatura', ...opts });
     out.push(r);
     return r;
+  };
+  // Body limits (physiology, not preference): an exhausted or starving body cannot do
+  // demanding work, and involuntary sleep cannot be cut short while still exhausted.
+  const n = s.needs;
+  if (['pesquisar', 'criar', 'projeto', 'relacionar', 'mover', 'organizar'].includes(a.type === 'atividade' ? a.activity : a.type) && (n.energia <= 15 || n.sono >= 95 || n.fome >= 95 || n.sede >= 95))
+    throw new ToolError('corpo_sem_condicoes', { needs: { fome: Math.round(n.fome), sede: Math.round(n.sede), sono: Math.round(n.sono), energia: Math.round(n.energia), saude: Math.round(n.saude) }, limits: 'energia > 15, sono < 95, fome < 95, sede < 95', options: 'comer, beber, dormir ou descansar recuperam o corpo' });
+  if (a.type === 'interromper' && s.activity.involuntary && s.activity.until > s.virtualMinutes && n.sono > 60)
+    throw new ToolError('sono_involuntario', { sono: Math.round(n.sono), remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes) });
+  const start = (kind: string, minutes: number) => {
+    const previous = s.activity;
+    if (activate(s, kind, minutes) === 'substituida') record('atividade_interrompida', `Deixou de ${previous.kind} para ${kind}.`, { activity: previous, replacedBy: kind, automatic: true });
   };
   let evidenceRecords:RecordEntry[]=[];
   if('evidence' in a){evidenceRecords=await store.resolveEvidence(a.evidence);a.evidence=evidenceRecords.map(r=>r.id);}
@@ -141,7 +156,7 @@ async function applyAction(
       break;
     }
     case 'pesquisar': {
-      activate(s, 'pesquisar', 30);
+      start('pesquisar', 30);
       const cached = (await store.latest('pesquisa', 40)).find(
         (r) => r.data.query === a.query && r.data.source === a.source && now - r.realAt < 86400000,
       );
@@ -174,7 +189,7 @@ async function applyAction(
       break;
     }
     case 'diario':
-      activate(s, 'diario', 20);
+      start('diario', 20);
       record('diario', a.content);
       break;
     case 'relacionar': {
@@ -225,6 +240,8 @@ async function applyAction(
     case 'identidade': {
       if (a.field === 'nome' && s.identity.name && s.identity.name !== a.value)
         throw new Error('nome_permanente');
+      if (s.identity.traits[a.field]?.value === a.value)
+        throw new ToolError('ja_registrado', { field: a.field, value: a.value, since: 'identidade versão ' + s.identity.traits[a.field].version, note: 'este valor já faz parte da sua identidade; não é preciso registrar de novo' });
       if (a.field === 'aparencia' && !/^#[0-9a-fA-F]{6}$/.test(a.value))
         throw new Error('aparencia_invalida');
       const previous = s.identity.traits[a.field];
@@ -232,7 +249,7 @@ async function applyAction(
       if (versions.some((v) => v.data.field === a.field && now - v.realAt < 3600000))
         throw new Error('mudanca_identidade_muito_rapida');
       if (previous && !a.evidence.some((id) => !previous.evidence.includes(id)))
-        throw new Error('nova_evidencia_necessaria');
+        throw new ToolError('nova_evidencia_necessaria', { field: a.field, current: previous.value, alreadyCited: previous.evidence, note: 'para mudar este traço, cite ao menos um registro novo que motive a mudança' });
       s.identity.version++;
       s.identity.traits[a.field] = {
         value: a.value,
@@ -298,11 +315,13 @@ async function applyAction(
       const produced = artifacts.filter((r) => entityId('projeto',String(r.data.projectId??'')) === projectId);
       if (a.completed.some((i) => i >= a.steps.length)) throw new Error('etapa_invalida');
       const oldCompleted = (prior?.data.completed ?? []) as number[];
+      const workKinds = ['artefato', 'diario', 'memoria', 'pesquisa', 'leitura', 'conceito', 'relacao', 'habitat', 'atividade_concluida'];
+      const priorEvidence = (prior?.data.evidence ?? []) as string[];
       if (
         a.completed.some((i) => !oldCompleted.includes(i)) &&
-        !evidenceRecords.some((r) => r.kind === 'artefato' && produced.some((p) => p.entityId === r.entityId))
+        !evidenceRecords.some((r) => workKinds.includes(r.kind) && !priorEvidence.includes(r.id) && (!prior || r.realAt >= prior.realAt))
       )
-        throw new Error('etapa_sem_artefato');
+        throw new ToolError('etapa_sem_evidencia', { newlyCompleted: a.completed.filter((i) => !oldCompleted.includes(i)).map((i) => a.steps[i]), accepted: workKinds, note: 'cite em evidence um registro do seu trabalho feito depois da última versão do projeto (diário, memória, pesquisa, obra, atividade concluída...)' });
       if (
         a.status === 'concluido' &&
         (new Set(a.completed).size !== a.steps.length || !produced.length)
@@ -328,7 +347,7 @@ async function applyAction(
       )
         throw new Error('pixels_invalidos');
       const prior = await existingEntity(store, 'artefato', a.id);
-      activate(s, 'criar', 40);
+      start('criar', 40);
       record(
         'artefato',
         a.title,
@@ -354,7 +373,7 @@ async function applyAction(
       if (!validLayout(objects, s.position)) throw new Error('posicao_bloqueia_acesso');
       s.objects = objects;
       record('habitat', `Reposicionou ${object.label}.`, { object });
-      activate(s, 'organizar', 20);
+      start('organizar', 20);
       break;
     }
     case 'expor': {
@@ -392,8 +411,9 @@ export async function tick(
     if (!original) return { status: 'aguardando_nascimento' };
     if (original.paused) return { status: 'pausado' };
     if (!(await store.capacity())) return { status: 'armazenamento_suspenso' };
-    const { state: s, gap,completed } = reconcile(original, now);
+    const { state: s, gap,completed,events } = reconcile(original, now);
     const records: RecordEntry[] = [];
+    for (const event of events) records.push(bodyEvent(s, event));
     for(const activity of completed)records.push(entry(s,'atividade_concluida',`Atividade concluída: ${activity.kind}.`,{activity},{virtualAt:activity.until,origin:'simulacao_deterministica'}));
     if (gap)
       records.push(
@@ -434,6 +454,7 @@ export async function tick(
       },
       identity: s.identity,
       needs: s.needs,
+      body: bodyAlerts(s),
       motives: s.motives,
       activity: s.activity,
       queuedActivities:s.queue??[],
@@ -662,15 +683,7 @@ export async function tick(
     } catch (e) {
       s.failures++;
       const code = safeError(e);
-      s.nextDecisionAt =
-        now +
-        Math.min(
-          21600000,
-          Math.max(
-            e instanceof CognitiveError ? e.retryMs : 300000,
-            300000 * 2 ** Math.min(s.failures - 1, 6),
-          ),
-        );
+      s.nextDecisionAt = now + retryDelay(code, e instanceof CognitiveError ? e.retryMs : 300000, s.failures);
       records.push(
         entry(s, 'erro', 'Operações cognitivas suspensas temporariamente.', {
           code,
@@ -679,7 +692,7 @@ export async function tick(
         }),
       );
       // Protective deterministic homeostasis only; explicitly recorded as a rule, not a choice.
-      if (s.needs.energia < 15 || s.needs.sono > 95) {
+      if ((s.needs.energia < 15 || s.needs.sono > 95) && !(s.activity.kind === 'dormir' && s.activity.until > s.virtualMinutes)) {
         activate(s, 'descansar', 120);
         records.push(
           entry(
@@ -695,6 +708,31 @@ export async function tick(
   } finally {
     await store.release(token);
   }
+}
+// Overload (503), timeouts and malformed replies are transient: retry in 5, 10, 20, 20... min.
+// Budget/configuration problems keep their own longer delay. Before this, 7 consecutive 503s
+// grew the wait to 5h20 and the creature stood still for hours.
+export function retryDelay(code: string, retryMs: number, failures: number) {
+  const transient = /^gemini_(http_(5\d\d|429)|fetch_|response_)|^resposta_incompleta|^falha/.test(code);
+  if (transient) return Math.min(1200000, 300000 * 2 ** Math.min(Math.max(0, failures - 1), 2));
+  return Math.min(21600000, Math.max(retryMs, 300000 * 2 ** Math.min(failures - 1, 6)));
+}
+function bodyEvent(s: State, event: string): RecordEntry {
+  return entry(s, 'corpo', 'Adormeceu de exaustão: o corpo parou (regra fisiológica, não decisão).', { event, needs: { ...s.needs }, activity: s.activity }, { origin: 'simulacao_deterministica' });
+}
+// Plain facts about the body for the model; no instruction about what to do.
+export function bodyAlerts(s: State): string[] {
+  const n = s.needs, out: string[] = [];
+  if (n.fome >= 90) out.push('fome crítica: a saúde está caindo');
+  else if (n.fome >= 70) out.push('com fome');
+  if (n.sede >= 90) out.push('sede crítica: a saúde está caindo');
+  else if (n.sede >= 70) out.push('com sede');
+  if (n.sono >= 95) out.push('exausta de sono: pode adormecer sozinha a qualquer momento');
+  else if (n.sono >= 75) out.push('com sono');
+  if (n.energia <= 15) out.push('sem energia para trabalho exigente');
+  if (n.saude < 50) out.push('saúde baixa: a energia se esgota mais rápido');
+  if (s.activity.involuntary && s.activity.until > s.virtualMinutes) out.push('dormindo por exaustão');
+  return out;
 }
 // Server-imposed pacing to fit free quotas; production is fixed at five real minutes.
 function decisionFloor(env: Env) {
@@ -749,9 +787,10 @@ export async function administer(
   try {
     const current = await store.state();
     if (!current) throw new CognitiveError('nao_nasceu');
-    const { state: s, completed } = reconcile(current, now);
+    const { state: s, completed, events } = reconcile(current, now);
     // Activities finishing inside this interval are recorded, never silently dropped.
     const records = [
+      ...events.map((event) => bodyEvent(s, event)),
       ...completed.map((activity) => entry(s, 'atividade_concluida', `Atividade concluída: ${activity.kind}.`, { activity }, { virtualAt: activity.until, origin: 'simulacao_deterministica' })),
       ...(await mutate(s, store)),
     ];

@@ -62,6 +62,7 @@ export const artifactSchema = z.discriminatedUnion('format', [
     })
     .strict(),
 ]);
+export const researchSources = ['wikipedia', 'wikipedia_en', 'wikidata', 'wikcionario', 'openlibrary', 'arxiv'] as const;
 export const actionSchema = z.discriminatedUnion('type', [
   z.object({type:z.literal('interromper'),reason:short}).strict(),
   z.object({ type: z.literal('ler_obra'), id: short }).strict(),
@@ -78,13 +79,13 @@ export const actionSchema = z.discriminatedUnion('type', [
         'observar',
         'organizar',
       ]),
-      minutes: z.number().int().min(5).max(120),
+      minutes: z.number().int().min(5).max(480),
     })
     .strict(),
   z
     .object({
       type: z.literal('pesquisar'),
-      source: z.enum(['wikipedia', 'wikidata']),
+      source: z.enum(researchSources),
       query: short,
     })
     .strict(),
@@ -182,12 +183,51 @@ export type Decision = z.infer<typeof decisionSchema>;
 export type InvalidAction = { type: string; issues: { path: string; message: string }[] };
 // One malformed action must not discard the whole decision: valid actions run, malformed
 // ones become explained rejections the creature sees in its next cycle.
+const activityKinds = ['comer', 'beber', 'dormir', 'higiene', 'descansar', 'observar', 'organizar'];
+// Purely formal tolerance: an over-long text is trimmed to the documented limit and an activity
+// written as its own type ({type:'observar'}) is read as {type:'atividade'}. Content is never
+// invented; anything else that is malformed is still rejected and explained.
+function trimTooBig(value: unknown, issues: z.ZodIssue[]): unknown {
+  const copy = structuredClone(value) as Record<string, unknown>;
+  for (const issue of issues) {
+    const max = (issue as { maximum?: unknown }).maximum;
+    if (issue.code !== 'too_big' || typeof max !== 'number' || !issue.path.length) return null;
+    let parent: Record<string, unknown> | undefined = copy;
+    for (const key of issue.path.slice(0, -1)) parent = parent?.[key as string] as Record<string, unknown> | undefined;
+    const last = issue.path[issue.path.length - 1] as string;
+    if (!parent || typeof parent[last] !== 'string') return null;
+    parent[last] = (parent[last] as string).slice(0, max);
+  }
+  return copy;
+}
+function normalizeAction(action: unknown): unknown {
+  const a = action as Record<string, unknown> | null;
+  if (a && typeof a === 'object' && typeof a.type === 'string' && activityKinds.includes(a.type)) {
+    const minutes = Number(a.minutes ?? a.duration ?? 30);
+    return { type: 'atividade', activity: a.type, minutes: Math.max(5, Math.min(480, Math.round(Number.isFinite(minutes) ? minutes : 30))) };
+  }
+  return action;
+}
 export function parseDecision(raw: unknown): { decision: Decision; invalidActions: InvalidAction[] } {
-  const envelope = decisionSchema.extend({ actions: z.array(z.unknown()).max(3) }).parse(raw);
+  const loose = decisionSchema.extend({ actions: z.array(z.unknown()) });
+  let candidate = raw;
+  const first = loose.safeParse(candidate);
+  if (!first.success) {
+    const trimmed = trimTooBig(candidate, first.error.issues);
+    if (trimmed) candidate = trimmed;
+  }
+  const envelope = loose.parse(candidate);
   const valid: z.infer<typeof actionSchema>[] = [];
   const invalidActions: InvalidAction[] = [];
-  for (const action of envelope.actions) {
-    const result = actionSchema.safeParse(action);
+  for (const extra of envelope.actions.slice(3))
+    invalidActions.push({ type: String((extra as { type?: unknown } | null)?.type ?? 'desconhecida').slice(0, 40), issues: [{ path: 'actions', message: 'no máximo 3 ações por decisão; esta não foi executada' }] });
+  for (const original of envelope.actions.slice(0, 3)) {
+    const action = normalizeAction(original);
+    let result = actionSchema.safeParse(action);
+    if (!result.success) {
+      const trimmed = trimTooBig(action, result.error.issues);
+      if (trimmed) result = actionSchema.safeParse(trimmed);
+    }
     if (result.success) valid.push(result.data);
     else
       invalidActions.push({
@@ -227,7 +267,7 @@ export type State = {
   };
   needs: Record<string, number>;
   motives: Record<string, number>;
-  activity: { kind: string; until: number; target: string; intention: string };
+  activity: { kind: string; until: number; target: string; intention: string; involuntary?: boolean };
   queue?:{kind:string;until:number;target:string;intention:string}[];
   lastCompleted?:{kind:string;until:number;target:string;intention:string};
   position: Point;
@@ -305,48 +345,70 @@ export function born(now: number): State {
   };
 }
 export const clamp = (n: number, min = 0, max = 100) => Math.max(min, Math.min(max, n));
-export function reconcile(input: State, now: number): { state: State; gap: boolean;completed:State['activity'][] } {
+// Physiology, per virtual hour. Needs are body rules (not choices): they rise while awake,
+// activities restore them, and neglect has consequences (energy drain, health loss and,
+// at exhaustion, involuntary sleep). Rates are sized so the 6x clock and ~15 min decision
+// cadence make needs matter: hungry every ~12-16 virtual hours, sleepy after ~24.
+export const physiology = {
+  awake: { fome: 5, sede: 6, sono: 3.5, energia: -3, higiene: -1.5 },
+  asleep: { fome: 2.5, sede: 3 },
+  restore: { comer: { fome: -300 }, beber: { sede: -400 }, higiene: { higiene: 300 }, dormir: { sono: -15, energia: 12 }, descansar: { energia: 15, sono: -3 } },
+  hungryDrain: 3,
+  exhaustion: { sono: 100, energia: 5, sleepMinutes: 240 },
+} as const;
+export const energyCap = (sono: number) => clamp(100 - Math.max(0, sono - 60) * 2);
+export function reconcile(input: State, now: number): { state: State; gap: boolean;completed:State['activity'][];events:string[] } {
   const s = structuredClone(input);
   const elapsed = Math.max(0, (now - s.updatedAt) / 60000);
   s.updatedAt = Math.max(now, s.updatedAt);
-  if (s.paused) return { state: s, gap: false,completed:[] };
+  if (s.paused) return { state: s, gap: false,completed:[],events:[] };
   const vm = elapsed * s.multiplier;
   s.virtualMinutes += vm;
-  // Homeostasis is rule-based, not an invented cognitive activity. Cap offline degradation.
+  // Cap offline degradation; activity overlaps are scaled by the same factor.
   const hours = Math.min(vm / 60, 12);
-  const n = s.needs;
-  n.fome = clamp(n.fome + hours * 2);
-  n.sede = clamp(n.sede + hours * 2.5);
-  n.sono = clamp(n.sono + hours * 2);
-  n.energia = clamp(n.energia - hours * 1.4, 10);
-  n.higiene = clamp(n.higiene - hours * 0.8, 10);
-  n.conforto = clamp(100 - (n.fome + n.sede + n.sono) / 4, 15);
-  n.saude = clamp(n.saude + (n.conforto > 40 ? hours * 0.8 : -hours), 30);
-  s.motives.tedio = clamp(s.motives.tedio + hours);
-  s.motives.interacao = clamp(s.motives.interacao + hours * 0.3);
+  const scale = vm > 0 ? hours / (vm / 60) : 0;
+  const over: Record<string, number> = {};
   const completed:State['activity'][]=[];let start=input.virtualMinutes;
   for(const activity of [input.activity,...(input.queue??[])]){
-  if (activity.until > input.virtualMinutes) {
-    const overlap =
-      Math.max(0, Math.min(s.virtualMinutes, activity.until) - Math.max(start,input.virtualMinutes)) / 60;
-    const k = activity.kind;
-    if (k === 'dormir') {
-      n.sono = clamp(n.sono - overlap * 40);
-      n.energia = clamp(n.energia + overlap * 30);
+    if (activity.until > input.virtualMinutes) {
+      const overlap = Math.max(0, Math.min(s.virtualMinutes, activity.until) - Math.max(start,input.virtualMinutes)) / 60;
+      over[activity.kind] = (over[activity.kind] ?? 0) + overlap * scale;
     }
-    if (k === 'comer') n.fome = clamp(n.fome - overlap * 90);
-    if (k === 'beber') n.sede = clamp(n.sede - overlap * 120);
-    if (k === 'higiene') n.higiene = clamp(n.higiene + overlap * 100);
-    if (k === 'descansar') {
-      n.energia = clamp(n.energia + overlap * 20);
-      n.conforto = clamp(n.conforto + overlap * 20);
-    }
-  }
     if(activity.until>input.virtualMinutes&&activity.until<=s.virtualMinutes){completed.push(activity);s.lastCompleted=activity;}
     start=Math.max(start,activity.until);
   }
+  const n = s.needs;
+  const sleepH = Math.min(hours, over.dormir ?? 0);
+  const awakeH = hours - sleepH;
+  const p = physiology;
+  const deprived = (n.fome ?? 0) >= 80 || (n.sede ?? 0) >= 80;
+  n.fome = clamp(n.fome + awakeH * p.awake.fome + sleepH * p.asleep.fome + (over.comer ?? 0) * p.restore.comer.fome);
+  n.sede = clamp(n.sede + awakeH * p.awake.sede + sleepH * p.asleep.sede + (over.beber ?? 0) * p.restore.beber.sede);
+  n.sono = clamp(n.sono + awakeH * p.awake.sono + sleepH * p.restore.dormir.sono + (over.descansar ?? 0) * p.restore.descansar.sono);
+  n.energia = clamp(
+    n.energia + awakeH * p.awake.energia - (deprived ? awakeH * p.hungryDrain : 0) - ((n.saude ?? 100) < 50 ? awakeH * 2 : 0) +
+      sleepH * p.restore.dormir.energia + (over.descansar ?? 0) * p.restore.descansar.energia,
+  );
+  // Sleep pressure caps usable energy: very sleepy means little energy (sono 80 → 60, 95 → 30, 100 → 20).
+  n.energia = Math.min(n.energia, energyCap(n.sono));
+  n.higiene = clamp(n.higiene + hours * p.awake.higiene + (over.higiene ?? 0) * p.restore.higiene.higiene);
+  n.conforto = clamp(100 - (n.fome + n.sede + n.sono) / 3 - (100 - n.higiene) / 6 + (over.descansar ?? 0) * 20);
+  const deficit = (n.fome >= 90 ? 4 : 0) + (n.sede >= 90 ? 4 : 0) + (n.sono >= 95 ? 2 : 0) + (n.higiene <= 15 ? 1 : 0);
+  n.saude = clamp(deficit ? n.saude - hours * deficit : n.fome < 70 && n.sede < 70 && n.sono < 80 ? n.saude + hours * 1.5 : n.saude, 10);
+  s.motives.tedio = clamp(s.motives.tedio + hours);
+  s.motives.interacao = clamp(s.motives.interacao + hours * 0.3);
   while(s.activity.until<=s.virtualMinutes&&s.queue?.length){s.activity=s.queue.shift()!;const object=s.objects.find(o=>o.id===s.activity.target);if(object){const path=approach(s.position,object,s.objects);if(path.length)s.position=path[path.length-1];}}
-  return { state: s, gap: elapsed > 15,completed };
+  const events: string[] = [];
+  const sleeping = s.activity.kind === 'dormir' && s.activity.until > s.virtualMinutes;
+  if (!sleeping && (n.sono >= p.exhaustion.sono || n.energia <= p.exhaustion.energia)) {
+    // The body gives out: recorded as physiology, never as a decision.
+    s.queue = [];
+    s.activity = { kind: 'dormir', until: s.virtualMinutes + p.exhaustion.sleepMinutes, target: 'cama', intention: s.activity.intention, involuntary: true };
+    const bed = s.objects.find((o) => o.id === 'cama');
+    if (bed) { const path = approach(s.position, bed, s.objects); if (path.length) s.position = path[path.length - 1]; }
+    events.push('adormeceu_exausta');
+  }
+  return { state: s, gap: elapsed > 15,completed,events };
 }
 export function pathfind(start: Point, end: Point, objects: HabitatObject[]): Point[] {
   const blocked = new Set(objects.map((o) => `${o.x},${o.y}`));

@@ -1140,7 +1140,7 @@ function Sources({ record }: { record: RecordEntry }) {
           (s) =>
             typeof s === 'object' &&
             s.url &&
-            /^https:\/\/(pt\.wikipedia\.org|www\.wikidata\.org)\//.test(s.url),
+            /^https:\/\/(pt\.wikipedia\.org|en\.wikipedia\.org|www\.wikidata\.org|pt\.wiktionary\.org|openlibrary\.org|arxiv\.org)\//.test(s.url),
         )
         .map((s, i) => (
           <a key={i} href={s.url} target="_blank" rel="noreferrer">

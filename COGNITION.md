@@ -49,6 +49,22 @@ Reflexão pode gerar diário ou memória autobiográfica mediante evidências. D
 
 O rosto, as orelhas e o ícone do coelho são uma projeção legível do estado simulado (`shared/expression.ts`), calculada com limiares fixos de sono/energia, sede, fome, frustração, satisfação+conforto, curiosidade e tédio. Não é um sentimento declarado pela criatura nem uma inferência do modelo; a interface mostra o motivo (por exemplo, "sono 78, energia 22").
 
+## Corpo e fisiologia (25/11)
+
+Necessidades são regras do corpo, não escolhas. Por hora virtual acordada: fome +5, sede +6, sono +3,5, energia −3 (−3 a mais com fome/sede ≥ 80; −2 a mais com saúde < 50), higiene −1,5. Comer tira 100 de fome em ~20 min, beber 100 de sede em ~15 min, dormir tira 15 de sono e dá 12 de energia por hora, descansar dá 15 de energia. Fome ou sede ≥ 90 tiram 4 de saúde por hora cada (sono ≥ 95 tira 2); a saúde nunca fica abaixo de 10 (a criatura é imortal). Com sono 100 ou energia ≤ 5 ela adormece sozinha por 4 h virtuais (registro `corpo`, origem `simulacao_deterministica`), e não consegue interromper esse sono enquanto o sono estiver acima de 60. Com energia ≤ 15, sono ≥ 95, fome ≥ 95 ou sede ≥ 95, tarefas exigentes (pesquisar, criar, projeto, relacionar, mover, organizar) são recusadas com `corpo_sem_condicoes`. O contexto traz `body`: fatos do corpo em linguagem simples, sem dizer o que fazer.
+
+Motivo: em produção, Lumi chegou a fome, sede e sono 100 com saúde 30. Comer 10 min tirava só 15 pontos e nada tinha consequência.
+
+Sono limita a energia disponível: o teto de energia é 100 − 2×(sono − 60) quando o sono passa de 60 (sono 80 → 60, 95 → 30, 100 → 20). Antes era possível ter sono 97 com energia 76.
+
+## Capacidades reais (25/11)
+
+`pesquisar` consulta fontes reais, sem chave e com origens fixas (o modelo só escolhe o texto da busca): Wikipedia em português e em inglês, Wikidata, Wikcionário, Open Library (livros) e arXiv (artigos científicos). `criar` gera obras em texto ou em pixels (até 32x32 com paleta própria), `mover` reposiciona móveis e `expor` coloca uma obra num objeto. Essas capacidades estão descritas como fatos do ambiente no prompt, sem sugerir temas. Pesquisar, escrever no diário, criar e mover substituem automaticamente uma atividade passiva (observar, descansar, organizar), e a substituição é registrada como interrupção. Antes, essas ações eram recusadas com `atividade_em_andamento` sempre que ela estava observando, o que explica o diário bloqueado várias vezes. Comer, beber, dormir, higiene, criar e pesquisar em andamento continuam bloqueando, assim como o sono involuntário.
+
+## Falhas do provedor (25/11)
+
+Sobrecarga (503), timeout e resposta malformada esperam 5, 10 e depois 20 min, no máximo. Antes, a espera dobrava até 6 h: 7 erros 503 seguidos deixaram Lumi parada por 5h20 em 24/11. Uma intenção longa demais agora é cortada no limite em vez de descartar a decisão. Uma atividade escrita como tipo (`{type:"observar"}`) é lida como `atividade`. Rejeições repetitivas ganharam detalhe: `ja_registrado` para identidade, e etapas de projeto aceitam como evidência qualquer trabalho próprio novo (`etapa_sem_evidencia`).
+
 ## Validação por ação
 
 Uma ação malformada (por exemplo, `evidence` vazio) não invalida mais a decisão inteira: as demais ações são executadas, e a malformada vira uma rejeição `acao_malformada` com o campo problemático, visível para a criatura no ciclo seguinte.

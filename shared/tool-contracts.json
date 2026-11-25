@@ -14,11 +14,11 @@
   {
     "type": "atividade",
     "activity": "comer|beber|dormir|higiene|descansar|observar|organizar",
-    "minutes": "integer min 5 max 120"
+    "minutes": "integer min 5 max 480"
   },
   {
     "type": "pesquisar",
-    "source": "wikipedia|wikidata",
+    "source": "wikipedia|wikipedia_en|wikidata|wikcionario|openlibrary|arxiv",
     "query": "string maxLength 160"
   },
   {

@@ -451,8 +451,8 @@ describe('deterministic time and geometry', () => {
     expect(reconcile(s, 86400000).state.virtualMinutes).toBe(0);
     s.paused = false;
     for (let i = 0; i < 200; i++) Object.assign(s, reconcile(s, (i + 1) * 86400000).state);
-    expect(s.needs.saude).toBeGreaterThanOrEqual(30);
-    expect(s.needs.energia).toBeGreaterThanOrEqual(10);
+    expect(s.needs.saude).toBeGreaterThanOrEqual(10);
+    expect(s.needs.energia).toBeGreaterThanOrEqual(0);
   });
   it('uses Pacific calendar correctly across DST and day boundaries', () => {
     expect(quotaDay(Date.parse('2026-07-01T06:59:00Z'))).toBe('2026-06-30');

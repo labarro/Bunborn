@@ -19,10 +19,11 @@ const byKind: Record<string, string> = {
   intencao: 'O que ela pensou e decidiu neste momento (escrito por ela).',
   erro_ferramenta: 'Resultado de algo que ela tentou fazer.',
   erro: 'Aviso do sistema sobre uma pausa no pensamento dela.',
+  corpo: 'O corpo dela reagiu sozinho (regra do corpo, não uma escolha dela).',
 };
 const tools: Record<string, string> = {
   atividade: 'fazer uma atividade (comer, beber, dormir…)',
-  pesquisar: 'pesquisar na Wikipedia/Wikidata',
+  pesquisar: 'pesquisar na internet (Wikipedia, Wikidata, Wikcionário, Open Library, arXiv)',
   criar: 'criar uma obra',
   memoria: 'guardar uma lembrança',
   diario: 'escrever no diário',
@@ -62,6 +63,12 @@ const errors: Record<string, string> = {
   posicao_bloqueia_acesso: 'mudar o objeto ali bloquearia a passagem',
   pixels_invalidos: 'o desenho tinha um formato inválido',
   gemini_http_503: 'o serviço de IA estava sobrecarregado',
+  gemini_fetch_timeouterror: 'o serviço de IA demorou demais para responder',
+  gemini_response_zoderror: 'a resposta da IA veio num formato inválido',
+  etapa_sem_evidencia: 'quis marcar uma etapa como feita sem apontar o trabalho que a cumpriu',
+  ja_registrado: 'tentou registrar algo sobre si que já estava registrado',
+  corpo_sem_condicoes: 'estava cansada, com fome ou com sede demais para esse esforço',
+  sono_involuntario: 'tentou acordar, mas o corpo ainda estava exausto',
   orcamento_suspenso: 'o limite diário de pensamentos foi atingido',
   orcamento_global_suspenso: 'o limite diário de pensamentos foi atingido',
 };
