@@ -49,7 +49,7 @@ export function categorize(s: CategorySignals): { category: Category; reason: st
   if (s.complexNext || (s.decisionNumber > 0 && s.decisionNumber % 24 === 0)) return { category: 'complexa', reason: s.complexNext ? 'a própria decisão anterior pediu revisão complexa' : 'revisão periódica (a cada 24 decisões)' };
   if (s.consolidationDue) return { category: 'memoria', reason: 'consolidação de memória pendente' };
   if (s.recentResearch) return { category: 'pesquisa', reason: 'resultados de pesquisa recentes para interpretar' };
-  if (s.activeCreativeProject || (s.creativity >= 70 && s.boredom >= 60)) return { category: 'criatividade', reason: s.activeCreativeProject ? 'projeto criativo em andamento' : 'vontade de criar e tédio altos' };
+  if (s.activeCreativeProject || s.creativity >= 70 || s.boredom >= 70) return { category: 'criatividade', reason: s.activeCreativeProject ? 'projeto criativo em andamento' : s.creativity >= 70 ? 'criatividade alta' : 'tédio alto' };
   return { category: 'cotidiana', reason: 'decisão cotidiana' };
 }
 

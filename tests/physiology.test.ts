@@ -274,3 +274,40 @@ describe('autonomy: research is always available', () => {
   });
 });
 
+
+describe('boredom, creativity, curiosity and observing (feedback 25/11)', () => {
+  it('only engaging work relieves boredom; creating and researching feed creativity and curiosity', () => {
+    let s = born(0);
+    s.motives = { ...s.motives, tedio: 80, criatividade: 50, curiosidade: 50 };
+    s.needs = { ...s.needs, fome: 60 };
+    s.activity = { kind: 'comer', until: s.virtualMinutes + 60, target: 'comida', intention: 't' };
+    s = reconcile(s, 1 * hour).state;
+    expect(s.motives.tedio).toBeGreaterThanOrEqual(80);
+    s.activity = { kind: 'criar', until: s.virtualMinutes + 120, target: 'atelie', intention: 't' };
+    s = reconcile(s, s.updatedAt + 2 * hour).state;
+    expect(s.motives.tedio).toBeLessThan(60);
+    expect(s.motives.criatividade).toBeGreaterThan(65);
+    s.activity = { kind: 'pesquisar', until: s.virtualMinutes + 120, target: 'terminal', intention: 't' };
+    s = reconcile(s, s.updatedAt + 2 * hour).state;
+    expect(s.motives.curiosidade).toBeGreaterThan(60);
+  });
+  it('perceptions show how boredom and creativity changed, so she can learn what relieves boredom', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    await seed(store, (s) => { s.motives.tedio = 90; s.activity.until = 0; }, t0);
+    await tick(env, t0, fixture([{ type: 'diario', content: 'Hoje percebi que a planta perto da janela muda de cor com a luz da tarde.' }]));
+    await tick(env, t0 + 5 * 60000, fixture([]));
+    const felt = (await store.records('percepcao'))[0];
+    expect(felt.content).toMatch(/^Depois de diario: .*tédio 90 → \d+/);
+  });
+  it('refuses to observe again an unchanged room she already observed, saying what is there', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    await seed(store, (s) => { s.activity.until = 0; }, t0);
+    await tick(env, t0, fixture([{ type: 'atividade', activity: 'observar', minutes: 15 }]));
+    await tick(env, t0 + 5 * 60000, fixture([{ type: 'atividade', activity: 'observar', minutes: 15 }]));
+    const refused = (await store.records('erro_ferramenta')).at(-1)!;
+    expect(refused.data).toMatchObject({ code: 'nada_novo_para_observar' });
+    expect((refused.data.detail as { objects: string[] }).objects).toContain('Diário');
+  });
+});

@@ -363,7 +363,8 @@ export const physiology = {
   minSonoToSleep: 25,
 } as const;
 // What the body felt at the start of an activity, compared at its end (perception, not a rule told to the creature).
-export const bodySnapshot = (n: Record<string, number>) => Object.fromEntries(['fome', 'sede', 'sono', 'energia', 'higiene', 'saude'].map((k) => [k, Math.round(n[k] ?? 0)]));
+// Body plus the motives the creature can feel change (boredom, creativity, curiosity), so perceptions show both.
+export const bodySnapshot = (n: Record<string, number>, m?: Record<string, number>) => ({ ...Object.fromEntries(['fome', 'sede', 'sono', 'energia', 'higiene', 'saude'].map((k) => [k, Math.round(n[k] ?? 0)])), ...(m ? Object.fromEntries(['tedio', 'criatividade', 'curiosidade'].map((k) => [k, Math.round(m[k] ?? 0)])) : {}) });
 export const energyCap = (sono: number) => clamp(100 - Math.max(0, sono - 60) * 2);
 export function reconcile(input: State, now: number): { state: State; gap: boolean;completed:State['activity'][];events:string[] } {
   const s = structuredClone(input);
@@ -411,10 +412,15 @@ export function reconcile(input: State, now: number): { state: State; gap: boole
   const passiveH = (over.observar ?? 0) + (over.descansar ?? 0) + (over.organizar ?? 0);
   const careH = (over.comer ?? 0) + (over.beber ?? 0) + (over.higiene ?? 0);
   const idleH = Math.max(0, awakeH - engaged - passiveH - careH);
-  m.tedio = clamp(m.tedio + idleH * 4 + passiveH * 1.5 - engaged * 12 - careH * 2);
+  // Boredom only falls with engaging work: researching, creating (drawings, poems, texts) and the diary.
+  // Care and passive activities do not relieve it.
+  m.tedio = clamp(m.tedio + idleH * 4 + (passiveH + careH) * 1.5 - engaged * 12);
   m.frustracao = clamp(m.frustracao - hours * 3);
-  m.curiosidade = clamp(m.curiosidade + awakeH * (m.tedio > 60 ? 1 : 0.5) - (over.pesquisar ?? 0) * 6);
-  m.criatividade = clamp(m.criatividade + awakeH * (m.tedio > 60 ? 0.6 : 0.2) - (over.criar ?? 0) * 8);
+  // Discovering feeds curiosity and creating feeds creativity; without them both settle back slowly.
+  const researchH = over.pesquisar ?? 0;
+  const creativeH = (over.criar ?? 0) + (over.diario ?? 0);
+  m.curiosidade = clamp(m.curiosidade + researchH * 8 + (55 - m.curiosidade) * Math.min(1, Math.max(0, awakeH - researchH) * 0.02));
+  m.criatividade = clamp(m.criatividade + creativeH * 10 + researchH * 3 + (40 - m.criatividade) * Math.min(1, Math.max(0, awakeH - creativeH - researchH) * 0.02));
   const critical = (n.fome >= 90 ? 1 : 0) + (n.sede >= 90 ? 1 : 0) + (n.sono >= 95 ? 1 : 0);
   m.satisfacao = clamp(m.satisfacao + (50 - m.satisfacao) * Math.min(1, hours * 0.05) - critical * hours * 2 + completed.filter((a) => ['comer', 'beber', 'dormir', 'higiene'].includes(a.kind)).length * 3);
   const target = (n.energia + n.saude + m.satisfacao) / 3 - m.frustracao / 3;
@@ -440,12 +446,12 @@ export function reconcile(input: State, now: number): { state: State; gap: boole
       endNow();
     } else if ((k === 'comer' && n.fome <= p.sated.fome) || (k === 'beber' && n.sede <= p.sated.sede) || (k === 'higiene' && n.higiene >= p.sated.higiene)) endNow();
   }
-  while(s.activity.until<=s.virtualMinutes&&s.queue?.length){s.activity={...s.queue.shift()!,startNeeds:bodySnapshot(n)};const object=s.objects.find(o=>o.id===s.activity.target);if(object){const path=approach(s.position,object,s.objects);if(path.length)s.position=path[path.length-1];}}
+  while(s.activity.until<=s.virtualMinutes&&s.queue?.length){s.activity={...s.queue.shift()!,startNeeds:bodySnapshot(n,s.motives)};const object=s.objects.find(o=>o.id===s.activity.target);if(object){const path=approach(s.position,object,s.objects);if(path.length)s.position=path[path.length-1];}}
   const sleeping = s.activity.kind === 'dormir' && s.activity.until > s.virtualMinutes;
   if (!sleeping && (n.sono >= p.exhaustion.sono || n.energia <= p.exhaustion.energia)) {
     // The body gives out: recorded as physiology, never as a decision.
     s.queue = [];
-    s.activity = { kind: 'dormir', until: s.virtualMinutes + p.exhaustion.sleepMinutes, target: 'cama', intention: s.activity.intention, involuntary: true, startNeeds: bodySnapshot(n) };
+    s.activity = { kind: 'dormir', until: s.virtualMinutes + p.exhaustion.sleepMinutes, target: 'cama', intention: s.activity.intention, involuntary: true, startNeeds: bodySnapshot(n, s.motives) };
     const bed = s.objects.find((o) => o.id === 'cama');
     if (bed) { const path = approach(s.position, bed, s.objects); if (path.length) s.position = path[path.length - 1]; }
     events.push('adormeceu_exausta');

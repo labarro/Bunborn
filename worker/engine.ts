@@ -82,12 +82,12 @@ function activate(s: State, kind: string, minutes = 30,allowQueue=false) {
   if (!route.length) throw new Error('objeto_inacessivel');
   if(s.activity.until>s.virtualMinutes){
     if(s.activity.kind===kind&&s.activity.target===target)return 'continuada';
-    if(passive.includes(s.activity.kind)&&!s.activity.involuntary&&!s.queue?.length){s.position=route[route.length-1];s.activity={kind,until:s.virtualMinutes+minutes,target,intention:s.activity.intention,startNeeds:bodySnapshot(s.needs)};return 'substituida';}
+    if(passive.includes(s.activity.kind)&&!s.activity.involuntary&&!s.queue?.length){s.position=route[route.length-1];s.activity={kind,until:s.virtualMinutes+minutes,target,intention:s.activity.intention,startNeeds:bodySnapshot(s.needs,s.motives)};return 'substituida';}
     if(!allowQueue)throw new ToolError('atividade_em_andamento',{current:s.activity.kind,currentStation:s.activity.target,requiredStation:target,remainingVirtualMinutes:Math.round(s.activity.until-s.virtualMinutes),queued:(s.queue??[]).map(q=>q.kind),options:'aguardar o término, ou usar interromper antes'});
     s.queue??=[];if(s.queue.some(a=>a.kind===kind&&a.target===target))return 'ja_agendada';if(s.queue.length>=4)throw new Error('fila_de_atividades_cheia');const tail=s.queue[s.queue.length-1]??s.activity;s.queue.push({kind,until:tail.until+minutes,target,intention:s.activity.intention});return 'agendada';
   }
   s.position = route[route.length - 1];
-  s.activity = { kind, until: s.virtualMinutes + minutes, target, intention: s.activity.intention, startNeeds: bodySnapshot(s.needs) };
+  s.activity = { kind, until: s.virtualMinutes + minutes, target, intention: s.activity.intention, startNeeds: bodySnapshot(s.needs, s.motives) };
   return 'iniciada';
 }
 async function applyAction(
@@ -165,6 +165,12 @@ async function applyAction(
         throw new ToolError(rule[1], { [rule[0]]: Math.round(s.needs[rule[0]]), minimo: physiology.needToStart[a.activity as 'comer' | 'beber'], note: 'o corpo ' + rule[2] });
       if (a.activity === 'higiene' && s.needs.higiene > physiology.needToStart.higiene)
         throw new ToolError('ja_limpa', { higiene: Math.round(s.needs.higiene), maximo: physiology.needToStart.higiene });
+      if (a.activity === 'observar') {
+        // Looking again at a room she already knows, unchanged, shows nothing new: the body refuses and says why.
+        const last = (await store.latest('percepcao', 30)).find((r) => r.data.activity === 'observar' && r.data.room);
+        if (last && last.data.room === roomSignature(s) && s.virtualMinutes - last.virtualAt < 24 * 60)
+          throw new ToolError('nada_novo_para_observar', { lastObserved: new Date(last.realAt).toISOString(), objects: s.objects.map((o) => o.label), note: 'você já observou o quarto e nada mudou desde então' });
+      }
       const previous = s.activity;
       const status=activate(s, a.activity, a.minutes,true);
       if (status === 'substituida') record('atividade_interrompida', `Deixou de ${previous.kind} para ${a.activity}.`, { activity: previous, replacedBy: a.activity, automatic: true });
@@ -201,6 +207,8 @@ async function applyAction(
         { entityId: 'conceito:' + a.query.toLocaleLowerCase('pt-BR'), associations: [r.id] },
       );
       s.motives.tedio = clamp(s.motives.tedio - 10);
+      s.motives.curiosidade = clamp(s.motives.curiosidade + 4);
+      s.motives.criatividade = clamp(s.motives.criatividade + 2);
       s.motives.satisfacao = clamp(s.motives.satisfacao + 3);
       break;
     }
@@ -212,6 +220,7 @@ async function applyAction(
       start('diario', 20);
       record('diario', a.content);
       s.motives.tedio = clamp(s.motives.tedio - 5);
+      s.motives.criatividade = clamp(s.motives.criatividade + 3);
       break;
     }
     case 'relacionar': {
@@ -239,7 +248,6 @@ async function applyAction(
     case 'mensagem':
       record('conversa', a.content, { role: 'criatura' });
       s.motives.interacao = clamp(s.motives.interacao - 10);
-      s.motives.tedio = clamp(s.motives.tedio - 5);
       break;
     case 'memoria': {
       if(a.status==='fato_do_ambiente'&&!evidenceRecords.some(r=>r.data.status==='fato_do_ambiente'||r.kind==='nascimento'))throw new Error('fato_do_ambiente_sem_origem');
@@ -384,7 +392,7 @@ async function applyAction(
         { entityId: prior?.entityId ?? entityId('artefato', a.id), importance: 0.8 },
       );
       s.motives.satisfacao = clamp(s.motives.satisfacao + 6);
-      s.motives.criatividade = clamp(s.motives.criatividade - 10);
+      s.motives.criatividade = clamp(s.motives.criatividade + 8);
       s.motives.tedio = clamp(s.motives.tedio - 12);
       break;
     }
@@ -397,7 +405,6 @@ async function applyAction(
       if (!validLayout(objects, s.position)) throw new Error('posicao_bloqueia_acesso');
       s.objects = objects;
       record('habitat', `Reposicionou ${object.label}.`, { object });
-      s.motives.tedio = clamp(s.motives.tedio - 4);
       start('organizar', 20);
       break;
     }
@@ -775,14 +782,20 @@ const bodyText: Record<string, string> = {
   acordou_descansada: 'Acordou sozinha: o sono acabou (regra fisiológica, não decisão).',
   acordou_com_fome_ou_sede: 'Acordou com fome ou sede críticas (regra fisiológica, não decisão).',
 };
-const needLabel: Record<string, string> = { fome: 'fome', sede: 'sede', sono: 'sono', energia: 'energia', higiene: 'higiene', saude: 'saúde' };
+const needLabel: Record<string, string> = { fome: 'fome', sede: 'sede', sono: 'sono', energia: 'energia', higiene: 'higiene', saude: 'saúde', tedio: 'tédio', criatividade: 'criatividade', curiosidade: 'curiosidade' };
 // What changed in the body between the start and the end of an activity. The creature learns
 // cause and effect from these perceptions; the rules themselves are never told to it.
+/** Fingerprint of the room (objects, positions and what is exposed on them). */
+export function roomSignature(s: Pick<State, 'objects'>) {
+  let h = 2166136261;
+  for (const c of JSON.stringify(s.objects)) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  return (h >>> 0).toString(36);
+}
 function perception(s: State, activity: State['activity']): RecordEntry | null {
   if (!activity.startNeeds) return null;
-  const after = bodySnapshot(s.needs);
+  const after = bodySnapshot(s.needs, s.motives);
   const changes = Object.keys(after).filter((k) => Math.abs(after[k] - (activity.startNeeds![k] ?? after[k])) >= 1).map((k) => `${needLabel[k]} ${activity.startNeeds![k]} → ${after[k]}`);
-  return entry(s, 'percepcao', `Depois de ${activity.kind}: ${changes.length ? changes.join(', ') : 'nada mudou no corpo'}.`, { activity: activity.kind, involuntary: !!activity.involuntary, before: activity.startNeeds, after }, { origin: 'simulacao_deterministica', category: 'episodica', importance: 0.6 });
+  return entry(s, 'percepcao', `Depois de ${activity.kind}: ${changes.length ? changes.join(', ') : 'nada mudou no corpo'}.`, { activity: activity.kind, involuntary: !!activity.involuntary, before: activity.startNeeds, after, ...(activity.kind === 'observar' ? { room: roomSignature(s) } : {}) }, { origin: 'simulacao_deterministica', category: 'episodica', importance: 0.6 });
 }
 function bodyEvent(s: State, event: string): RecordEntry {
   return entry(s, 'corpo', bodyText[event] ?? 'Reação do corpo (regra fisiológica).', { event, needs: { ...s.needs }, activity: s.activity }, { origin: 'simulacao_deterministica' });

@@ -96,6 +96,16 @@ Comportamento observado entre 05:44Z e 12:53Z, sem nenhuma instrução sobre o c
 
 Pesquisar e recordar ficam disponíveis em qualquer estado do corpo, mas não durante uma atividade física em andamento nem durante o sono. Antes, fome, sede ou cansaço extremos bloqueavam a pesquisa justamente quando ela mais precisava descobrir o que fazer. O prompt diz que ela é autônoma: diante de qualquer dúvida, sobre o mundo, sobre si, sobre o corpo ou sobre como fazer algo, pode pesquisar ou recordar. Novas sensações em `body`: suja, muito entediada, frustrada.
 
+## Tédio, criatividade, curiosidade e observar (25/11)
+
+Pedido do responsável: o tédio só deve baixar com atividades que engajam, e criar deve aumentar a criatividade.
+- **Tédio:** só baixa ao pesquisar, criar (desenhos, poemas, textos) e escrever no diário (−12 por hora dessas atividades, mais uma queda imediata). Comer, beber, higiene e atividades passivas não aliviam (+1,5/h); ficar parada sobe +4/h. Conversar e mover móveis deixaram de baixar o tédio.
+- **Criatividade:** sobe ao criar e escrever no diário (+10/h, mais +8 por obra e +3 por entrada) e um pouco ao pesquisar. Sem isso, volta devagar para 40.
+- **Curiosidade:** descobrir alimenta a curiosidade: pesquisar sobe +8/h, mais +4 por pesquisa. Sem novas descobertas, volta devagar para 55.
+- **Percepções:** agora mostram também a mudança de tédio, criatividade e curiosidade em cada atividade. Ela aprende pela experiência o que alivia o tédio; ninguém conta.
+- **Observar de novo:** se ela já observou o quarto e nada mudou (mesmos objetos, posições e obras expostas) nas últimas 24 h virtuais, o corpo recusa com `nada_novo_para_observar`, com a lista do que existe no quarto. Se algo mudar, ela pode observar de novo.
+- **Roteamento:** a categoria criatividade agora vale com criatividade ≥ 70 ou tédio ≥ 70 (antes: as duas juntas).
+
 ## Diário (25/11)
 
 Com o gpt-oss-120b, ela passou a anexar ao diário uma frase a cada decisão, no mesmo pedido em que tentava comer. Em 25/11 às 21:36Z e 21:42Z, duas entradas quase iguais descreviam uma refeição que o corpo recusou (sem fome).

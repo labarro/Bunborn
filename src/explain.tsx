@@ -75,6 +75,7 @@ const errors: Record<string, string> = {
   sem_fome: 'tentou comer sem estar com fome',
   sem_sede: 'tentou beber sem estar com sede',
   ja_limpa: 'tentou se limpar já estando limpa',
+  nada_novo_para_observar: 'tentou observar de novo um quarto que já conhecia e que não tinha mudado',
   orcamento_suspenso: 'o limite diário de pensamentos foi atingido',
   orcamento_global_suspenso: 'o limite diário de pensamentos foi atingido',
 };
