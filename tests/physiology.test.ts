@@ -221,3 +221,43 @@ describe('waking up (review 25/11 05:15Z)', () => {
     expect((await store.state())!.activity.kind).not.toBe('dormir');
   });
 });
+
+describe('sense from experience (review 25/11 05:40Z)', () => {
+  it('eating stops when sated and the queued drink starts at once instead of waiting', () => {
+    let s = born(0);
+    s.needs = { ...s.needs, fome: 30, sede: 80 };
+    s.activity = { kind: 'comer', until: s.virtualMinutes + 60, target: 'comida', intention: 't' };
+    s.queue = [{ kind: 'beber', until: s.virtualMinutes + 90, target: 'comida', intention: 't' }];
+    s = reconcile(s, (12 / 60) * hour).state; // 12 virtual minutes: fome 30 - 60 → 0
+    expect(s.activity.kind).toBe('beber');
+    expect(s.activity.until).toBeLessThanOrEqual(s.virtualMinutes + 31);
+  });
+  it('the body refuses to eat without hunger, and a chosen drink replaces a passive observation', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    await seed(store, (s) => { s.needs.fome = 2; s.needs.sede = 90; s.activity = { kind: 'observar', until: s.virtualMinutes + 120, target: 'descanso', intention: 'olhar' }; }, t0);
+    await tick(env, t0 + 1000, fixture([{ type: 'atividade', activity: 'comer', minutes: 30 }, { type: 'atividade', activity: 'beber', minutes: 15 }]));
+    expect((await store.records('erro_ferramenta'))[0].data).toMatchObject({ code: 'sem_fome' });
+    const state = (await store.state())!;
+    expect(state.activity.kind).toBe('beber');
+    expect(state.queue ?? []).toEqual([]);
+  });
+  it('records what changed in the body when an activity ends, so the creature can learn by itself', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    await seed(store, (s) => { s.needs = { ...s.needs, sono: 60, fome: 80, sede: 80 }; s.activity.until = 0; }, t0);
+    await tick(env, t0, fixture([{ type: 'atividade', activity: 'dormir', minutes: 60 }]));
+    await tick(env, t0 + 11 * 60000, fixture([]));
+    const felt = (await store.records('percepcao'))[0];
+    expect(felt.content).toMatch(/^Depois de dormir: /);
+    expect(felt.content).toMatch(/sono 60 → \d+/);
+    expect(felt.content).toMatch(/fome 80 → \d+/);
+    expect(Number((felt.data.after as Record<string, number>).fome)).toBeGreaterThan(80);
+  });
+  it('body facts are sensations only: no remedy or rule is told', () => {
+    const s = born(0);
+    s.needs = { ...s.needs, fome: 95, sede: 95, saude: 20 };
+    const text = bodyAlerts(s).join(' | ');
+    expect(text).not.toMatch(/comer|beber|dormir|descansar|só /);
+  });
+});

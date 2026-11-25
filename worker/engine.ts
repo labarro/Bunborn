@@ -4,6 +4,7 @@ import {
   clamp,
   reconcile,
   physiology,
+  bodySnapshot,
   validLayout,
   type Action,
   type RecordEntry,
@@ -78,12 +79,12 @@ function activate(s: State, kind: string, minutes = 30,allowQueue=false) {
   if (!route.length) throw new Error('objeto_inacessivel');
   if(s.activity.until>s.virtualMinutes){
     if(s.activity.kind===kind&&s.activity.target===target)return 'continuada';
-    if(!allowQueue&&passive.includes(s.activity.kind)&&!s.activity.involuntary){s.position=route[route.length-1];s.activity={kind,until:s.virtualMinutes+minutes,target,intention:s.activity.intention};return 'substituida';}
+    if(passive.includes(s.activity.kind)&&!s.activity.involuntary&&!s.queue?.length){s.position=route[route.length-1];s.activity={kind,until:s.virtualMinutes+minutes,target,intention:s.activity.intention,startNeeds:bodySnapshot(s.needs)};return 'substituida';}
     if(!allowQueue)throw new ToolError('atividade_em_andamento',{current:s.activity.kind,currentStation:s.activity.target,requiredStation:target,remainingVirtualMinutes:Math.round(s.activity.until-s.virtualMinutes),queued:(s.queue??[]).map(q=>q.kind),options:'aguardar o término, ou usar interromper antes'});
     s.queue??=[];if(s.queue.some(a=>a.kind===kind&&a.target===target))return 'ja_agendada';if(s.queue.length>=4)throw new Error('fila_de_atividades_cheia');const tail=s.queue[s.queue.length-1]??s.activity;s.queue.push({kind,until:tail.until+minutes,target,intention:s.activity.intention});return 'agendada';
   }
   s.position = route[route.length - 1];
-  s.activity = { kind, until: s.virtualMinutes + minutes, target, intention: s.activity.intention };
+  s.activity = { kind, until: s.virtualMinutes + minutes, target, intention: s.activity.intention, startNeeds: bodySnapshot(s.needs) };
   return 'iniciada';
 }
 async function applyAction(
@@ -154,7 +155,15 @@ async function applyAction(
     case 'atividade':{
       if (a.activity === 'dormir' && s.needs.sono < physiology.minSonoToSleep)
         throw new ToolError('sem_sono', { sono: Math.round(s.needs.sono), minimo: physiology.minSonoToSleep, note: 'o corpo não consegue adormecer sem sono' });
+      const need = { comer: ['fome', 'sem_fome', 'não está com fome'], beber: ['sede', 'sem_sede', 'não está com sede'] } as const;
+      const rule = need[a.activity as keyof typeof need];
+      if (rule && s.needs[rule[0]] < physiology.needToStart[a.activity as 'comer' | 'beber'])
+        throw new ToolError(rule[1], { [rule[0]]: Math.round(s.needs[rule[0]]), minimo: physiology.needToStart[a.activity as 'comer' | 'beber'], note: 'o corpo ' + rule[2] });
+      if (a.activity === 'higiene' && s.needs.higiene > physiology.needToStart.higiene)
+        throw new ToolError('ja_limpa', { higiene: Math.round(s.needs.higiene), maximo: physiology.needToStart.higiene });
+      const previous = s.activity;
       const status=activate(s, a.activity, a.minutes,true);
+      if (status === 'substituida') record('atividade_interrompida', `Deixou de ${previous.kind} para ${a.activity}.`, { activity: previous, replacedBy: a.activity, automatic: true });
       record('atividade', `Atividade ${status}: ${a.activity}.`, { activity:s.queue?.find(item=>item.kind===a.activity)??s.activity,status });
       break;
     }
@@ -421,7 +430,7 @@ export async function tick(
     const { state: s, gap,completed,events } = reconcile(original, now);
     const records: RecordEntry[] = [];
     for (const event of events) records.push(bodyEvent(s, event));
-    for(const activity of completed)records.push(entry(s,'atividade_concluida',`Atividade concluída: ${activity.kind}.`,{activity},{virtualAt:activity.until,origin:'simulacao_deterministica'}));
+    for(const activity of completed){records.push(entry(s,'atividade_concluida',`Atividade concluída: ${activity.kind}.`,{activity},{virtualAt:activity.until,origin:'simulacao_deterministica'}));const felt=perception(s,activity);if(felt)records.push(felt);}
     if (gap)
       records.push(
         entry(
@@ -450,6 +459,7 @@ export async function tick(
       store.latest('conceito', 10),
       store.latest('leitura', 2),
     ]);
+    const perceptions = (await store.latest('percepcao', 6)).map((r) => ({ id: r.id, content: r.content }));
     let complex =
       (s.complexNext || (s.decisions > 0 && s.decisions % 24 === 0)) && s.decisions > 0;
     if(complex){const today=quotaDay(Date.now());const local=await store.usage() as {day:string;model:string;calls:number}[];const global=env.BUDGET_DB?await new Store(env.BUDGET_DB).usage() as typeof local:local;const used=(rows:typeof local)=>rows.find(r=>r.day===today&&r.model===env.MODEL_FLASH)?.calls??0;if(used(local)>=Math.min(16,Number(env.FLASH_DAILY_LIMIT))||used(global)>=Math.min(16,Number(env.FLASH_GLOBAL_LIMIT??16))){complex=false;records.push(entry(s,'orcamento','Revisão complexa adiada por cota; continuidade com o cérebro principal.',{model:env.MODEL_LITE},{origin:'controle_orcamento'}));}}
@@ -468,6 +478,7 @@ export async function tick(
       identity: s.identity,
       needs: s.needs,
       body: bodyAlerts(s),
+      perceptions,
       motives: s.motives,
       activity: s.activity,
       activityStatus: s.activity.until > s.virtualMinutes ? { ongoing: true, remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes), remainingRealMinutes: Math.round((s.activity.until - s.virtualMinutes) / s.multiplier) } : { ongoing: false, note: 'nenhuma atividade em andamento' },
@@ -739,20 +750,29 @@ const bodyText: Record<string, string> = {
   acordou_descansada: 'Acordou sozinha: o sono acabou (regra fisiológica, não decisão).',
   acordou_com_fome_ou_sede: 'Acordou com fome ou sede críticas (regra fisiológica, não decisão).',
 };
+const needLabel: Record<string, string> = { fome: 'fome', sede: 'sede', sono: 'sono', energia: 'energia', higiene: 'higiene', saude: 'saúde' };
+// What changed in the body between the start and the end of an activity. The creature learns
+// cause and effect from these perceptions; the rules themselves are never told to it.
+function perception(s: State, activity: State['activity']): RecordEntry | null {
+  if (!activity.startNeeds) return null;
+  const after = bodySnapshot(s.needs);
+  const changes = Object.keys(after).filter((k) => Math.abs(after[k] - (activity.startNeeds![k] ?? after[k])) >= 1).map((k) => `${needLabel[k]} ${activity.startNeeds![k]} → ${after[k]}`);
+  return entry(s, 'percepcao', `Depois de ${activity.kind}: ${changes.length ? changes.join(', ') : 'nada mudou no corpo'}.`, { activity: activity.kind, involuntary: !!activity.involuntary, before: activity.startNeeds, after }, { origin: 'simulacao_deterministica', category: 'episodica', importance: 0.6 });
+}
 function bodyEvent(s: State, event: string): RecordEntry {
   return entry(s, 'corpo', bodyText[event] ?? 'Reação do corpo (regra fisiológica).', { event, needs: { ...s.needs }, activity: s.activity }, { origin: 'simulacao_deterministica' });
 }
 // Plain facts about the body for the model; no instruction about what to do.
 export function bodyAlerts(s: State): string[] {
   const n = s.needs, out: string[] = [];
-  if (n.fome >= 90) out.push('fome crítica: a saúde está caindo (dormir e descansar não reduzem a fome; só comer reduz)');
+  if (n.fome >= 90) out.push('fome intensa; sente a saúde piorar');
   else if (n.fome >= 70) out.push('com fome');
-  if (n.sede >= 90) out.push('sede crítica: a saúde está caindo (dormir e descansar não reduzem a sede; só beber reduz)');
+  if (n.sede >= 90) out.push('sede intensa; sente a saúde piorar');
   else if (n.sede >= 70) out.push('com sede');
-  if (n.sono >= 95) out.push('exausta de sono: pode adormecer sozinha a qualquer momento');
+  if (n.sono >= 95) out.push('exausta de sono, mal consegue ficar acordada');
   else if (n.sono >= 75) out.push('com sono');
-  if (n.energia <= 15) out.push('sem energia para trabalho exigente');
-  if (n.saude < 50) out.push('saúde baixa: a energia se esgota mais rápido; a saúde só se recupera com fome e sede abaixo de 70 e sono abaixo de 80');
+  if (n.energia <= 15) out.push('sem energia');
+  if (n.saude < 50) out.push('saúde baixa, sente-se fraca');
   if (s.activity.involuntary && s.activity.until > s.virtualMinutes) out.push('dormindo por exaustão');
   return out;
 }
@@ -813,7 +833,7 @@ export async function administer(
     // Activities finishing inside this interval are recorded, never silently dropped.
     const records = [
       ...events.map((event) => bodyEvent(s, event)),
-      ...completed.map((activity) => entry(s, 'atividade_concluida', `Atividade concluída: ${activity.kind}.`, { activity }, { virtualAt: activity.until, origin: 'simulacao_deterministica' })),
+      ...completed.flatMap((activity) => { const felt = perception(s, activity); return [entry(s, 'atividade_concluida', `Atividade concluída: ${activity.kind}.`, { activity }, { virtualAt: activity.until, origin: 'simulacao_deterministica' }), ...(felt ? [felt] : [])]; }),
       ...(await mutate(s, store)),
     ];
     await store.commit(token, s, records);

@@ -63,9 +63,9 @@ export const stateSchema = z
         motivacao: meter,
       })
       .strict(),
-    activity: z.object({kind:short,until:time,target:short,intention:short,involuntary:z.boolean().optional()}).strict(),
-    queue:z.array(z.object({kind:short,until:time,target:short,intention:short,involuntary:z.boolean().optional()}).strict()).max(4).optional(),
-    lastCompleted:z.object({kind:short,until:time,target:short,intention:short,involuntary:z.boolean().optional()}).strict().optional(),
+    activity: z.object({kind:short,until:time,target:short,intention:short,involuntary:z.boolean().optional(),startNeeds:z.record(z.string(),z.number().min(0).max(100)).optional()}).strict(),
+    queue:z.array(z.object({kind:short,until:time,target:short,intention:short,involuntary:z.boolean().optional(),startNeeds:z.record(z.string(),z.number().min(0).max(100)).optional()}).strict()).max(4).optional(),
+    lastCompleted:z.object({kind:short,until:time,target:short,intention:short,involuntary:z.boolean().optional(),startNeeds:z.record(z.string(),z.number().min(0).max(100)).optional()}).strict().optional(),
     position: z.object(point).strict(),
     objects: z
       .array(

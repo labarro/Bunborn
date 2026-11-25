@@ -72,6 +72,16 @@ Sono limita a energia disponível: o teto de energia é 100 − 2×(sono − 60)
   - Curiosidade e vontade de criar: crescem com o tédio e diminuem ao pesquisar ou criar.
 - **Backup:** o esquema estrito do estado não aceitava os campos novos `involuntary` e `lastDecisionAt`, e um backup feito depois de 25/11 02:27Z seria recusado na restauração. Corrigido, e o estado real de produção foi conferido contra o esquema.
 
+## Senso pela experiência (25/11, 05:40Z)
+
+A criatura **não recebe as regras do corpo**. O prompt diz só que o corpo tem regras que ela descobre pela experiência. Os alertas `body` são sensações ("fome intensa; sente a saúde piorar"), sem dizer o remédio. Ao fim de cada atividade, um registro `percepcao` mostra o que mudou no corpo ("Depois de dormir: fome 80 → 95, sono 60 → 5"), e as últimas seis percepções vão no contexto (`perceptions`). Ela pode errar, por exemplo achar que dormir tira a fome, e perceber sozinha que não tira. Orientação do responsável: "não tem problema ela fazer coisa errada… ela tem que perceber".
+
+Regras físicas novas:
+- Comer, beber e higiene terminam sozinhos quando a necessidade é atendida, e a fila é puxada para a frente.
+- O corpo recusa comer com fome abaixo de 15, beber com sede abaixo de 15 e higiene acima de 90 (`sem_fome`, `sem_sede`, `ja_limpa`).
+- Uma atividade física escolhida substitui uma atividade passiva quando a fila está vazia.
+- A saúde se recupera 3 por hora virtual quando o corpo está bem.
+
 ## Despertar (25/11)
 
 O corpo acorda sozinho quando o sono chega a 3 ou menos, ou antes disso se fome ou sede passarem de 95 com o sono abaixo de 40. Isso vale mesmo que ela tenha escolhido dormir por mais tempo. Também não consegue adormecer com sono abaixo de 25 (`sem_sono`). Antes, um sono de 6 h virtuais continuava com o sono já zerado. Em produção, às 05:17Z ela acordou sozinha, a tentativa de voltar a dormir foi recusada e às 05:22Z ela foi comer.

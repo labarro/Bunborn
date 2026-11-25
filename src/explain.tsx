@@ -20,6 +20,7 @@ const byKind: Record<string, string> = {
   erro_ferramenta: 'Resultado de algo que ela tentou fazer.',
   erro: 'Aviso do sistema sobre uma pausa no pensamento dela.',
   corpo: 'O corpo dela reagiu sozinho (regra do corpo, não uma escolha dela).',
+  percepcao: 'O que ela sentiu mudar no corpo ao terminar uma atividade. É assim que ela aprende o que cada coisa faz.',
 };
 const tools: Record<string, string> = {
   atividade: 'fazer uma atividade (comer, beber, dormir…)',
@@ -69,6 +70,10 @@ const errors: Record<string, string> = {
   ja_registrado: 'tentou registrar algo sobre si que já estava registrado',
   corpo_sem_condicoes: 'estava cansada, com fome ou com sede demais para esse esforço',
   sono_involuntario: 'tentou acordar, mas o corpo ainda estava exausto',
+  sem_sono: 'tentou dormir sem estar com sono',
+  sem_fome: 'tentou comer sem estar com fome',
+  sem_sede: 'tentou beber sem estar com sede',
+  ja_limpa: 'tentou se limpar já estando limpa',
   orcamento_suspenso: 'o limite diário de pensamentos foi atingido',
   orcamento_global_suspenso: 'o limite diário de pensamentos foi atingido',
 };

@@ -267,9 +267,9 @@ export type State = {
   };
   needs: Record<string, number>;
   motives: Record<string, number>;
-  activity: { kind: string; until: number; target: string; intention: string; involuntary?: boolean };
-  queue?:{kind:string;until:number;target:string;intention:string}[];
-  lastCompleted?:{kind:string;until:number;target:string;intention:string};
+  activity: { kind: string; until: number; target: string; intention: string; involuntary?: boolean; startNeeds?: Record<string, number> };
+  queue?:State['activity'][];
+  lastCompleted?:State['activity'];
   position: Point;
   objects: HabitatObject[];
   complexNext: boolean;
@@ -357,8 +357,13 @@ export const physiology = {
   hungryDrain: 3,
   exhaustion: { sono: 100, energia: 5, sleepMinutes: 240 },
   wake: { rested: 3, hungerBelowSono: 40 },
+  sated: { fome: 1, sede: 1, higiene: 99 },
+  needToStart: { comer: 15, beber: 15, higiene: 90 },
+  healthRecovery: 3,
   minSonoToSleep: 25,
 } as const;
+// What the body felt at the start of an activity, compared at its end (perception, not a rule told to the creature).
+export const bodySnapshot = (n: Record<string, number>) => Object.fromEntries(['fome', 'sede', 'sono', 'energia', 'higiene', 'saude'].map((k) => [k, Math.round(n[k] ?? 0)]));
 export const energyCap = (sono: number) => clamp(100 - Math.max(0, sono - 60) * 2);
 export function reconcile(input: State, now: number): { state: State; gap: boolean;completed:State['activity'][];events:string[] } {
   const s = structuredClone(input);
@@ -397,7 +402,7 @@ export function reconcile(input: State, now: number): { state: State; gap: boole
   n.higiene = clamp(n.higiene + hours * p.awake.higiene + (over.higiene ?? 0) * p.restore.higiene.higiene);
   n.conforto = clamp(100 - (n.fome + n.sede + n.sono) / 3 - (100 - n.higiene) / 6 + (over.descansar ?? 0) * 20);
   const deficit = (n.fome >= 90 ? 4 : 0) + (n.sede >= 90 ? 4 : 0) + (n.sono >= 95 ? 2 : 0) + (n.higiene <= 15 ? 1 : 0);
-  n.saude = clamp(deficit ? n.saude - hours * deficit : n.fome < 70 && n.sede < 70 && n.sono < 80 ? n.saude + hours * 1.5 : n.saude, 10);
+  n.saude = clamp(deficit ? n.saude - hours * deficit : n.fome < 70 && n.sede < 70 && n.sono < 80 ? n.saude + hours * p.healthRecovery : n.saude, 10);
   // Motives drift by rules too: boredom grows when idle and falls with engaging work,
   // frustration fades with time, satisfaction returns to a baseline and drops while needs are
   // critical, motivation follows energy, health and satisfaction. Choices stay with the creature.
@@ -418,19 +423,29 @@ export function reconcile(input: State, now: number): { state: State; gap: boole
   // The body wakes by itself when rested, or earlier when hunger/thirst are critical and sleep
   // pressure is no longer high. Before this, a chosen 6 h sleep went on with sono already 0.
   const events: string[] = [];
-  if (s.activity.kind === 'dormir' && s.activity.until > s.virtualMinutes && (n.sono <= p.wake.rested || (n.sono < p.wake.hungerBelowSono && (n.fome >= 95 || n.sede >= 95)))) {
-    const woke = { ...s.activity, until: s.virtualMinutes };
-    completed.push(woke);
-    s.lastCompleted = woke;
-    s.activity = woke;
-    events.push(n.sono <= p.wake.rested ? 'acordou_descansada' : 'acordou_com_fome_ou_sede');
+  // Need-restoring activities end when the need is met (sated, quenched, clean, rested); the
+  // queue is pulled forward so the next activity does not wait for the old schedule.
+  const endNow = () => {
+    const shift = s.activity.until - s.virtualMinutes;
+    const done = { ...s.activity, until: s.virtualMinutes };
+    completed.push(done);
+    s.lastCompleted = done;
+    s.activity = done;
+    for (const queued of s.queue ?? []) queued.until -= shift;
+  };
+  if (s.activity.until > s.virtualMinutes) {
+    const k = s.activity.kind;
+    if (k === 'dormir' && (n.sono <= p.wake.rested || (n.sono < p.wake.hungerBelowSono && (n.fome >= 95 || n.sede >= 95)))) {
+      events.push(n.sono <= p.wake.rested ? 'acordou_descansada' : 'acordou_com_fome_ou_sede');
+      endNow();
+    } else if ((k === 'comer' && n.fome <= p.sated.fome) || (k === 'beber' && n.sede <= p.sated.sede) || (k === 'higiene' && n.higiene >= p.sated.higiene)) endNow();
   }
-  while(s.activity.until<=s.virtualMinutes&&s.queue?.length){s.activity=s.queue.shift()!;const object=s.objects.find(o=>o.id===s.activity.target);if(object){const path=approach(s.position,object,s.objects);if(path.length)s.position=path[path.length-1];}}
+  while(s.activity.until<=s.virtualMinutes&&s.queue?.length){s.activity={...s.queue.shift()!,startNeeds:bodySnapshot(n)};const object=s.objects.find(o=>o.id===s.activity.target);if(object){const path=approach(s.position,object,s.objects);if(path.length)s.position=path[path.length-1];}}
   const sleeping = s.activity.kind === 'dormir' && s.activity.until > s.virtualMinutes;
   if (!sleeping && (n.sono >= p.exhaustion.sono || n.energia <= p.exhaustion.energia)) {
     // The body gives out: recorded as physiology, never as a decision.
     s.queue = [];
-    s.activity = { kind: 'dormir', until: s.virtualMinutes + p.exhaustion.sleepMinutes, target: 'cama', intention: s.activity.intention, involuntary: true };
+    s.activity = { kind: 'dormir', until: s.virtualMinutes + p.exhaustion.sleepMinutes, target: 'cama', intention: s.activity.intention, involuntary: true, startNeeds: bodySnapshot(n) };
     const bed = s.objects.find((o) => o.id === 'cama');
     if (bed) { const path = approach(s.position, bed, s.objects); if (path.length) s.position = path[path.length - 1]; }
     events.push('adormeceu_exausta');

@@ -25,7 +25,8 @@ function setup(extra: Partial<Env> = {}) {
 }
 async function seed(store: Store, now = Date.now()) {
   const s = born(now);
-  s.needs.sono = 60; // enough sleep pressure for the queue tests that use dormir
+  // Needs high enough that the body accepts every physical activity used by these mechanism tests.
+  Object.assign(s.needs, { sono: 60, fome: 60, sede: 60, higiene: 50 });
   const token = await store.acquire(now);
   await store.commit(token!, s, [entry(s, 'nascimento', 'Nascimento DESCARTÁVEL de teste.', { fixture: true }, { importance: 1 })], [], true);
   await store.release(token!);
@@ -69,9 +70,10 @@ describe('physical activity queue (fixture decisions)', () => {
     expect(s.activity.kind).toBe('comer');
     const done = await store.records('atividade_concluida');
     expect(done.map((r) => (r.data.activity as { kind: string }).kind)).toContain('dormir');
-    // Fill the queue while a long activity runs: four queued fit, the fifth is rejected.
-    await tick(env, t0 + 900000 + 2000, fixture([{ type: 'atividade', activity: 'organizar', minutes: 120 }, { type: 'atividade', activity: 'beber', minutes: 30 }, { type: 'atividade', activity: 'higiene', minutes: 30 }]));
-    await tick(env, t0 + 1200000 + 3000, fixture([{ type: 'atividade', activity: 'descansar', minutes: 30 }, { type: 'atividade', activity: 'dormir', minutes: 30 }, { type: 'atividade', activity: 'observar', minutes: 30 }]));
+    // Fill the queue while a long (non-passive) activity runs: four queued fit, the fifth is rejected.
+    // A passive activity with an empty queue would simply be replaced, so sleep is used here.
+    await tick(env, t0 + 900000 + 2000, fixture([{ type: 'atividade', activity: 'dormir', minutes: 240 }, { type: 'atividade', activity: 'beber', minutes: 30 }, { type: 'atividade', activity: 'higiene', minutes: 30 }]));
+    await tick(env, t0 + 1200000 + 3000, fixture([{ type: 'atividade', activity: 'descansar', minutes: 30 }, { type: 'atividade', activity: 'organizar', minutes: 30 }, { type: 'atividade', activity: 'observar', minutes: 30 }]));
     s = (await store.state())!;
     expect(s.queue!.length).toBe(4);
     const errors = (await store.records('erro_ferramenta')).map((r) => r.data.code);
