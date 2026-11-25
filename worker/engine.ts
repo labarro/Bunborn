@@ -735,14 +735,14 @@ function bodyEvent(s: State, event: string): RecordEntry {
 // Plain facts about the body for the model; no instruction about what to do.
 export function bodyAlerts(s: State): string[] {
   const n = s.needs, out: string[] = [];
-  if (n.fome >= 90) out.push('fome crítica: a saúde está caindo');
+  if (n.fome >= 90) out.push('fome crítica: a saúde está caindo (dormir e descansar não reduzem a fome; só comer reduz)');
   else if (n.fome >= 70) out.push('com fome');
-  if (n.sede >= 90) out.push('sede crítica: a saúde está caindo');
+  if (n.sede >= 90) out.push('sede crítica: a saúde está caindo (dormir e descansar não reduzem a sede; só beber reduz)');
   else if (n.sede >= 70) out.push('com sede');
   if (n.sono >= 95) out.push('exausta de sono: pode adormecer sozinha a qualquer momento');
   else if (n.sono >= 75) out.push('com sono');
   if (n.energia <= 15) out.push('sem energia para trabalho exigente');
-  if (n.saude < 50) out.push('saúde baixa: a energia se esgota mais rápido');
+  if (n.saude < 50) out.push('saúde baixa: a energia se esgota mais rápido; a saúde só se recupera com fome e sede abaixo de 70 e sono abaixo de 80');
   if (s.activity.involuntary && s.activity.until > s.virtualMinutes) out.push('dormindo por exaustão');
   return out;
 }
