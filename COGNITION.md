@@ -82,6 +82,10 @@ Regras físicas novas:
 - Uma atividade física escolhida substitui uma atividade passiva quando a fila está vazia.
 - A saúde se recupera 3 por hora virtual quando o corpo está bem.
 
+## Autonomia para pesquisar (25/11)
+
+Pesquisar e recordar ficam disponíveis em qualquer estado do corpo, mas não durante uma atividade física em andamento nem durante o sono. Antes, fome, sede ou cansaço extremos bloqueavam a pesquisa justamente quando ela mais precisava descobrir o que fazer. O prompt diz que ela é autônoma: diante de qualquer dúvida, sobre o mundo, sobre si, sobre o corpo ou sobre como fazer algo, pode pesquisar ou recordar. Novas sensações em `body`: suja, muito entediada, frustrada.
+
 ## Despertar (25/11)
 
 O corpo acorda sozinho quando o sono chega a 3 ou menos, ou antes disso se fome ou sede passarem de 95 com o sono abaixo de 40. Isso vale mesmo que ela tenha escolhido dormir por mais tempo. Também não consegue adormecer com sono abaixo de 25 (`sem_sono`). Antes, um sono de 6 h virtuais continuava com o sono já zerado. Em produção, às 05:17Z ela acordou sozinha, a tentativa de voltar a dormir foi recusada e às 05:22Z ela foi comer.

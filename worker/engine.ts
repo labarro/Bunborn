@@ -108,7 +108,8 @@ async function applyAction(
   // Body limits (physiology, not preference): an exhausted or starving body cannot do
   // demanding work, and involuntary sleep cannot be cut short while still exhausted.
   const n = s.needs;
-  if (['pesquisar', 'criar', 'projeto', 'relacionar', 'mover', 'organizar'].includes(a.type === 'atividade' ? a.activity : a.type) && (n.energia <= 15 || n.sono >= 95 || n.fome >= 95 || n.sede >= 95))
+  // Searching and remembering stay available in any bodily state: when unsure, the creature can look it up.
+  if (['criar', 'projeto', 'relacionar', 'mover', 'organizar'].includes(a.type === 'atividade' ? a.activity : a.type) && (n.energia <= 15 || n.sono >= 95 || n.fome >= 95 || n.sede >= 95))
     throw new ToolError('corpo_sem_condicoes', { needs: { fome: Math.round(n.fome), sede: Math.round(n.sede), sono: Math.round(n.sono), energia: Math.round(n.energia), saude: Math.round(n.saude) }, limits: 'energia > 15, sono < 95, fome < 95, sede < 95', options: 'comer, beber, dormir ou descansar recuperam o corpo' });
   if (a.type === 'interromper' && s.activity.involuntary && s.activity.until > s.virtualMinutes && n.sono > 60)
     throw new ToolError('sono_involuntario', { sono: Math.round(n.sono), remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes) });
@@ -774,6 +775,9 @@ export function bodyAlerts(s: State): string[] {
   if (n.energia <= 15) out.push('sem energia');
   if (n.saude < 50) out.push('saúde baixa, sente-se fraca');
   if (s.activity.involuntary && s.activity.until > s.virtualMinutes) out.push('dormindo por exaustão');
+  if (n.higiene <= 25) out.push('sente-se suja e desconfortável');
+  if (s.motives.tedio >= 80) out.push('muito entediada');
+  if (s.motives.frustracao >= 60) out.push('frustrada');
   return out;
 }
 // Server-imposed pacing to fit free quotas; production is fixed at five real minutes.

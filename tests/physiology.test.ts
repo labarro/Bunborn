@@ -72,7 +72,7 @@ describe('physiology (deterministic body rules)', () => {
     await tick(env, t0 + 60000, fixture([{ type: 'pesquisar', source: 'wikipedia', query: 'coelhos' }, { type: 'interromper', reason: 'quero acordar' }]));
     expect((await store.records('corpo')).length).toBe(1);
     const errors = (await store.records('erro_ferramenta')).map((r) => r.data.code);
-    expect(errors).toEqual(expect.arrayContaining(['corpo_sem_condicoes', 'sono_involuntario']));
+    expect(errors).toEqual(expect.arrayContaining(['atividade_em_andamento', 'sono_involuntario']));
     expect((await store.state())!.activity.kind).toBe('dormir');
   });
 });
@@ -259,5 +259,17 @@ describe('sense from experience (review 25/11 05:40Z)', () => {
     s.needs = { ...s.needs, fome: 95, sede: 95, saude: 20 };
     const text = bodyAlerts(s).join(' | ');
     expect(text).not.toMatch(/comer|beber|dormir|descansar|só /);
+  });
+});
+
+describe('autonomy: research is always available', () => {
+  it('a starving, exhausted-but-awake creature can still search to find out what to do', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    await seed(store, (s) => { s.needs = { ...s.needs, fome: 98, sede: 98, energia: 10, sono: 60 }; s.activity.until = 0; }, t0);
+    const fetcher = (async () => Response.json({ query: { pages: { 1: { pageid: 1, title: 'Fome', extract: 'Fome é...' } } } })) as typeof fetch;
+    await tick(env, t0 + 1000, fixture([{ type: 'pesquisar', source: 'wikipedia', query: 'o que reduz a fome' }, { type: 'criar', id: 'x', title: 'x', motivation: 'x', projectId: null, artifact: { format: 'texto', content: 'x' } }]), fetcher);
+    expect((await store.records('pesquisa')).length).toBe(1);
+    expect((await store.records('erro_ferramenta')).map((r) => r.data.code)).toEqual(['corpo_sem_condicoes']);
   });
 });
