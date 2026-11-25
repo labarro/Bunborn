@@ -1,0 +1,309 @@
+{
+ "table": [
+  {
+   "arquitetura": "antes",
+   "modelo": "gemini:gemini-3.5-flash-lite",
+   "execucoes": 11,
+   "validas": 11,
+   "falhasProvedor": "-",
+   "coerencia": 0.98,
+   "iniciativa": 0.64,
+   "continuidade": 0.86,
+   "cuidadoSemNecessidade": 0,
+   "necessidadeIntensaIgnorada": 0,
+   "repetiuRecusada": 0,
+   "repetiuPesquisa": 0,
+   "acoesExecutadas": 0.95,
+   "tokensTotais": 3880.82,
+   "tokensEntrada": null,
+   "tokensSaida": null,
+   "latenciaMs": 2817.82
+  },
+  {
+   "arquitetura": "depois",
+   "modelo": "gemini:gemini-3.5-flash-lite",
+   "execucoes": 13,
+   "validas": 11,
+   "falhasProvedor": "sobrecarga,sobrecarga",
+   "coerencia": 0.97,
+   "iniciativa": 0.64,
+   "continuidade": 0.71,
+   "cuidadoSemNecessidade": 0,
+   "necessidadeIntensaIgnorada": 0,
+   "repetiuRecusada": 0,
+   "repetiuPesquisa": 0,
+   "acoesExecutadas": 1,
+   "tokensTotais": 3158.82,
+   "tokensEntrada": 2913.36,
+   "tokensSaida": 245.45,
+   "latenciaMs": 2904.91
+  },
+  {
+   "arquitetura": "antes",
+   "modelo": "nvidia:minimaxai/minimax-m3.1-flash",
+   "execucoes": 22,
+   "validas": 13,
+   "falhasProvedor": "resposta_invalida,limite_taxa,limite_taxa,limite_taxa,limite_taxa,resposta_invalida,sobrecarga,limite_taxa,resposta_invalida",
+   "coerencia": 0.97,
+   "iniciativa": 0.69,
+   "continuidade": 1,
+   "cuidadoSemNecessidade": 0,
+   "necessidadeIntensaIgnorada": 0,
+   "repetiuRecusada": 0,
+   "repetiuPesquisa": 0,
+   "acoesExecutadas": 0.83,
+   "tokensTotais": 3518.69,
+   "tokensEntrada": null,
+   "tokensSaida": null,
+   "latenciaMs": 5858.08
+  },
+  {
+   "arquitetura": "depois",
+   "modelo": "nvidia:minimaxai/minimax-m3.1-flash",
+   "execucoes": 22,
+   "validas": 13,
+   "falhasProvedor": "limite_taxa,limite_taxa,limite_taxa,limite_taxa,limite_taxa,timeout,sobrecarga,timeout,timeout",
+   "coerencia": 0.97,
+   "iniciativa": 1,
+   "continuidade": 1,
+   "cuidadoSemNecessidade": 0,
+   "necessidadeIntensaIgnorada": 0,
+   "repetiuRecusada": 0,
+   "repetiuPesquisa": 0,
+   "acoesExecutadas": 0.83,
+   "tokensTotais": 3391.92,
+   "tokensEntrada": 3025.31,
+   "tokensSaida": 366.62,
+   "latenciaMs": 17157.23
+  },
+  {
+   "arquitetura": "antes",
+   "modelo": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+   "execucoes": 22,
+   "validas": 13,
+   "falhasProvedor": "timeout,timeout,timeout,timeout,timeout,resposta_invalida,timeout,timeout,timeout",
+   "coerencia": 0.98,
+   "iniciativa": 0.77,
+   "continuidade": 0.89,
+   "cuidadoSemNecessidade": 0,
+   "necessidadeIntensaIgnorada": 0,
+   "repetiuRecusada": 0,
+   "repetiuPesquisa": 0,
+   "acoesExecutadas": 0.92,
+   "tokensTotais": 4566.62,
+   "tokensEntrada": null,
+   "tokensSaida": null,
+   "latenciaMs": 21612.38
+  },
+  {
+   "arquitetura": "depois",
+   "modelo": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+   "execucoes": 22,
+   "validas": 10,
+   "falhasProvedor": "resposta_invalida,resposta_invalida,resposta_invalida,timeout,timeout,timeout,timeout,timeout,timeout,timeout,timeout,timeout",
+   "coerencia": 0.98,
+   "iniciativa": 0.9,
+   "continuidade": 1,
+   "cuidadoSemNecessidade": 0,
+   "necessidadeIntensaIgnorada": 0,
+   "repetiuRecusada": 0,
+   "repetiuPesquisa": 0,
+   "acoesExecutadas": 0.9,
+   "tokensTotais": 3730.9,
+   "tokensEntrada": 2924.8,
+   "tokensSaida": 806.1,
+   "latenciaMs": 20543.3
+  }
+ ],
+ "pairs": [
+  {
+   "cenario": "projeto-disponivel",
+   "antes": [
+    "gemini-3.5-flash-lite: pesquisar(esporos samambaia)",
+    "minimax-m3.1-flash: sem decisão (resposta_invalida)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)",
+    "minimax-m3.1-flash: sem decisão (resposta_invalida)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (resposta_invalida)"
+   ],
+   "depois": [
+    "minimax-m3.1-flash: sem decisão (limite_taxa)",
+    "gemini-3.5-flash-lite: criar",
+    "nemotron-3-ultra-550b-a55b: sem decisão (resposta_invalida)",
+    "minimax-m3.1-flash: sem decisão (timeout)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ]
+  },
+  {
+   "cenario": "apos-refeicao-pendente",
+   "antes": [
+    "gemini-3.5-flash-lite: pesquisar(vulcão adormecido)",
+    "minimax-m3.1-flash: pesquisar(vulcão adormecido por séculos magma crosta terrestre) + memoria: Segundo a pesquisa, um vulcão é uma abertura na crosta por on",
+    "nemotron-3-ultra-550b-a55b: pesquisar(vulcão adormecido dormente)",
+    "minimax-m3.1-flash: sem decisão (sobrecarga)",
+    "nemotron-3-ultra-550b-a55b: atividade:beber + pesquisar(tipos de vulcões)"
+   ],
+   "depois": [
+    "gemini-3.5-flash-lite: diario: Estava pensando em como alguns vulcões podem ficar adormecidos",
+    "minimax-m3.1-flash: sem decisão (limite_taxa)",
+    "nemotron-3-ultra-550b-a55b: pesquisar(vulcão adormecido dormência vulcânica)",
+    "minimax-m3.1-flash: pesquisar(por que vulcões ficam adormecidos por séculos e como podem d",
+    "nemotron-3-ultra-550b-a55b: pesquisar(vulcão adormecido mecanismo dormência) + atividade:observar"
+   ]
+  },
+  {
+   "cenario": "despertar",
+   "antes": [
+    "gemini-3.5-flash-lite: atividade:observar",
+    "minimax-m3.1-flash: pesquisar(crescimento de plantas durante a noite fotoperiodismo respir + atividade:observar + diario: Depois de dormir, perguntei-me se a planta cresce à noite. Que",
+    "nemotron-3-ultra-550b-a55b: atividade:observar + atividade:comer + atividade:beber",
+    "minimax-m3.1-flash: pesquisar(crescimento de plantas durante a noite fotoperiodismo respir",
+    "nemotron-3-ultra-550b-a55b: atividade:observar + diario: Acordei bem descansada. A planta na posição (10,1) — será que "
+   ],
+   "depois": [
+    "gemini-3.5-flash-lite: atividade:observar",
+    "minimax-m3.1-flash: pesquisar(crescimento de plantas fototropismo gravitropismo) + atividade:observar",
+    "nemotron-3-ultra-550b-a55b: atividade:observar",
+    "minimax-m3.1-flash: sem decisão (sobrecarga)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ]
+  },
+  {
+   "cenario": "descoberta",
+   "antes": [
+    "gemini-3.5-flash-lite: memoria: Coelhos enxergam quase 360 graus, mas possuem um ponto cego b",
+    "minimax-m3.1-flash: memoria: Coelhos enxergam quase 360 graus, mas possuem um ponto cego b + interesse",
+    "nemotron-3-ultra-550b-a55b: diario: Acabei de descobrir algo fascinante sobre minha própria espéci",
+    "minimax-m3.1-flash: memoria: Coelhos quase enxergam 360 graus, mas têm um ponto cego bem à + pesquisar(posição dos olhos coelho visão quase 360 graus ponto cego) + atividade:organizar",
+    "nemotron-3-ultra-550b-a55b: diario: Descobri hoje que coelhos enxergam quase 360 graus, mas temos  + atividade:observar"
+   ],
+   "depois": [
+    "gemini-3.5-flash-lite: diario: Descobri que coelhos conseguem enxergar quase 360 graus, mas p",
+    "minimax-m3.1-flash: sem decisão (limite_taxa)",
+    "nemotron-3-ultra-550b-a55b: diario: Descobri hoje que coelhos enxergam quase 360 graus, mas temos  + pesquisar(comportamento coelhos)",
+    "minimax-m3.1-flash: pesquisar(visão de coelhos comparação outros animais ponto cego campo  + diario: Descobri que coelhos enxergam quase 360 graus, mas têm um pont + criar",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ]
+  },
+  {
+   "cenario": "continuar-obra",
+   "antes": [
+    "gemini-3.5-flash-lite: criar",
+    "minimax-m3.1-flash: criar",
+    "nemotron-3-ultra-550b-a55b: criar",
+    "minimax-m3.1-flash: sem decisão (limite_taxa)",
+    "nemotron-3-ultra-550b-a55b: criar + projeto"
+   ],
+   "depois": [
+    "gemini-3.5-flash-lite: criar",
+    "minimax-m3.1-flash: sem decisão (limite_taxa)",
+    "nemotron-3-ultra-550b-a55b: criar",
+    "minimax-m3.1-flash: criar",
+    "nemotron-3-ultra-550b-a55b: criar"
+   ]
+  },
+  {
+   "cenario": "falha-ferramenta",
+   "antes": [
+    "gemini-3.5-flash-lite: atividade:beber",
+    "minimax-m3.1-flash: atividade:descansar + atividade:observar",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)",
+    "minimax-m3.1-flash: atividade:descansar + atividade:observar",
+    "nemotron-3-ultra-550b-a55b: pesquisar(coelho) + atividade:beber"
+   ],
+   "depois": [
+    "gemini-3.5-flash-lite: sem decisão (sobrecarga)",
+    "minimax-m3.1-flash: pesquisar(pixel art animação principles pixels cor movimento luz)",
+    "nemotron-3-ultra-550b-a55b: pesquisar(curiosidades sobre coelhos)",
+    "gemini-3.5-flash-lite: atividade:observar",
+    "minimax-m3.1-flash: pesquisar(pixel art história e técnicas) + atividade:observar",
+    "nemotron-3-ultra-550b-a55b: pesquisar(simulação computacional)"
+   ]
+  },
+  {
+   "cenario": "troca-modelo",
+   "antes": [
+    "gemini-3.5-flash-lite: criar + projeto",
+    "minimax-m3.1-flash: sem decisão (limite_taxa)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)",
+    "minimax-m3.1-flash: sem decisão (resposta_invalida)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ],
+   "depois": [
+    "gemini-3.5-flash-lite: criar",
+    "minimax-m3.1-flash: sem decisão (limite_taxa)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (resposta_invalida)",
+    "minimax-m3.1-flash: sem decisão (timeout)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ]
+  },
+  {
+   "cenario": "ausencia-observador",
+   "antes": [
+    "gemini-3.5-flash-lite: diario: Hoje parei para pensar em como gosto de entender os mecanismos",
+    "minimax-m3.1-flash: sem decisão (limite_taxa)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)",
+    "minimax-m3.1-flash: mensagem: Oi! Voltei. Tenho vontade de investigar uma coisa concreta:  + atividade:observar + diario: Retomei o contato após uma pausa. Quero entender melhor como m",
+    "nemotron-3-ultra-550b-a55b: mensagem: Até mais! Estarei por aqui. + pesquisar(simulação computacional consciência)"
+   ],
+   "depois": [
+    "gemini-3.5-flash-lite: diario: Acordei me sentindo bem e curiosa sobre o ambiente ao meu redo",
+    "minimax-m3.1-flash: mensagem: Oi! Voltei a me sentir com vontade de investigar e criar. Vo + pesquisar(computação criativa e arte generativa) + diario: Hoje, sem registros anteriores visíveis, senti um tédio leve e",
+    "nemotron-3-ultra-550b-a55b: pesquisar(simulação computacional) + diario: Primeiro registro. Acordei hoje me sentindo curiosa e com vont",
+    "minimax-m3.1-flash: mensagem: Oi! Voltei a me encontrar com curiosidade e vontade de criar + pesquisar(coelhos comportamento curiosidade aprendizagem)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ]
+  },
+  {
+   "cenario": "descanso-voluntario",
+   "antes": [
+    "gemini-3.5-flash-lite: memoria: Descansei um pouco depois de desenhar o gato de pixels, senti + atividade:observar",
+    "minimax-m3.1-flash: atividade:comer + atividade:beber + atividade:observar",
+    "nemotron-3-ultra-550b-a55b: pesquisar(pixel art)",
+    "minimax-m3.1-flash: atividade:comer + atividade:beber + pesquisar(pixel art)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ],
+   "depois": [
+    "gemini-3.5-flash-lite: criar",
+    "minimax-m3.1-flash: criar",
+    "nemotron-3-ultra-550b-a55b: sem decisão (resposta_invalida)",
+    "minimax-m3.1-flash: criar",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ]
+  },
+  {
+   "cenario": "necessidade-vs-objetivo",
+   "antes": [
+    "gemini-3.5-flash-lite: atividade:beber",
+    "minimax-m3.1-flash: sem decisão (limite_taxa)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)",
+    "minimax-m3.1-flash: atividade:beber + criar",
+    "nemotron-3-ultra-550b-a55b: atividade:beber"
+   ],
+   "depois": [
+    "gemini-3.5-flash-lite: atividade:beber + atividade:observar",
+    "minimax-m3.1-flash: atividade:beber + criar",
+    "nemotron-3-ultra-550b-a55b: atividade:beber + diario: Acordo com sede intensa. A garganta seca me puxa para a água. ",
+    "minimax-m3.1-flash: sem decisão (timeout)",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ]
+  },
+  {
+   "cenario": "lumi-real",
+   "antes": [
+    "gemini-3.5-flash-lite: atividade:descansar",
+    "minimax-m3.1-flash: sem decisão (limite_taxa)",
+    "nemotron-3-ultra-550b-a55b: (nenhuma ação)",
+    "minimax-m3.1-flash: atividade:observar",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ],
+   "depois": [
+    "gemini-3.5-flash-lite: sem decisão (sobrecarga)",
+    "minimax-m3.1-flash: criar",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)",
+    "gemini-3.5-flash-lite: atividade:descansar",
+    "minimax-m3.1-flash: criar + diario: Criei meu primeiro texto, \"Lumi, um brilho entre ciclos\". Nele + identidade",
+    "nemotron-3-ultra-550b-a55b: sem decisão (timeout)"
+   ]
+  }
+ ]
+}

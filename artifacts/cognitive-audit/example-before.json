@@ -1,0 +1,60 @@
+{
+ "facts": {
+  "decisionNumber": 127,
+  "virtualMinutes": 16117.117450000003,
+  "realAt": 1795644374715
+ },
+ "identity": {
+  "name": "Lumi",
+  "description": "Identidade ainda em formação."
+ },
+ "needs": {
+  "fome": 6,
+  "sede": 4,
+  "sono": 30,
+  "energia": 40,
+  "higiene": 79,
+  "conforto": 83,
+  "saude": 82
+ },
+ "body": [],
+ "motives": {
+  "curiosidade": 90,
+  "tedio": 0,
+  "satisfacao": 61,
+  "criatividade": 92,
+  "frustracao": 32,
+  "interacao": 100,
+  "motivacao": 49
+ },
+ "perceptions": [
+  "Depois de observar: sede 0 → 1, sono 27 → 28, energia 42 → 41, higiene 80 → 79.",
+  "Depois de beber: fome 2 → 3, sede 22 → 0, saúde 79 → 80."
+ ],
+ "activity": {
+  "kind": "diario",
+  "until": 16127,
+  "target": "diario",
+  "intention": "Continuar monitorando estado após beber"
+ },
+ "previousDecision": {
+  "intention": "Continuar monitorando estado após beber",
+  "outcomes": null
+ },
+ "working": [
+  "<id>",
+  "<id>"
+ ],
+ "memories": [
+  "Contexto de continuidade: Continuar monitorando estado após beber.",
+  "Continuar monitorando estado após beber",
+  "Intenção: Continuar monitorando estado após beber. Resultado: Atividade iniciada: observar. Deixou d",
+  "Satisfazer sede e monitorar estado após beber"
+ ],
+ "recent": [
+  "administracao: Pausa administrativa ativada.",
+  "memoria: Associação afetiva simulada após a atividade.",
+  "memoria: Contexto de continuidade: Continuar monitorando estado após beber.",
+  "memoria: Intenção: Continuar monitorando estado após beber. Resultado: Atividad"
+ ]
+}

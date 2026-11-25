@@ -90,9 +90,19 @@ O livro-razão continua sendo as tabelas `budgets` e `calls`: local por ambiente
 
 Mais modelos **não** aumentam o ritmo: continua no máximo uma decisão a cada 5 min em produção.
 
+**Estimativa e reserva (auditoria de 25/11):**
+- **Entrada:** estimada em bytes UTF-8 do system prompt mais o contexto, divididos pela razão bytes/token de cada família (`shared/token-budget.ts`). Medidas em 25/11 (tokens de entrada informados pelo provedor contra bytes enviados): Gemini 3,38 a 3,46 e MiniMax 3,61. Ainda não medidos só na entrada, com valores conservadores: gpt-oss 3,4, Qwen 3,3, demais modelos da NVIDIA 3,2. O Worker não roda tokenizador. Antes, o divisor era 4 para todos, e isso subestimava o consumo real em 6 a 30%.
+- **Saída por categoria:** cotidiana, comunicação e pesquisa 1.536 tokens; memória 2.048; complexa 2.560; criatividade 4.096. Na Groq, `max_tokens` é encaixado abaixo do limite por minuto (entrada + saída + 300 ≤ TPM), e o modelo é excluído se não couberem nem 900 tokens de saída. Antes, o Gemini pedia sempre 4.096 (8.192 no caminho legado) e a Groq até 3.000.
+- **Reserva:** a reserva é a entrada estimada mais a saída pedida, o que a Groq conta no limite por minuto. A liquidação usa sempre o consumo informado pelo provedor; o caminho legado reservava em média 24,7 mil tokens para 6,5 mil consumidos.
+- **Requisição grande demais:** o "Request too large" da Groq é erro nosso de dimensionamento; passa para o próximo modelo sem penalizar a saúde do modelo.
+- **Liquidação segura:** uma falha ao gravar a liquidação é registrada em `operations` (`ledger-error:*`), mas nunca descarta uma decisão válida nem esconde o erro original. Se a reserva global falha por indisponibilidade, a local é liberada e o modelo não é chamado.
+- **Reservas órfãs:** reservas não liquidadas há mais de 10 min (Worker interrompido no meio da chamada) são liquidadas de forma conservadora com os tokens reservados (status `orfa_conservadora`), antes de cada roteamento. A operação é idempotente: uma liquidação tardia não conta duas vezes.
+- **Retry-After:** aceito em segundos ou como data HTTP.
+- **Identificadores de conta:** identificadores de organização (por exemplo, `org_…` nas mensagens da Groq) são removidos dos detalhes gravados.
+
 ## Transparência
 
-Cada `intencao` guarda em `route`: categoria e motivo, modelo e provedor escolhidos, motivos técnicos, candidatos elegíveis com pontuação, excluídos com motivo, tentativas (resultado, latência e tokens), número de fallbacks, tokens, latência e resultado da validação. Um ciclo em que todos falharam guarda a rota no registro `erro`.
+Cada `intencao` guarda em `execution` quantas ações foram propostas, feitas e recusadas (resultado funcional, separado da validade do JSON) e em `outcomes` o resultado de cada uma. Em `route` guarda: categoria e motivo, modelo e provedor escolhidos, motivos técnicos, candidatos elegíveis com pontuação, excluídos com motivo, tentativas (resultado, latência, tokens de entrada e de saída, entrada estimada e saída pedida), número de fallbacks, tokens, latência e resultado da validação. Um ciclo em que todos falharam guarda a rota no registro `erro`.
 
 A aba **Provedores** (só para o responsável) mostra as últimas 30 rotas. Esses são motivos técnicos de roteamento, e não intenções da criatura.
 

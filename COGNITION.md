@@ -96,6 +96,15 @@ Comportamento observado entre 05:44Z e 12:53Z, sem nenhuma instrução sobre o c
 
 Pesquisar e recordar ficam disponíveis em qualquer estado do corpo, mas não durante uma atividade física em andamento nem durante o sono. Antes, fome, sede ou cansaço extremos bloqueavam a pesquisa justamente quando ela mais precisava descobrir o que fazer. O prompt diz que ela é autônoma: diante de qualquer dúvida, sobre o mundo, sobre si, sobre o corpo ou sobre como fazer algo, pode pesquisar ou recordar. Novas sensações em `body`: suja, muito entediada, frustrada.
 
+## Auditoria cognitiva (25/11, noite)
+
+Relatório completo em [COGNITIVE_AUDIT.md](COGNITIVE_AUDIT.md). Em resumo:
+- **Prompt em módulos:** núcleo (existência contínua, identidade persistente entre modelos, autonomia, ferramentas como meio), corpo, mundo e capacidades, tempo e atividades, memória e evidências, segurança e formato. As instruções de nascimento ("começa sem nome…") só vão na decisão zero. Saiu "fome/sede/sono altos indicam necessidade".
+- **Corpo sentido:** o modelo recebe níveis ("saciada", "leve sede", "um pouco cansada") calculados com os mesmos limiares do corpo, em vez de percentuais. As percepções descrevem a mudança sentida, e as recusas do corpo dizem o que ela sente, sem número, limiar ou remédio. O observador continua vendo os percentuais.
+- **Contexto em ordem de vida:** quem ela é → como se sente → onde está → o que vinha fazendo e pensando (`thread`) → o que sabe (`knowledge`) → do que se lembra → eventos e mensagens. Saíram `recent` (dominado por registros técnicos), `working` (IDs) e os campos numéricos crus.
+- **Memória sem eco:** ver [MEMORY.md](MEMORY.md#recuperação-limitada-revista-na-auditoria-cognitiva-de-2511).
+- **Orçamento e erros:** ver [COGNITIVE_ROUTING.md](COGNITIVE_ROUTING.md#orçamento).
+
 ## Estado interno e diário, segunda revisão (25/11 22h)
 
 - **Diário:** a pedido do responsável, as 5 entradas de 20:19Z a 22:04Z (registros de ações e planos, não reflexões) foram apagadas da produção depois de um backup assinado (`production-752330c9…`). O índice de busca e os vínculos dessas entradas também foram limpos; as memórias de observação que citam o resultado do ciclo ficaram.

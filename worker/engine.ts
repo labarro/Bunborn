@@ -5,6 +5,9 @@ import {
   reconcile,
   physiology,
   bodySnapshot,
+  feel,
+  feelings,
+  feltChange,
   validLayout,
   type Action,
   type RecordEntry,
@@ -113,9 +116,9 @@ async function applyAction(
   const n = s.needs;
   // Searching and remembering stay available in any bodily state: when unsure, the creature can look it up.
   if (['criar', 'projeto', 'relacionar', 'mover', 'organizar'].includes(a.type === 'atividade' ? a.activity : a.type) && (n.energia <= 15 || n.sono >= 95 || n.fome >= 95 || n.sede >= 95))
-    throw new ToolError('corpo_sem_condicoes', { needs: { fome: Math.round(n.fome), sede: Math.round(n.sede), sono: Math.round(n.sono), energia: Math.round(n.energia), saude: Math.round(n.saude) }, limits: 'energia > 15, sono < 95, fome < 95, sede < 95', options: 'comer, beber, dormir ou descansar recuperam o corpo' });
+    throw new ToolError('corpo_sem_condicoes', { sente: feelings(s).body, note: 'o corpo está sem condições para isso agora' });
   if (a.type === 'interromper' && s.activity.involuntary && s.activity.until > s.virtualMinutes && n.sono > 60)
-    throw new ToolError('sono_involuntario', { sono: Math.round(n.sono), remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes) });
+    throw new ToolError('sono_involuntario', { sente: feel('sono', n.sono), remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes), note: 'o corpo ainda não consegue acordar' });
   const start = (kind: string, minutes: number) => {
     const previous = s.activity;
     if (activate(s, kind, minutes) === 'substituida') record('atividade_interrompida', `Deixou de ${previous.kind} para ${kind}.`, { activity: previous, replacedBy: kind, automatic: true });
@@ -158,19 +161,23 @@ async function applyAction(
     }
     case 'atividade':{
       if (a.activity === 'dormir' && s.needs.sono < physiology.minSonoToSleep)
-        throw new ToolError('sem_sono', { sono: Math.round(s.needs.sono), minimo: physiology.minSonoToSleep, note: 'o corpo não consegue adormecer sem sono' });
+        throw new ToolError('sem_sono', { sente: feel('sono', s.needs.sono), note: 'o corpo não consegue adormecer sem sono' });
       const need = { comer: ['fome', 'sem_fome', 'não está com fome'], beber: ['sede', 'sem_sede', 'não está com sede'] } as const;
       const rule = need[a.activity as keyof typeof need];
       if (rule && s.needs[rule[0]] < physiology.needToStart[a.activity as 'comer' | 'beber'])
-        throw new ToolError(rule[1], { [rule[0]]: Math.round(s.needs[rule[0]]), minimo: physiology.needToStart[a.activity as 'comer' | 'beber'], note: 'o corpo ' + rule[2] });
+        throw new ToolError(rule[1], { sente: feel(rule[0], s.needs[rule[0]]), note: 'o corpo ' + rule[2] });
       if (a.activity === 'higiene' && s.needs.higiene > physiology.needToStart.higiene)
-        throw new ToolError('ja_limpa', { higiene: Math.round(s.needs.higiene), maximo: physiology.needToStart.higiene });
+        throw new ToolError('ja_limpa', { sente: feel('higiene', s.needs.higiene), note: 'já está limpa' });
       if (a.activity === 'observar') {
         // Looking again at a room she already knows, unchanged, shows nothing new: the body refuses and says why.
         // The room only changes when furniture moves or a work is exposed (habitat records).
-        const last = (await store.latest('percepcao', 60)).find((r) => r.data.activity === 'observar');
+        // An observation counts once it started: "observar + diario" replaced it before it ended, so no
+        // perception was recorded and she observed 10 times in 14 cycles (homologation 25/11).
+        const perceived = (await store.latest('percepcao', 60)).find((r) => r.data.activity === 'observar');
+        const started = (await store.latest('atividade', 60)).find((r) => (r.data.activity as { kind?: string } | undefined)?.kind === 'observar' && ['iniciada', 'substituida'].includes(String(r.data.status)));
+        const last = [perceived, started].filter((r): r is RecordEntry => !!r).sort((a, b) => b.realAt - a.realAt)[0];
         const changed = (await store.latest('habitat', 1))[0];
-        if (last && (last.data.room ? last.data.room === roomSignature(s) : !changed || changed.realAt < last.realAt))
+        if (last && (last === perceived && last.data.room ? last.data.room === roomSignature(s) : !changed || changed.realAt < last.realAt))
           throw new ToolError('nada_novo_para_observar', { lastObserved: new Date(last.realAt).toISOString(), objects: s.objects.map((o) => o.label), note: 'você já observou o quarto e nada mudou desde então' });
       }
       const previous = s.activity;
@@ -467,94 +474,7 @@ export async function tick(
       await store.commit(token, s, records);
       return { status: 'tempo_atualizado' };
     }
-    const inbox = await store.inbox();
-    const memories = await store.memories(s.activity.intention + ' ' + s.working.join(' '), now);
-    const [interests, projects, artifacts, recent, concepts, readings] = await Promise.all([
-      store.latest('interesse', 12),
-      store.latest('projeto', 10),
-      store.latest('artefato', 8),
-      store.recent(10),
-      store.latest('conceito', 10),
-      store.latest('leitura', 2),
-    ]);
-    const perceptions = (await store.latest('percepcao', 6)).map((r) => ({ id: r.id, content: r.content }));
-    const lastIntent = (await store.latest('intencao', 1))[0];
-    // Her own recent diary (continuity of voice and of what she already wrote).
-    const diaryRecent = (await store.latest('diario', 3)).map((r) => ({ id: r.id, content: r.content.slice(0, 400) }));
-    // What happened to each action of the previous decision (done or refused, and why), stated plainly.
-    const previousDecision = lastIntent ? { intention: lastIntent.content, outcomes: lastIntent.data.outcomes ?? null } : null;
-    let complex =
-      (s.complexNext || (s.decisions > 0 && s.decisions % 24 === 0)) && s.decisions > 0;
-    const context = {
-      facts: {
-        simulation: true,
-        decisionNumber:s.decisions,
-        species: 'coelho',
-        virtualMinutes: s.virtualMinutes,
-        multiplier: s.multiplier,
-        realAt: now,
-        consolidationDue: s.virtualMinutes - s.lastConsolidation > 1440,
-        minimumRealMinutesBetweenDecisions: decisionFloor(env) / 60000,
-        timeUnits: `atividade.minutes é tempo VIRTUAL; nextMinutes é tempo REAL. 1 minuto real = ${s.multiplier} minutos virtuais (dormir 60 dura ${Math.round(60 / s.multiplier)} min reais). Quando a atividade e a fila terminam, a próxima decisão vem cedo; nextMinutes é só a espera máxima enquanto ocupada.`,
-      },
-      // Compact but complete identity: every trait value stays; evidence lists are capped.
-      identity: { name: s.identity.name, description: s.identity.description, version: s.identity.version, traits: Object.fromEntries(Object.entries(s.identity.traits).map(([k, v]) => [k, { value: v.value, evidence: v.evidence.slice(0, 3), version: v.version }])) },
-      needs: Object.fromEntries(Object.entries(s.needs).map(([k, v]) => [k, Math.round(v)])),
-      body: bodyAlerts(s),
-      perceptions,
-      motives: Object.fromEntries(Object.entries(s.motives).map(([k, v]) => [k, Math.round(v)])),
-      // A finished activity is not shown as current (it confused models into thinking it was still going on).
-      activity: s.activity.until > s.virtualMinutes ? brief(s.activity) : null,
-      previousDecision,
-      diaryRecent,
-      activityStatus: s.activity.until > s.virtualMinutes ? { ongoing: true, remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes), remainingRealMinutes: Math.round((s.activity.until - s.virtualMinutes) / s.multiplier) } : { ongoing: false, note: 'nenhuma atividade em andamento' },
-      queuedActivities:(s.queue??[]).map(brief),
-      lastCompletedActivity:s.lastCompleted?brief(s.lastCompleted):null,
-      // Object positions only; names and uses are in the system instructions.
-      objects: s.objects.map((o) => ({ id: o.id, x: o.x, y: o.y, ...(o.artifactId ? { artifactId: o.artifactId } : {}) })),
-      concepts: concepts.map((r) => ({
-        id: r.id,
-        entityId: r.entityId,
-        content: r.content,
-        associations: r.associations,
-      })),
-      memories: memories.map((r) => ({
-        id: r.id,
-        category: r.category,
-        content: r.content.slice(0, 700),
-        confidence: r.confidence,
-        status: r.data.status,
-        evidence: r.associations.slice(0, 4),
-      })),
-      interests: interests.map((r) => ({
-        id: r.id,
-        entityId: r.entityId,
-        topic: r.content,
-        status: r.data.status,
-        effectiveStrength: Math.round(Number(r.data.strength) * Math.exp(-Math.max(0, s.virtualMinutes - r.virtualAt) / 43200) * 100) / 100,
-      })),
-      projects: projects.map((r) => ({ id: r.id, entityId: r.entityId, title: r.content, steps: r.data.steps, completed: r.data.completed, status: r.data.status, horizon: r.data.horizon, version: r.data.version })),
-      artifacts: artifacts.map((r) => ({
-        id: r.id,
-        entityId: r.entityId,
-        title: r.content,
-        version: r.data.version,
-      })),
-      recent: recent.map((r) => ({
-        id: r.id,
-        kind: r.kind,
-        content: r.content.slice(0, 500),
-        result: ['leitura','erro_ferramenta','pesquisa'].includes(r.kind) ? JSON.stringify(r.data).slice(0, 2500) : undefined,
-      })),
-      inbox,
-      working: s.working,
-      workingResults: readings.map((r) => ({
-        id: r.id,
-        realAt: r.realAt,
-        content: r.content,
-        result: JSON.stringify(r.data).slice(0, 5000),
-      })),
-    };
+    const { context, inbox, lastIntent, recent, projects, artifacts, complex, memories } = await buildContext(env, store, s, now);
     try {
       // Category steers model choice only; the decision is still ONE request with the same context.
       const lastRoute = lastIntent?.data.route as { selected?: string; category?: Category } | undefined;
@@ -620,6 +540,8 @@ export async function tick(
           s.motives.frustracao = clamp(s.motives.frustracao + 4);
         }
       }
+      // Functional result, distinct from a structurally valid reply: how much of the decision happened.
+      intent.data.execution = { proposed: outcomes.length, done: outcomes.filter((o) => o.result === 'feita').length, refused: outcomes.filter((o) => o.result === 'recusada').length };
       for (const message of inbox)
         records.push(
           entry(
@@ -674,38 +596,9 @@ export async function tick(
       const floor=decisionFloor(env);
       s.nextDecisionAt = now + Math.max(floor, decision.nextMinutes * 60000);
       s.lastDecisionAt = now;
-      records.push(
-        entry(
-          s,
-          'memoria',
-          `Contexto de continuidade: ${decision.intention}.`,
-          { activity: s.activity, evidence: [observation.id] },
-          {
-            category: 'trabalho',
-            origin: 'observacao',
-            importance: 0.35,
-            associations: [observation.id],
-          },
-        ),
-      );
-      const successful = records.filter((r) =>
-        ['atividade', 'artefato', 'pesquisa', 'habitat'].includes(r.kind),
-      );
-      if (successful.length)
-        records.push(
-          entry(
-            s,
-            'memoria',
-            'Associação afetiva simulada após a atividade.',
-            { motives: s.motives, evidence: successful.map((r) => r.id) },
-            {
-              category: 'afetiva',
-              origin: 'regra_afetiva',
-              importance: 0.35,
-              associations: successful.map((r) => r.id),
-            },
-          ),
-        );
+      // No per-cycle "Contexto de continuidade" or content-free "Associação afetiva" memories any more:
+      // they were 85% of all memories and echoed the last cycle back as "relevant memories" (audit 25/11).
+      // Continuity lives in state.activity and in the context thread.
       if (
         s.virtualMinutes - s.lastConsolidation >= 1440 &&
         ['dormir', 'descansar'].includes(s.activity.kind)
@@ -832,6 +725,102 @@ export function bodyAlerts(s: State): string[] {
   if (s.motives.frustracao >= 60) out.push('frustrada');
   return out;
 }
+/**
+ * What can come back on its own as a memory: her memories, diary, conversations and readings.
+ * Engine bookkeeping (per-cycle "Intenção/Resultado" logs, continuity and affect rules, raw
+ * intentions and numeric perceptions) stays in the database and in explicit recall (recordar),
+ * but no longer floods the context (audit 25/11: 85% of memories were such echoes).
+ */
+const recallable = (r: RecordEntry) => ['memoria', 'diario', 'conversa', 'leitura'].includes(r.kind) && !['regra_afetiva', 'observacao'].includes(r.origin);
+const ago = (now: number, at: number) => Math.max(0, Math.round((now - at) / 60000));
+const noteOf = (o: { result?: string; code?: string; detail?: unknown }) => {
+  const d = o.detail as { note?: string } | undefined;
+  return o.result === 'feita' ? 'feita' : `recusada (${d?.note ?? o.code ?? 'motivo não informado'})`;
+};
+/** Notable events she lived (not engine bookkeeping), newest first. */
+const eventKinds = ['conversa', 'artefato', 'habitat', 'identidade', 'interesse', 'projeto', 'interrupcao', 'corpo', 'atividade_interrompida', 'relacao'];
+/**
+ * Everything the creature perceives when deciding, built from persisted state only.
+ * Order follows a lived moment: who she is → how she feels → where she is → what she was doing
+ * and thinking → what she knows → what she remembers → who is talking to her.
+ * Numbers about the body are not sent: she feels levels (the observer still sees percentages).
+ */
+export async function buildContext(env: Env, store: Store, s: State, now: number) {
+  const inbox = await store.inbox();
+  const [interests, projects, artifacts, recent, concepts, readings, researchRows, thread, diary, perceptionRows] = await Promise.all([
+    store.latest('interesse', 12),
+    store.latest('projeto', 10),
+    store.latest('artefato', 8),
+    store.recent(40),
+    store.latest('conceito', 16),
+    store.latest('leitura', 2),
+    store.latest('pesquisa', 12),
+    store.latest('intencao', 4),
+    store.latest('diario', 3),
+    store.latest('percepcao', 5),
+  ]);
+  const lastIntent = thread[0];
+  // Retrieval cue: what she is doing and what matters to her, not only the last intention.
+  const researchByQuery = [...new Map(researchRows.map((r) => [String(r.data.query ?? r.content).toLocaleLowerCase('pt-BR'), r])).values()].slice(0, 4);
+  const cue = [s.activity.intention, ...interests.map((r) => r.content), ...projects.filter((p) => p.data.status === 'ativo').map((p) => p.content), ...researchByQuery.map((r) => String(r.data.query ?? '')), diary[0]?.content ?? ''].join(' ');
+  const shownQueries = new Set(researchByQuery.slice(0, 3).map((r) => String(r.data.query ?? '').toLocaleLowerCase('pt-BR')));
+  const diaryIds = new Set(diary.map((r) => r.id));
+  // Skip what is already in front of her (diary entries, research shown in knowledge).
+  const candidates = await store.memories(cue, now, 24, (r) => recallable(r) && !diaryIds.has(r.id) && !shownQueries.has(String(r.data.query ?? '').toLocaleLowerCase('pt-BR')));
+  // Varied recall: a near-repetition of an already chosen memory does not take another slot.
+  const memories: RecordEntry[] = [];
+  for (const r of candidates) if (memories.length < 8 && !repeatedDiary(r.content, memories, 0.4)) memories.push(r);
+  const complex = (s.complexNext || (s.decisions > 0 && s.decisions % 24 === 0)) && s.decisions > 0;
+  const felt = feelings(s);
+  const ongoing = s.activity.until > s.virtualMinutes;
+  const situationOf = (a: State['activity']) => ({ kind: a.kind, where: a.target, intention: a.intention });
+  const context = {
+    facts: {
+      simulation: true,
+      decisionNumber: s.decisions,
+      species: 'coelho',
+      ageVirtualDays: Math.round(s.virtualMinutes / 144) / 10,
+      multiplier: s.multiplier,
+      consolidationDue: s.virtualMinutes - s.lastConsolidation > 1440,
+      minimumRealMinutesBetweenDecisions: decisionFloor(env) / 60000,
+      timeUnits: `atividade.minutes é tempo VIRTUAL; nextMinutes é tempo REAL (1 min real = ${s.multiplier} min virtuais). Quando a atividade e a fila terminam, a próxima decisão vem cedo.`,
+    },
+    // Who she is: identity and her own trajectory (interests, projects, works, diary).
+    identity: { name: s.identity.name, description: s.identity.description, version: s.identity.version, traits: Object.fromEntries(Object.entries(s.identity.traits).map(([k, v]) => [k, { value: v.value, evidence: v.evidence.slice(0, 3), version: v.version }])) },
+    interests: interests.map((r) => ({ id: r.id, entityId: r.entityId, topic: r.content, status: r.data.status, effectiveStrength: Math.round(Number(r.data.strength) * Math.exp(-Math.max(0, s.virtualMinutes - r.virtualAt) / 43200) * 100) / 100 })),
+    projects: projects.map((r) => ({ id: r.id, entityId: r.entityId, title: r.content, steps: r.data.steps, completed: r.data.completed, status: r.data.status, horizon: r.data.horizon, version: r.data.version })),
+    artifacts: artifacts.map((r) => ({ id: r.id, entityId: r.entityId, title: r.content, version: r.data.version, format: (r.data.artifact as { format?: string } | undefined)?.format })),
+    diaryRecent: diary.map((r) => ({ id: r.id, content: r.content.slice(0, 400), agoRealMinutes: ago(now, r.realAt) })),
+    // How she feels now, and how she felt things change after recent activities.
+    feeling: { body: felt.body, mood: felt.mood, state: bodyAlerts(s).filter((x) => x.startsWith('dormindo')) },
+    perceptions: perceptionRows.map((r) => ({ id: r.id, felt: r.data.before && r.data.after ? feltChange(String(r.data.activity), r.data.before as Record<string, number>, r.data.after as Record<string, number>) : r.content })),
+    // Where she is and what is going on around her.
+    situation: {
+      activity: ongoing ? { ...situationOf(s.activity), remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes) } : null,
+      queue: (s.queue ?? []).map(situationOf),
+      lastCompleted: s.lastCompleted ? situationOf(s.lastCompleted) : null,
+      objects: s.objects.map((o) => ({ id: o.id, x: o.x, y: o.y, ...(o.artifactId ? { artifactId: o.artifactId } : {}) })),
+    },
+    // Continuity of thought: her last decisions and what happened to each action.
+    thread: thread.map((r) => ({
+      intention: r.content,
+      agoRealMinutes: ago(now, r.realAt),
+      actions: Array.isArray(r.data.outcomes) && r.data.outcomes.length
+        ? (r.data.outcomes as { action: string; result?: string; code?: string; detail?: unknown }[]).map((o) => `${o.action}: ${noteOf(o)}`)
+        : ((r.data.proposals ?? []) as { type: string; activity?: string }[]).map((p) => (p.activity ? 'atividade:' + p.activity : p.type)),
+    })),
+    // What she learned: recent research results (one entry per question) and concepts.
+    knowledge: {
+      research: researchByQuery.slice(0, 3).map((r) => ({ id: r.id, query: r.data.query, source: r.data.source, agoRealMinutes: ago(now, r.realAt), results: ((r.data.results ?? []) as { title: string; excerpt: string; url: string }[]).slice(0, 2).map((x) => ({ title: x.title, excerpt: String(x.excerpt ?? '').slice(0, 220), url: x.url })) })),
+      concepts: [...new Map(concepts.map((r) => [r.entityId, { entityId: r.entityId, content: r.content }])).values()].slice(0, 12),
+    },
+    memories: memories.map((r) => ({ id: r.id, category: r.category, content: r.content.slice(0, 420), confidence: r.confidence, status: r.data.status, evidence: r.associations.slice(0, 4) })),
+    events: recent.filter((r) => eventKinds.includes(r.kind)).slice(0, 6).map((r) => ({ id: r.id, kind: r.kind, content: r.content.slice(0, 240), agoRealMinutes: ago(now, r.realAt) })),
+    inbox,
+    workingResults: readings.map((r) => ({ id: r.id, realAt: r.realAt, content: r.content, result: JSON.stringify(r.data).slice(0, 5000) })),
+  };
+  return { context, inbox, lastIntent, recent, projects, artifacts, complex, memories };
+}
 // Server-imposed pacing to fit free quotas; production is fixed at five real minutes.
 function decisionFloor(env: Env) {
   return env.ENVIRONMENT_ID === 'homologation' || env.ENVIRONMENT_ID === 'tool-tests' ? Math.max(0, Number(env.MIN_DECISION_MINUTES ?? 5)) * 60000 : 300000;
@@ -842,16 +831,8 @@ export function packContext(input: Record<string, unknown>): Record<string, unkn
   const encoder = new TextEncoder();
   let bytes = encoder.encode(JSON.stringify(packed)).length;
   const omitted: Record<string, number> = {};
-  for (const key of [
-    'recent',
-    'workingResults',
-    'interests',
-    'projects',
-    'concepts',
-    'memories',
-    'artifacts',
-    'inbox',
-  ]) {
+  // Least essential first; at least one memory and one message always stay.
+  for (const key of ['events', 'workingResults', 'artifacts', 'interests', 'projects', 'diaryRecent', 'memories', 'inbox']) {
     const values = packed[key];
     if (!Array.isArray(values)) continue;
     const minimum = ['memories', 'inbox'].includes(key) ? 1 : 0;
@@ -869,7 +850,7 @@ export function packContext(input: Record<string, unknown>): Record<string, unkn
 }
 const diaryWords = (t: string) => new Set(t.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/\p{M}/gu, '').match(/\p{L}{4,}/gu) ?? []);
 /** A recent diary entry that shares ≥60% of the meaningful words of the shorter text, if any. */
-export function repeatedDiary(content: string, recent: { content: string; realAt: number }[]) {
+export function repeatedDiary(content: string, recent: { content: string; realAt: number }[], threshold = 0.6) {
   const mine = diaryWords(content);
   if (mine.size < 4) return null;
   return recent.find((r) => {
@@ -877,7 +858,7 @@ export function repeatedDiary(content: string, recent: { content: string; realAt
     if (other.size < 4) return false;
     let shared = 0;
     for (const w of mine) if (other.has(w)) shared++;
-    return shared / Math.min(mine.size, other.size) >= 0.6;
+    return shared / Math.min(mine.size, other.size) >= threshold;
   }) ?? null;
 }
 export function safeError(e: unknown): string {

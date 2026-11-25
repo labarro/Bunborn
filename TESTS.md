@@ -47,6 +47,23 @@ E2E novo: exportação v2 assinada pelo gateway + DO, escrita recusada durante o
 
 `tests/insights.test.ts`: destaques e diário de bordo refletem só os registros armazenados; existência não nascida não gera resumo; o contador de visitas conta cada visitante uma vez por dia e não guarda o IP. `features.test.ts` também cobre a validação por ação, reproduzindo a falha real de produção: a ação válida é executada e a malformada vira `acao_malformada`. O E2E do visitante cobre destaques, diário de bordo e contador sem credencial.
 
+## Auditoria cognitiva (25/11, noite)
+
+- **`tests/audit.test.ts`** (fixtures):
+  - instruções de nascimento só na decisão 0, e segurança e continuidade sempre presentes;
+  - sensações sem números, com os mesmos limiares do corpo;
+  - memórias sem eco (os resumos automáticos não voltam; uma memória antiga e real volta);
+  - pesquisa vira `knowledge`, uma entrada por pergunta;
+  - o ciclo não grava mais as memórias sem conteúdo;
+  - saída por categoria e encaixe no TPM da Groq;
+  - estimativa por família de modelo;
+  - Retry-After em segundos e em data HTTP, e redação de `org_…`;
+  - reserva órfã liquidada uma vez só;
+  - falha do ledger que não descarta uma decisão válida.
+- **`tests/physiology.test.ts`:** a próxima decisão vê em `thread` o resultado de cada ação anterior; atividade concluída não aparece como atual; o corpo aparece como sensação.
+- **`tests/architecture.live.test.ts`** (chamadas reais, bancos descartáveis): os mesmos 11 cenários na arquitetura anterior (worktree do commit `c96bf8a`) e na nova. Resultados em [COGNITIVE_AUDIT.md](COGNITIVE_AUDIT.md) e `artifacts/cognitive-audit/`. Para reproduzir: `node scripts/architecture-bench.mjs <rótulo> <modelos> [cenários] [pasta]`.
+- **`scripts/context-snapshot.ts`:** reconstrói, a partir de um backup assinado e num SQLite em memória, o contexto exato que a criatura recebe.
+
 ## Multiprovedor (25/11)
 
 **Falhas simuladas** (`tests/routing.test.ts`, 14 testes): todas as respostas de provedor vêm de fetchers de fixture, sem nenhuma chamada real.

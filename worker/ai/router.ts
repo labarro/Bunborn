@@ -7,6 +7,7 @@
 import { catalog, modelKey, nvidiaEntry, type Category, type ModelEntry } from '../../shared/ai-catalog';
 import quality from '../../shared/model-quality.json';
 import evidence from '../../shared/production-evidence.json';
+import { minimumOutput } from '../../shared/token-budget';
 import { callable, type Health } from './health';
 
 export type AiConfig = {
@@ -75,6 +76,8 @@ export function rankModels(input: {
   availableProviders: string[];
   now: number;
   estimatedTokens: number;
+  /** Per-model input estimate (tokenizers differ); falls back to estimatedTokens. */
+  inputFor?: (m: ModelEntry) => number;
   lastModel?: { key: string; category: Category } | null;
 }): Ranking {
   const ranked: Candidate[] = [];
@@ -91,13 +94,14 @@ export function rankModels(input: {
     if (input.environment === 'production' && !m.productionAllowed && !input.config.allowTrialInProduction) { out('termos do provedor não permitem uso em produção'); continue; }
     if (!info.homologated.includes(input.category) || quality === undefined) { out('não homologado para ' + input.category); continue; }
     if (!callable(h, input.now)) { out(h?.state === 'desabilitado' ? 'desabilitado: ' + (h.last_error ?? '') : 'circuit breaker aberto até ' + new Date(h!.next_probe_at).toISOString()); continue; }
-    if (m.context && input.estimatedTokens > m.context * 0.8) { out('contexto excede a janela do modelo'); continue; }
+    const inputTokens = input.inputFor ? input.inputFor(m) : input.estimatedTokens;
+    if (m.context && inputTokens > m.context * 0.8) { out('contexto excede a janela do modelo'); continue; }
     // Groq counts prompt + max_tokens against tokens/minute: a request that cannot fit is refused.
-    if (input.estimatedTokens + 400 > m.limits.tpm) { out('contexto grande demais para o limite de tokens por minuto do modelo'); continue; }
+    if (m.provider === 'groq' ? inputTokens + 300 + minimumOutput > m.limits.tpm : inputTokens + 400 > m.limits.tpm) { out('contexto grande demais para o limite de tokens por minuto do modelo'); continue; }
     const u = input.usage(m);
     const rpd = Math.min(m.limits.rpd, input.config.dailyCaps[key] ?? Infinity);
     if (u.callsToday >= rpd) { out('limite diário de requisições atingido'); continue; }
-    if (m.limits.tpd !== null && u.tokensToday + input.estimatedTokens > m.limits.tpd) { out('limite diário de tokens atingido'); continue; }
+    if (m.limits.tpd !== null && u.tokensToday + inputTokens > m.limits.tpd) { out('limite diário de tokens atingido'); continue; }
     const headroom = Math.max(0, Math.min(1 - u.callsToday / rpd, m.limits.tpd ? 1 - u.tokensToday / m.limits.tpd : 1));
     const success = h ? h.success_ewma * h.valid_ewma : 0.81;
     const speed = 1 - Math.min(1, (h?.latency_ewma ?? 3000) / 30000);

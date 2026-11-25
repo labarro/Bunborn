@@ -2785,7 +2785,7 @@
    "rejectionCodes": [],
    "technical": 0,
    "expectation": 0,
-   "note": "sem decisão válida: limite_taxa {\"error\":{\"message\":\"Request too large for model `qwen/qwen3.8-27b` in organization `org_01m89r1asce60bpqszw7xfpnkp` service tier `on_demand` on output tokens p",
+   "note": "sem decisão válida: limite_taxa {\"error\":{\"message\":\"Request too large for model `qwen/qwen3.8-27b` in organization `org_[redacted]` service tier `on_demand` on output tokens p",
    "intention": null,
    "summary": "",
    "actions": []

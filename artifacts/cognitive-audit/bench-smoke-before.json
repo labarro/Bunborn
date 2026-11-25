@@ -1,0 +1,62 @@
+{
+ "at": "2026-11-25T22:20:24.134Z",
+ "arch": "smoke-before",
+ "rows": [
+  {
+   "arch": "smoke-before",
+   "model": "nvidia:minimaxai/minimax-m3.1-flash",
+   "scenario": "falha-ferramenta",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 3130,
+   "tokens": 3188,
+   "tokensIn": null,
+   "tokensOut": null,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "intention": "Beber um pouco para aliviar a sede e observar o habitat",
+   "summary": "A fome está baixa, mas a sede chegou a 20. Vou atender à sede e, enquanto isso, olhar ao redor para escolher uma atividade interessante.",
+   "actions": [
+    "atividade:beber",
+    "atividade:observar"
+   ]
+  },
+  {
+   "arch": "smoke-before",
+   "model": "nvidia:minimaxai/minimax-m3.1-flash",
+   "scenario": "lumi-real",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 4137,
+   "tokens": 6382,
+   "tokensIn": null,
+   "tokensOut": null,
+   "executed": 0.5,
+   "refusals": [
+    "nada_novo_para_observar"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 0.9166666666666666,
+   "intention": "Concluir o registro no diário e observar o efeito final da hidratação",
+   "summary": "A sede já está saciada e a atividade atual está quase concluída; registrarei o efeito observado e farei uma breve monitoração das necessidades.",
+   "actions": [
+    "diario: Depois de beber, a sede voltou a zero e a saúde subiu de 79 para 80. Agora observo o estado final para entender como hidratação, energia e sono evoluem juntos.",
+    "atividade:observar"
+   ]
+  }
+ ]
+}

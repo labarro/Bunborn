@@ -25,12 +25,20 @@ export class ProviderFailure extends Error {
 export type CognitiveRequest = { system: string; prompt: string; schema: unknown; maxOutput: number; reasoning: 'baixo' | 'medio' };
 export type CognitiveReply = { text: string; tokensIn: number; tokensOut: number; tokensTotal: number; latencyMs: number; finish: string };
 export type Keys = Partial<Record<ProviderId, string>>;
-const redact = (text: string, keys: Keys) => Object.values(keys).reduce((t, k) => (k ? t.split(k).join('[redacted]') : t), text);
+// Keys and provider account identifiers (e.g. Groq 'org_…' in error messages) never reach records.
+const redact = (text: string, keys: Keys) => Object.values(keys).reduce((t, k) => (k ? t.split(k).join('[redacted]') : t), text).replace(/\borg_[A-Za-z0-9]{6,}/g, 'org_[redacted]');
+/** Retry-After in seconds or as an HTTP date (RFC 9110); null when absent or unusable. */
+export function retryAfterMs(value: string | null, now = Date.now()): number | null {
+  if (!value) return null;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds)) return seconds > 0 ? Math.min(seconds * 1000, 86400000) : null;
+  const at = Date.parse(value);
+  return Number.isFinite(at) && at > now ? Math.min(at - now, 86400000) : null;
+}
 
 export function classifyHttp(status: number, body: string, retryAfter: string | null, keys: Keys): ProviderFailure {
   const detail = redact(body, keys).slice(0, 600);
-  const seconds = Number(retryAfter);
-  const retry = Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : null;
+  const retry = retryAfterMs(retryAfter);
   if (status === 401 || status === 403 || /API key not valid|API_KEY_INVALID|invalid api key|invalid_api_key/i.test(body)) return new ProviderFailure('autenticacao', status, null, detail);
   if (status === 404) return new ProviderFailure('modelo_inexistente', status, null, detail);
   // Groq answers 429 'Request too large' when prompt + max_tokens exceed tokens/minute: retrying

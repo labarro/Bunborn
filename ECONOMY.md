@@ -24,7 +24,7 @@ Todas as contas estão sem faturamento vinculado, confirmado pelo responsável. 
 | Gemini 3.1 Flash Lite | 15 RPM, 500 RPD | 12 RPM, 440 RPD | disponibilidade (26% de 503) | até 440, quando disponível |
 | Gemini 3 Flash | 5 RPM, 20 RPD | 4 RPM, 16 RPD | RPD | 16 |
 | Gemini 3.5 Flash Lite | não informado | 8 RPM, 200 RPD | desconhecido | até 200 (conservador) |
-| Groq gpt-oss-120b / gpt-oss-20b / qwen3.8-27b | 30 RPM, 1K RPD, 8K TPM, 200K TPD (cada) | 20 RPM, 900 RPD, 7K TPM, 180K TPD | **TPD** (180 mil ÷ cerca de 3,3 mil) e TPM (1 por minuto) | cerca de 54 cada, **cerca de 160 somados** |
+| Groq gpt-oss-120b / gpt-oss-20b / qwen3.8-27b | 30 RPM, 1K RPD, 8K TPM, 200K TPD (cada) | 20 RPM, 900 RPD, 7K TPM, 180K TPD | **TPD** (180 mil ÷ cerca de 5,3 mil) e TPM (1 por minuto) | cerca de 34 cada, **cerca de 100 somados** |
 | NVIDIA (trial) | cerca de 40 RPM; diário desconhecido | 20 RPM, 300 RPD | latência de 10 a 45 s; termos de trial (uso em produção autorizado pelo responsável em 25/11) | até 300 por modelo (interno; diário real desconhecido) |
 
 O ritmo de produção continua limitado a uma decisão a cada 5 min (no máximo 288 por dia; na prática, de 150 a 200). Só a Groq já cobre perto de 160 decisões por dia mesmo com o Gemini fora; com o Gemini disponível, a capacidade combinada passa do que o ritmo usa. Ter mais modelos **não** aumenta a frequência das decisões. O livro-razão compartilhado (`bunborn-budget`) soma produção e homologação por modelo, e o dia da cota segue o provedor (Pacífico para o Gemini, UTC para a Groq).

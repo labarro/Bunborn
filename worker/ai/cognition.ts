@@ -5,14 +5,22 @@
 import { parseDecision, quotaDay, type Decision, type InvalidAction } from '../../shared/domain';
 import { modelKey, type Category, type ModelEntry } from '../../shared/ai-catalog';
 import compiledDecisionSchema from '../../shared/decision.schema.json';
-import toolContracts from '../../shared/tool-contracts.json';
 import { Store } from '../store';
-import { CognitiveError, systemInstruction, type Env } from '../provider';
+import { CognitiveError, systemFor, type Env } from '../provider';
 import { callModel, extractJson, ProviderFailure, type Keys } from './adapters';
 import { freshHealth, loadHealth, onFailure, onSuccess, saveHealth, type Health } from './health';
 import { defaultConfig, knownModels, rankModels, type AiConfig, type Usage } from './router';
+import { estimateInput, maxOutputFor } from '../../shared/token-budget';
+/** Ledger writes never mask the decision or the original error (audit 25/11). */
+async function safely(db: D1Database, what: string, work: () => Promise<unknown>) {
+  try {
+    await work();
+  } catch (e) {
+    await db.prepare('INSERT INTO operations(key,data,updated_at) VALUES(?,?,?) ON CONFLICT(key) DO UPDATE SET data=excluded.data,updated_at=excluded.updated_at').bind('ledger-error:' + what, JSON.stringify({ error: String((e as Error)?.message ?? e).slice(0, 300) }), Date.now()).run().catch(() => undefined);
+  }
+}
 
-export type RouteAttempt = { model: string; provider: string; outcome: 'aceita' | string; latencyMs: number; tokens: number; detail?: string };
+export type RouteAttempt = { model: string; provider: string; outcome: 'aceita' | string; latencyMs: number; tokens: number; tokensIn?: number; tokensOut?: number; estimatedIn?: number; maxOutput?: number; detail?: string };
 export type RouteRecord = {
   category: Category;
   categoryReason: string;
@@ -56,7 +64,6 @@ async function usageMap(store: Store, budget: Store, now: number) {
     return { callsToday: Math.max(local.calls, shared.calls), tokensToday: Math.max(local.tokens, shared.tokens) };
   };
 }
-const jsonShape = 'Formato obrigatório da resposta: um único objeto JSON {"intention": string<=160, "summary": string, "nextMinutes": inteiro 3..60, "complexNext": boolean, "actions": [no máximo 3 ações conforme os contratos]}. Sem texto fora do JSON.';
 
 export class RoutedProvider {
   constructor(private env: Env, private store: Store, private fetcher: typeof fetch = fetch, private systemAddon = '') {}
@@ -69,14 +76,19 @@ export class RoutedProvider {
     const health = await loadHealth(this.store.db);
     const budget = this.env.BUDGET_DB ? new Store(this.env.BUDGET_DB) : this.store;
     const usage = await usageMap(this.store, budget, now);
+    // Reservations left open by an interrupted Worker are settled conservatively before routing.
+    await safely(this.store.db, 'orphans-local', () => this.store.reconcileOrphans(now));
+    if (budget !== this.store) await safely(this.store.db, 'orphans-global', () => budget.reconcileOrphans(now));
     const prompt = JSON.stringify(context);
-    const system = systemInstruction + '\nContratos tipados das ferramentas (obrigatórios; cada ação é um objeto plano com type e os demais campos, NÃO use parameters ou args):\n' + JSON.stringify(toolContracts) + '\n' + jsonShape + '\n' + this.systemAddon;
-    // ~4 bytes/token measured on real calls (Portuguese JSON); +800 for the typical reply.
-    const estimatedInput = Math.ceil(new TextEncoder().encode(prompt + system).length / 4);
+    const system = systemFor((context as { facts?: { decisionNumber?: number } }).facts?.decisionNumber ?? 1, this.systemAddon);
+    // Input estimated per model family from real calls (tokenizers differ); see shared/token-budget.ts.
+    const bytes = new TextEncoder().encode(prompt + system).length;
+    const inputFor = (m: ModelEntry) => estimateInput(bytes, m);
+    const estimatedInput = Math.ceil(bytes / 3.2);
     const estimatedTokens = estimatedInput + 800;
     if (estimatedTokens > 60000) throw new CognitiveError('contexto_excessivo');
     const environment = this.env.ENVIRONMENT_ID ?? this.env.ENVIRONMENT;
-    const rankInput = { models: knownModels(), health, usage, config, environment, availableProviders, now, estimatedTokens };
+    const rankInput = { models: knownModels(), health, usage, config, environment, availableProviders, now, estimatedTokens, inputFor };
     const { ranked: primary, excluded } = rankModels({ ...rankInput, category, lastModel: hint?.lastModel });
     // If every model of this category fails, the best everyday models continue the same decision.
     const general = category === 'cotidiana' ? [] : rankModels({ ...rankInput, category: 'cotidiana', lastModel: null }).ranked.filter((g) => !primary.some((p) => p.key === g.key)).map((g) => ({ ...g, reasons: ['alternativa geral (homologado em cotidiana) após falhas em ' + category, ...g.reasons] }));
@@ -91,18 +103,31 @@ export class RoutedProvider {
       const rpd = Math.min(m.limits.rpd, config.dailyCaps[key] ?? Infinity);
       // Keep ~10% of each model's day for pending conversations.
       const daily = hint?.hasMessages ? rpd : Math.floor(rpd * 0.9);
-      const local = await this.store.reserve(m.id, day, now, daily, m.limits.rpm, estimatedTokens, environment, m.limits.tpm, m.limits.tpd, m.provider, category);
+      const inTokens = inputFor(m);
+      const maxOutput = maxOutputFor(m, category, inTokens);
+      // Reserve what the provider will count: input plus the output room requested.
+      const reserveTokens = inTokens + maxOutput;
+      const local = await this.store.reserve(m.id, day, now, daily, m.limits.rpm, reserveTokens, environment, m.limits.tpm, m.limits.tpd, m.provider, category);
       if (!local) { route.attempts.push({ model: key, provider: m.provider, outcome: 'orcamento_local', latencyMs: 0, tokens: 0 }); continue; }
       let shared: string | null = null;
       if (budget !== this.store) {
-        shared = await budget.reserve(m.id, day, now, rpd, m.limits.rpm, estimatedTokens, environment, m.limits.tpm, m.limits.tpd, m.provider, category);
-        if (!shared) { await this.store.settle(local, 0, 'negada_global'); route.attempts.push({ model: key, provider: m.provider, outcome: 'orcamento_global', latencyMs: 0, tokens: 0 }); continue; }
+        try {
+          shared = await budget.reserve(m.id, day, now, rpd, m.limits.rpm, reserveTokens, environment, m.limits.tpm, m.limits.tpd, m.provider, category);
+        } catch (e) {
+          // The global ledger is unreachable: release the local slot and do not call (never above limits).
+          await safely(this.store.db, 'settle-local', () => this.store.settle(local, 0, 'falha_orcamento_global'));
+          route.attempts.push({ model: key, provider: m.provider, outcome: 'orcamento_global_indisponivel', latencyMs: 0, tokens: 0, detail: String((e as Error)?.message ?? e).slice(0, 160) });
+          continue;
+        }
+        if (!shared) { await safely(this.store.db, 'settle-local', () => this.store.settle(local, 0, 'negada_global')); route.attempts.push({ model: key, provider: m.provider, outcome: 'orcamento_global', latencyMs: 0, tokens: 0 }); continue; }
       }
       const started = Date.now();
-      let tokens = 0, status = 'falha';
+      let tokens = 0, tokensIn = 0, tokensOut = 0, status = 'falha';
       try {
-        const reply = await callModel(m, { system, prompt, schema: compiledDecisionSchema, maxOutput: m.provider === 'gemini' ? 4096 : Math.max(1000, Math.min(3000, m.limits.tpm - estimatedInput - 200)), reasoning }, keys, this.fetcher);
+        const reply = await callModel(m, { system, prompt, schema: compiledDecisionSchema, maxOutput, reasoning }, keys, this.fetcher);
         tokens = reply.tokensTotal;
+        tokensIn = reply.tokensIn;
+        tokensOut = reply.tokensOut;
         let parsed: ReturnType<typeof parseDecision>;
         try {
           parsed = parseDecision(extractJson(reply.text));
@@ -112,7 +137,7 @@ export class RoutedProvider {
         status = 'sucesso';
         const next = onSuccess(h, reply.latencyMs, now, parsed.invalidActions.length);
         await saveHealth(this.store.db, next, now);
-        route.attempts.push({ model: key, provider: m.provider, outcome: 'aceita', latencyMs: reply.latencyMs, tokens });
+        route.attempts.push({ model: key, provider: m.provider, outcome: 'aceita', latencyMs: reply.latencyMs, tokens, tokensIn, tokensOut, estimatedIn: inTokens, maxOutput });
         route.selected = key;
         route.provider = m.provider;
         route.reasons = candidate.reasons;
@@ -123,16 +148,22 @@ export class RoutedProvider {
         return { decision: parsed.decision, model: m.id, invalidActions: parsed.invalidActions, route };
       } catch (e) {
         const f = e instanceof ProviderFailure ? e : new ProviderFailure('resposta_invalida', 0, null, String((e as Error)?.message ?? e).slice(0, 200));
-        const partial = (e as { reply?: { tokensTotal?: number } }).reply;
+        const partial = (e as { reply?: { tokensTotal?: number; tokensIn?: number; tokensOut?: number } }).reply;
         tokens = partial?.tokensTotal ?? tokens;
+        tokensIn = partial?.tokensIn ?? tokensIn;
+        tokensOut = partial?.tokensOut ?? tokensOut;
         status = f.kind;
-        await saveHealth(this.store.db, onFailure(h, f.kind, f.detail, now, f.retryAfterMs), now);
-        route.attempts.push({ model: key, provider: m.provider, outcome: f.kind, latencyMs: Date.now() - started, tokens, detail: f.detail.slice(0, 160) });
+        // A request we sized too large for the provider is our fault, not the model's: no health penalty.
+        const sizing = f.kind === 'requisicao_invalida' && /too large/i.test(f.detail);
+        if (!sizing) await saveHealth(this.store.db, onFailure(h, f.kind, f.detail, now, f.retryAfterMs), now);
+        route.attempts.push({ model: key, provider: m.provider, outcome: f.kind, latencyMs: Date.now() - started, tokens, tokensIn, tokensOut, estimatedIn: inTokens, maxOutput, detail: f.detail.slice(0, 160) });
         route.tokens += tokens;
         route.latencyMs += Date.now() - started;
       } finally {
-        await this.store.settle(local, tokens, status, Date.now() - started);
-        if (shared) await budget.settle(shared, tokens, status, Date.now() - started);
+        // A failed ledger write is recorded but never discards a valid decision nor hides the original error.
+        const elapsed = Date.now() - started;
+        await safely(this.store.db, 'settle-local', () => this.store.settle(local, tokens, status, elapsed));
+        if (shared) { const id = shared; await safely(this.store.db, 'settle-global', () => budget.settle(id, tokens, status, elapsed)); }
       }
     }
     route.fallbacks = Math.max(0, route.attempts.length - 1);

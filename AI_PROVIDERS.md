@@ -46,7 +46,7 @@ As três contas estão em planos gratuitos **sem faturamento vinculado**. O resp
   - Os modelos Whisper e Orpheus são de áudio.
 - **Limites documentados (Free):** 30 RPM, 1.000 RPD, **8 mil TPM e 200 mil TPD** por modelo, contados por organização. Tokens em cache não contam.
 - **Limites internos:** 20 RPM, 900 RPD, 7 mil TPM e 180 mil TPD por modelo. O dia da cota vira às 00:00 UTC.
-- **Restrição que manda:** uma decisão do Bunborn usa cerca de 3,3 mil tokens. Com 8 mil TPM, cabe **uma decisão por minuto por modelo**; com 200 mil TPD, cerca de **55 decisões por dia por modelo**. O orçamento confere TPM e TPD antes de cada chamada, e as respostas 429 com `retry-after` são respeitadas.
+- **Restrição que manda:** com o contexto real da Lumi, uma decisão usava de 6,0 a 6,8 mil tokens (média do ledger de produção, 25/11) e passou a usar cerca de 5,3 mil depois da auditoria cognitiva (benchmark sobre o backup real). Com 8 mil TPM, cabe **uma decisão por minuto por modelo**; com 200 mil TPD, cerca de **37 decisões por dia por modelo**. O Qwen também tem limite de tokens de saída por minuto (OTPM), que apareceu num "Request too large" em 25/11. O orçamento confere TPM e TPD antes de cada chamada, e as respostas 429 com `retry-after` são respeitadas.
 - **Raciocínio:** gpt-oss com `reasoning_effort` low (medium em decisões complexas ou criativas); Qwen com `reasoning_effort: none`.
 - **Dados** (console.groq.com/docs/your-data, 25/11/2026): por padrão não guarda entradas nem saídas de inferência. Pode registrar por até 30 dias só para confiabilidade ou investigação de abuso, o que pode ser desligado em Data Controls.
 

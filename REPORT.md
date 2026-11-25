@@ -195,3 +195,32 @@ Os detalhes estão em [AI_PROVIDERS.md](AI_PROVIDERS.md), [COGNITIVE_ROUTING.md]
    - os modelos da NVIDIA são lentos (10 a 45 s);
    - a NVIDIA em produção contraria os termos de trial (risco assumido pelo responsável).
 24. **Custo zero:** contas sem faturamento vinculado (confirmação explícita do responsável); nenhum serviço pago contratado; bundle do Worker com 179 KiB comprimidos; ritmo de decisões sem aumento.
+
+## 19. Auditoria cognitiva (25/11, noite)
+
+Relatório completo, com evidências, métodos e limitações: [COGNITIVE_AUDIT.md](COGNITIVE_AUDIT.md).
+
+**Causas encontradas:**
+- 85% das memórias eram ecos automáticos do último ciclo, devolvidos como "memórias relevantes".
+- O que ela pesquisava não voltava como conhecimento.
+- O corpo chegava como percentuais e limiares, e o prompt tratava as barras como objetivo.
+- As instruções de nascimento iam em todo ciclo.
+- A estimativa de tokens errava a ponto de gerar 413 na Groq.
+
+**O que mudou:**
+- **Prompt em módulos:** o nascimento só vai na decisão 0.
+- **Sensações em vez de números,** com a faixa baixa recalibrada depois de uma regressão medida.
+- **Contexto em ordem de vida,** com `thread` (as últimas decisões e o resultado de cada ação) e `knowledge` (pesquisas).
+- **Memória sem eco e com variedade.**
+- **Orçamento:** estimativa por família de modelo, saída por categoria e por tipo de modelo, liquidação segura, reconciliação de órfãs, Retry-After em data HTTP e redação de identificadores de conta.
+
+**Evidência** (benchmark com chamadas reais, anterior × nova):
+- decisões justificadas com números de necessidade: 22% → 0%;
+- decisões em que a necessidade aparece: 51% → 21%;
+- coerência igual (≈0,97);
+- iniciativa maior na NVIDIA;
+- tokens −4% a −25%.
+
+Na homologação ponta a ponta: 14 de 14 decisões, diário reflexivo, obra nova, projeto seguido por vários ciclos e resposta com continuidade ao observador.
+
+**Implantação:** em 25/11 às 23:10Z, depois do backup assinado `production-45e088e1…`. Não houve migração, e nenhum registro foi alterado.

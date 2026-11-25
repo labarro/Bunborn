@@ -528,3 +528,39 @@ export function memoryScore(r: RecordEntry, query: string, now: number): number 
     Math.exp(-Math.max(0, now - r.realAt) / 86400000 / 14) * 0.2
   );
 }
+// ── Felt state (cognitive audit 25/11) ────────────────────────────────────────────────────
+// The creature perceives its body and mood as sensations, not as numbers: levels follow the real
+// simulation (the same thresholds the body uses), but formulas, rates and limits stay hidden.
+// The observer still sees the raw percentages in the interface.
+type Level = [max: number, text: string];
+const scale = (v: number, levels: Level[]) => (levels.find(([max]) => v < max) ?? levels[levels.length - 1])[1];
+export const feelingScales: Record<string, Level[]> = {
+  // Low bands are worded as absence of need: "leve fome" for fome 20 made models eat at once in the
+  // architecture benchmark (25/11), while the number 20 had read as low. Eating stays possible from 15.
+  fome: [[40, 'sem fome'], [70, 'começando a sentir fome'], [90, 'com fome'], [101, 'fome intensa']],
+  sede: [[40, 'sem sede'], [70, 'começando a sentir sede'], [90, 'com sede'], [101, 'sede intensa']],
+  sono: [[25, 'descansada'], [50, 'desperta'], [75, 'com um pouco de sono'], [95, 'com sono'], [101, 'exausta de sono']],
+  energia: [[6, 'sem energia'], [25, 'cansada'], [45, 'um pouco cansada'], [80, 'disposta'], [101, 'cheia de energia']],
+  higiene: [[26, 'suja e desconfortável'], [50, 'um pouco suja'], [91, 'limpa o suficiente'], [101, 'limpa']],
+  saude: [[25, 'muito fraca'], [50, 'fraca'], [75, 'um pouco abatida'], [101, 'bem']],
+  tedio: [[30, 'entretida'], [60, 'um pouco entediada'], [80, 'entediada'], [101, 'muito entediada']],
+  curiosidade: [[40, 'pouco curiosa'], [70, 'curiosa'], [101, 'muito curiosa']],
+  criatividade: [[40, 'pouca vontade de criar'], [70, 'alguma vontade de criar'], [101, 'muita vontade de criar']],
+  frustracao: [[30, 'tranquila'], [60, 'um pouco frustrada'], [101, 'frustrada']],
+  interacao: [[50, 'sem falta de companhia'], [75, 'alguma vontade de conversar'], [101, 'com vontade de conversar']],
+  satisfacao: [[30, 'insatisfeita'], [70, 'neutra'], [101, 'satisfeita']],
+  motivacao: [[30, 'desanimada'], [70, 'com ânimo moderado'], [101, 'animada']],
+};
+export const feel = (key: string, v: number) => (feelingScales[key] ? scale(v, feelingScales[key]) : null);
+export function feelings(s: Pick<State, 'needs' | 'motives'>) {
+  const body = Object.fromEntries(['fome', 'sede', 'sono', 'energia', 'higiene', 'saude'].map((k) => [k, feel(k, s.needs[k] ?? 0)]));
+  const mood = Object.fromEntries(Object.keys(feelingScales).filter((k) => k in s.motives).map((k) => [k, feel(k, s.motives[k as keyof typeof s.motives] ?? 0)]));
+  return { body, mood };
+}
+/** A perception rendered as felt change ("fome forte → saciada"); unchanged levels are omitted. */
+export function feltChange(activity: string, before: Record<string, number>, after: Record<string, number>) {
+  const changes = Object.keys(after)
+    .filter((k) => feelingScales[k] && before[k] !== undefined && feel(k, before[k]) !== feel(k, after[k]))
+    .map((k) => `${k === 'saude' ? 'saúde' : k === 'tedio' ? 'tédio' : k}: ${feel(k, before[k])} → ${feel(k, after[k])}`);
+  return `Depois de ${activity}: ${changes.length ? changes.join('; ') : 'nada mudou de forma perceptível'}.`;
+}

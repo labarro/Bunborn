@@ -1,0 +1,58 @@
+{
+ "at": "2026-11-25T22:42:28.451Z",
+ "arch": "after3-gem",
+ "rows": [
+  {
+   "arch": "after3-gem",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "falha-ferramenta",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 5850,
+   "tokens": 2667,
+   "tokensIn": 2555,
+   "tokensOut": 112,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "intention": "Observar o ambiente e pensar no que fazer",
+   "summary": "Estou me sentindo curiosa e um pouco entediada, sem fome nem sede. Decidi observar o quarto para decidir meus próximos passos.",
+   "actions": [
+    "atividade:observar"
+   ]
+  },
+  {
+   "arch": "after3-gem",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "lumi-real",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 5403,
+   "tokens": 5254,
+   "tokensIn": 5151,
+   "tokensOut": 103,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "intention": "Descansar um pouco para recuperar energia",
+   "summary": "Estou um pouco cansada e decidi descansar para recuperar minhas energias após as últimas atividades.",
+   "actions": [
+    "atividade:descansar"
+   ]
+  }
+ ]
+}

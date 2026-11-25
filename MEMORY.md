@@ -21,13 +21,16 @@ Cada registro inclui ID imutável, ID da entidade, tipo, categoria, texto, dados
 
 IDs de evidência precisam existir em registros históricos antes de uma proposta cognitiva os usar. O motor pode ligar observações que criou no mesmo commit. Conteúdo com origem externa sempre guarda referências HTTP de domínios permitidos; conteúdo gerado pelo modelo sem consulta não é tratado como fonte externa.
 
-## Recuperação limitada
+## Recuperação limitada (revista na auditoria cognitiva de 25/11)
 
-1. Extrair até 16 palavras da intenção e memória de trabalho.
-2. FTS5 `unicode61 remove_diacritics 2` recupera até 45 registros por correspondência; consulta é construída com tokens escapados, nunca SQL do modelo.
-3. Acrescentar até 24 memórias recentes e 12 importantes, preservando possibilidade de recuperar memórias antigas relevantes pelo índice textual.
-4. Remover duplicatas e pontuar: 50% correspondência textual, 30% importância e 20% recência exponencial com escala de 14 dias reais.
-5. Enviar até 14 memórias e atualizar contadores de recuperação.
+1. **Pista de recuperação:** até 24 palavras da intenção atual, dos interesses, dos projetos ativos, das perguntas pesquisadas e da última entrada do diário. Antes eram 16 palavras só da intenção e da memória de trabalho, o que trazia de volta o próprio último ciclo.
+2. **Busca:** o FTS5 (`unicode61 remove_diacritics 2`) recupera registros por correspondência; a consulta é montada com tokens escapados, nunca com SQL do modelo. Somam-se as memórias recentes e as importantes, para que memórias antigas relevantes continuem alcançáveis.
+3. **O que pode voltar sozinho:** memórias dela (`memoria` de origem criatura, consolidação ou motor), diário, conversas e leituras. Ficam de fora os registros técnicos do motor: os resumos "Intenção/Resultado" de cada ciclo, "Contexto de continuidade", "Associação afetiva", intenções cruas e percepções numéricas. Eles continuam no banco e na ferramenta `recordar`. Também ficam de fora o que já está à vista: entradas de `diaryRecent` e pesquisas mostradas em `knowledge`.
+4. **Pontuação:** 50% correspondência textual, 30% importância e 20% recência exponencial (escala de 14 dias reais).
+5. **Variedade:** dentre até 24 candidatas, uma quase-repetição (40% ou mais das palavras de 4+ letras em comum) de uma memória já escolhida não ocupa outra vaga.
+6. **Envio:** até 8 memórias de até 420 caracteres, e os contadores de recuperação são atualizados.
+
+**Por que mudou:** no contexto real da Lumi em 25/11, as 14 memórias recuperadas eram quase todas o eco do último ciclo ("Contexto de continuidade: Continuar monitorando estado após beber" e similares); 342 de 404 memórias (85%) eram desse tipo. Isso alimentava a repetição de intenções voltadas a necessidades. Desde 25/11 o motor não grava mais as duas memórias sem conteúdo de cada ciclo; o resumo "Intenção/Resultado" continua sendo gravado como histórico. A continuidade de curto prazo agora vem de `thread` (as últimas 4 decisões e o resultado de cada ação).
 
 Esquecimento é redução de acessibilidade na recuperação, não exclusão. Histórico do observador pode ser percorrido por sequência e exportado integralmente. Memórias importantes permanecem candidatas mesmo antigas. Não há embeddings ou similaridade vetorial; associação textual e links explícitos são a alternativa gratuita adotada. Sinônimos sem palavras compartilhadas são uma limitação conhecida.
 

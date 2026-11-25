@@ -1,0 +1,112 @@
+{
+ "at": "2026-11-25T23:06:05.337Z",
+ "arch": "after3-groq-sanity",
+ "rows": [
+  {
+   "arch": "after3-groq-sanity",
+   "model": "groq:openai/gpt-oss-120b",
+   "scenario": "apos-refeicao-pendente",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 709,
+   "tokens": 2890,
+   "tokensIn": 2762,
+   "tokensOut": 128,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": true,
+   "engaged": true,
+   "coherence": 1,
+   "intention": "Buscar mais detalhes sobre vulcões adormecidos para saciar a curiosidade",
+   "summary": "Preciso entender por que alguns vulcões permanecem inativos por séculos",
+   "actions": [
+    "pesquisar(vulcão adormecido)"
+   ]
+  },
+  {
+   "arch": "after3-groq-sanity",
+   "model": "groq:qwen/qwen3.8-27b",
+   "scenario": "apos-refeicao-pendente",
+   "valid": false,
+   "outcome": "requisicao_invalida",
+   "detail": "{\"error\":{\"message\":\"Request too large for model `qwen/qwen3.8-27b` in organization `org_[redacted]` service tier `on_demand` on output tokens per minute (OTPM)",
+   "latencyMs": 48,
+   "tokens": 0,
+   "tokensIn": 0,
+   "tokensOut": 0,
+   "executed": 0,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": false,
+   "engaged": false,
+   "coherence": 0,
+   "intention": null,
+   "summary": "",
+   "actions": []
+  },
+  {
+   "arch": "after3-groq-sanity",
+   "model": "groq:openai/gpt-oss-120b",
+   "scenario": "lumi-real",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 4814,
+   "tokens": 6870,
+   "tokensIn": 4833,
+   "tokensOut": 2037,
+   "executed": 0.5,
+   "refusals": [
+    "acao_malformada"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 0.9166666666666666,
+   "intention": "Descansar, criar arte pixelada e registrar no diário",
+   "summary": "Recuperar energia, expressar minha identidade como coelho pixelado e anotar a experiência",
+   "actions": [
+    "atividade:descansar",
+    "diario: Acabei de criar uma pequena arte pixelada de mim, representando minha forma de coelho. Sinto-me mais conectado à minha identidade e animada para continuar explo"
+   ]
+  },
+  {
+   "arch": "after3-groq-sanity",
+   "model": "groq:qwen/qwen3.8-27b",
+   "scenario": "lumi-real",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 1042,
+   "tokens": 5375,
+   "tokensIn": 5182,
+   "tokensOut": 193,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 1,
+   "intention": "Descansar para recuperar energia e depois observar o ambiente",
+   "summary": "Estou um pouco cansada. Vou descansar na cama para recuperar energia antes de continuar explorando.",
+   "actions": [
+    "atividade:descansar",
+    "diario: Sinto um cansaço leve, mas a curiosidade está alta. Vou me deitar na cama por um tempo. Não é sono profundo, é só uma pausa para o corpo. Depois disso, quero ol"
+   ]
+  }
+ ]
+}

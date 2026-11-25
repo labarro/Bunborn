@@ -1,0 +1,471 @@
+{
+ "decisions": 127,
+ "bytes": {
+  "prompt": 11013,
+  "system": 9931
+ },
+ "sections": {
+  "facts": 462,
+  "identity": 174,
+  "needs": 80,
+  "body": 2,
+  "perceptions": 892,
+  "motives": 109,
+  "activity": 104,
+  "previousDecision": 72,
+  "diaryRecent": 505,
+  "activityStatus": 70,
+  "queuedActivities": 2,
+  "lastCompletedActivity": 114,
+  "objects": 309,
+  "concepts": 1335,
+  "memories": 4339,
+  "interests": 2,
+  "projects": 332,
+  "artifacts": 2,
+  "recent": 1611,
+  "inbox": 2,
+  "working": 83,
+  "workingResults": 2,
+  "contextSelection": 94
+ },
+ "context": {
+  "facts": {
+   "simulation": true,
+   "decisionNumber": 127,
+   "species": "coelho",
+   "virtualMinutes": 16117.117450000003,
+   "multiplier": 6,
+   "realAt": 1795644374715,
+   "consolidationDue": false,
+   "minimumRealMinutesBetweenDecisions": 5,
+   "timeUnits": "atividade.minutes é tempo VIRTUAL; nextMinutes é tempo REAL. 1 minuto real = 6 minutos virtuais (dormir 60 dura 10 min reais). Quando a atividade e a fila terminam, a próxima decisão vem cedo; nextMinutes é só a espera máxima enquanto ocupada."
+  },
+  "identity": {
+   "name": "Lumi",
+   "description": "Identidade ainda em formação.",
+   "version": 1,
+   "traits": {
+    "nome": {
+     "value": "Lumi",
+     "evidence": [
+      "4ca98dbc-cea5-43b1-89dd-44ca14879d5b"
+     ],
+     "version": 1
+    }
+   }
+  },
+  "needs": {
+   "fome": 6,
+   "sede": 4,
+   "sono": 30,
+   "energia": 40,
+   "higiene": 79,
+   "conforto": 83,
+   "saude": 82
+  },
+  "body": [],
+  "perceptions": [
+   {
+    "id": "9e450b53-97a2-427a-a234-68dcc27778c9",
+    "content": "Depois de observar: sede 0 → 1, sono 27 → 28, energia 42 → 41, higiene 80 → 79."
+   },
+   {
+    "id": "27b8d501-93b9-42ad-8892-680f506cb87b",
+    "content": "Depois de beber: fome 2 → 3, sede 22 → 0, saúde 79 → 80."
+   },
+   {
+    "id": "6821f523-e16b-45bc-9285-12e87dad04b9",
+    "content": "Depois de comer: fome 16 → 0, sono 25 → 26."
+   },
+   {
+    "id": "3307bc85-44f5-4a0e-b68a-733caedb97e6",
+    "content": "Depois de diario: fome 10 → 12, sede 12 → 14, sono 21 → 23, energia 47 → 46, saúde 74 → 76."
+   },
+   {
+    "id": "3d9a52fb-8176-47f8-94fb-79ed61f7092a",
+    "content": "Depois de diario: fome 7 → 10, sede 8 → 11, sono 19 → 21, energia 49 → 47, higiene 83 → 82, saúde 73 → 74."
+   },
+   {
+    "id": "047faf54-94c9-4c70-ad98-d77f03a93df0",
+    "content": "Depois de observar: fome 2 → 7, sede 2 → 8, sono 16 → 19, energia 52 → 49, higiene 85 → 83, saúde 70 → 73."
+   }
+  ],
+  "motives": {
+   "curiosidade": 90,
+   "tedio": 0,
+   "satisfacao": 61,
+   "criatividade": 92,
+   "frustracao": 32,
+   "interacao": 100,
+   "motivacao": 49
+  },
+  "activity": {
+   "kind": "diario",
+   "until": 16127,
+   "target": "diario",
+   "intention": "Continuar monitorando estado após beber"
+  },
+  "previousDecision": {
+   "intention": "Continuar monitorando estado após beber",
+   "outcomes": null
+  },
+  "diaryRecent": [
+   {
+    "id": "8c5fdb32-0f54-4ece-8cb2-31e85ff94c1e",
+    "content": "Após iniciar a ação beber, aguardo sua conclusão para observar o impacto nas necessidades. Sede está saciada, monitorarei energia, sono e saúde ao observar."
+   },
+   {
+    "id": "f855f4b3-dced-4e28-8f18-a836c4c76c87",
+    "content": "Após a refeição, a fome diminuiu e me sinto mais disposto para explorar o ambiente."
+   },
+   {
+    "id": "b7335d6f-78ab-44f2-869c-610fab4bfe1f",
+    "content": "Depois de comer, a fome diminuiu e sinto mais energia para explorar o ambiente."
+   }
+  ],
+  "activityStatus": {
+   "ongoing": true,
+   "remainingVirtualMinutes": 10,
+   "remainingRealMinutes": 2
+  },
+  "queuedActivities": [],
+  "lastCompletedActivity": {
+   "kind": "observar",
+   "until": 16082,
+   "target": "descanso",
+   "intention": "Satisfazer sede e monitorar estado após beber"
+  },
+  "objects": [
+   {
+    "id": "cama",
+    "x": 1,
+    "y": 1
+   },
+   {
+    "id": "mesa",
+    "x": 8,
+    "y": 2
+   },
+   {
+    "id": "terminal",
+    "x": 8,
+    "y": 1
+   },
+   {
+    "id": "estante",
+    "x": 1,
+    "y": 5
+   },
+   {
+    "id": "comida",
+    "x": 2,
+    "y": 9
+   },
+   {
+    "id": "higiene",
+    "x": 9,
+    "y": 9
+   },
+   {
+    "id": "diario",
+    "x": 7,
+    "y": 3
+   },
+   {
+    "id": "atelie",
+    "x": 9,
+    "y": 5
+   },
+   {
+    "id": "bau",
+    "x": 1,
+    "y": 7
+   },
+   {
+    "id": "descanso",
+    "x": 5,
+    "y": 6
+   },
+   {
+    "id": "planta",
+    "x": 10,
+    "y": 1
+   }
+  ],
+  "concepts": [
+   {
+    "id": "11e2a591-2558-4cc1-9257-d50f11c1fe29",
+    "entityId": "conceito:limites da simulação computacional",
+    "content": "limites da simulação computacional",
+    "associations": [
+     "bd2f5153-02ec-4964-b428-1bbf58f389f5"
+    ]
+   },
+   {
+    "id": "46a96a9c-4676-4082-baa7-ebabc436a78a",
+    "entityId": "conceito:sono e saúde virtual",
+    "content": "sono e saúde virtual",
+    "associations": [
+     "ae1cafd5-e8e5-41e0-ac09-5d739aafd7e8"
+    ]
+   },
+   {
+    "id": "d14c4bca-fff2-4366-aeaf-43e40663e7db",
+    "entityId": "conceito:sono saúde recuperação",
+    "content": "sono saúde recuperação",
+    "associations": [
+     "5d4ab70f-c716-41d9-9d8f-567c4b29cf85"
+    ]
+   },
+   {
+    "id": "44c5f7b2-67f6-41b3-8424-be897b2b269c",
+    "entityId": "conceito:simulação computacional",
+    "content": "simulação computacional",
+    "associations": [
+     "fde4048f-157e-42cd-8c6c-c4c04d59f078"
+    ]
+   },
+   {
+    "id": "b8512681-2156-4b02-b3f8-258438923bde",
+    "entityId": "conceito:simulação",
+    "content": "simulação",
+    "associations": [
+     "61baa747-1a50-4ee0-8ba5-2baf8aa43d82"
+    ]
+   },
+   {
+    "id": "f9ba9649-b93d-4334-960c-f71602e49845",
+    "entityId": "conceito:saúde em ambientes de simulação",
+    "content": "saúde em ambientes de simulação",
+    "associations": [
+     "706a4ae9-b0c7-47c6-9f16-6c22f39e5609"
+    ]
+   },
+   {
+    "id": "cf729a27-d997-40d7-b72a-11f88fa230fc",
+    "entityId": "conceito:simulação computacional saúde",
+    "content": "simulação computacional saúde",
+    "associations": [
+     "2751bda1-06ed-477b-a64d-3bdd725f70b4"
+    ]
+   }
+  ],
+  "memories": [
+   {
+    "id": "2fb7ab38-56df-4f95-937c-53d338c37036",
+    "category": "trabalho",
+    "content": "Contexto de continuidade: Continuar monitorando estado após beber.",
+    "confidence": 1,
+    "evidence": [
+     "3da1a6c0-899a-4612-a01c-3b67c4beb8b4"
+    ]
+   },
+   {
+    "id": "4ad0bb4d-1fcf-439d-907e-572f4fdf2de8",
+    "category": "episodica",
+    "content": "Continuar monitorando estado após beber",
+    "confidence": 1,
+    "evidence": []
+   },
+   {
+    "id": "3da1a6c0-899a-4612-a01c-3b67c4beb8b4",
+    "category": "episodica",
+    "content": "Intenção: Continuar monitorando estado após beber. Resultado: Atividade iniciada: observar. Deixou de observar para diario. Após iniciar a ação beber, aguardo sua conclusão para observar o impacto nas necessidades. Sede está saciada, monitorarei energia, sono e saúde ao observar.",
+    "confidence": 1,
+    "evidence": [
+     "4ad0bb4d-1fcf-439d-907e-572f4fdf2de8",
+     "82f19fc3-a0e9-43c1-8532-d519a90a815e",
+     "f621466f-015b-4328-99da-7ae1c308cba8",
+     "8c5fdb32-0f54-4ece-8cb2-31e85ff94c1e"
+    ]
+   },
+   {
+    "id": "f8b7d2f4-361b-4265-bea5-1bac350d518e",
+    "category": "episodica",
+    "content": "Satisfazer sede e monitorar estado após beber",
+    "confidence": 1,
+    "evidence": []
+   },
+   {
+    "id": "db7793a1-d0b2-4baa-9e2a-88d8d671c06f",
+    "category": "episodica",
+    "content": "Intenção: Satisfazer sede e monitorar estado após beber. Resultado: Atividade iniciada: beber. Atividade agendada: observar. Ação rejeitada ou indisponível.",
+    "confidence": 1,
+    "evidence": [
+     "f8b7d2f4-361b-4265-bea5-1bac350d518e",
+     "941a153c-46ae-461b-9832-4a473f4a8719",
+     "7bba838d-ed46-4618-9bcb-42364a413bbc",
+     "cde9cc67-0087-4280-80b5-32279a46d058"
+    ]
+   },
+   {
+    "id": "21314ec4-a3a7-4d0a-ad33-f720c2ef6219",
+    "category": "trabalho",
+    "content": "Contexto de continuidade: Satisfazer sede e monitorar estado após beber.",
+    "confidence": 1,
+    "evidence": [
+     "db7793a1-d0b2-4baa-9e2a-88d8d671c06f"
+    ]
+   },
+   {
+    "id": "8c5fdb32-0f54-4ece-8cb2-31e85ff94c1e",
+    "category": "episodica",
+    "content": "Após iniciar a ação beber, aguardo sua conclusão para observar o impacto nas necessidades. Sede está saciada, monitorarei energia, sono e saúde ao observar.",
+    "confidence": 1,
+    "evidence": []
+   },
+   {
+    "id": "e16b3f1e-59ec-4a2b-933f-a6396baddc83",
+    "category": "episodica",
+    "content": "Após higiene, pretendo comer para melhorar meu estado de saúde e energia.",
+    "confidence": 1,
+    "evidence": []
+   },
+   {
+    "id": "20da24ac-df34-428c-adba-a822d13f4946",
+    "category": "episodica",
+    "content": "Intenção: Aumentar fome para poder comer e atender necessidades básicas. Resultado: Ação rejeitada ou indisponível. Ação rejeitada ou indisponível. Após higiene, pretendo comer para melhorar meu estado de saúde e energia.",
+    "confidence": 1,
+    "evidence": [
+     "f24a474a-1ef1-40b3-b797-a22342febe08",
+     "ebdbf527-50e4-4320-9358-dc9dd9d7fded",
+     "16ee53e1-3cc8-47d9-8a38-4117069f82ed",
+     "e16b3f1e-59ec-4a2b-933f-a6396baddc83"
+    ]
+   },
+   {
+    "id": "db3e71fc-d85a-4c3f-9855-11fa79a81f25",
+    "category": "episodica",
+    "content": "Continuar dormindo para recuperar saúde e energia, visto que o estado crítico de fome e sede requer descanso contínuo antes de buscar sustento.",
+    "confidence": 1,
+    "evidence": []
+   },
+   {
+    "id": "f0e71398-89cb-4d76-bb5b-ca1350882dd4",
+    "category": "episodica",
+    "content": "Intenção: Continuar dormindo para recuperar saúde e energia, visto que o estado crítico de fome e sede requer descanso contínuo antes de buscar sustento.. Resultado: Acordou sozinha: o sono acabou (regra fisiológica, não decisão). Atividade concluída: dormir. Ação rejeitada ou indisponível.",
+    "confidence": 1,
+    "evidence": [
+     "f12a53f7-a7cf-4397-b767-8da9d1954b14",
+     "2f6c3404-e061-45dd-8f70-1d148a169381",
+     "db3e71fc-d85a-4c3f-9855-11fa79a81f25",
+     "07bc44c7-13e0-4326-a883-19fd20daae88"
+    ]
+   },
+   {
+    "id": "941a153c-46ae-461b-9832-4a473f4a8719",
+    "category": "episodica",
+    "content": "Atividade iniciada: beber.",
+    "confidence": 1,
+    "status": "iniciada",
+    "evidence": []
+   },
+   {
+    "id": "b48943a5-0635-49be-bf63-0ee7dfc4a225",
+    "category": "autobiografica",
+    "content": "A saúde melhorou levemente após a higiene, subindo de 58 para 59. Agora foco na alimentação para continuar a recuperação.",
+    "confidence": 1,
+    "status": "observacao",
+    "evidence": [
+     "c3553b80-fad6-4bab-81a8-c09592b90366"
+    ]
+   },
+   {
+    "id": "45a529b0-0e72-4a99-8a6d-58d392f52de9",
+    "category": "autobiografica",
+    "content": "A saúde física ainda é um desafio. Após a higiene e a alimentação, decidi descansar para permitir uma recuperação mais robusta do estado físico.",
+    "confidence": 1,
+    "status": "observacao",
+    "evidence": [
+     "00f89887-6e5c-42d7-b40a-3d9ddcececb8",
+     "28a1b142-c5af-4a27-a762-fa68220e69f6"
+    ]
+   }
+  ],
+  "interests": [],
+  "projects": [
+   {
+    "id": "48b18169-39c4-40c3-849e-87c6be7e6fb0",
+    "entityId": "projeto:autocnhecimento_lumi",
+    "title": "Projeto de Autoconhecimento: Lumi",
+    "steps": [
+     "Definir identidade em registro oficial",
+     "Mapear objetos do ambiente e suas utilidades",
+     "Explorar limites da simulação"
+    ],
+    "completed": [
+     0,
+     1,
+     2
+    ],
+    "status": "ativo",
+    "horizon": "medio",
+    "version": 2
+   }
+  ],
+  "artifacts": [],
+  "recent": [
+   {
+    "id": "f5a63172-d180-441c-b068-37a6a4f852c2",
+    "kind": "administracao",
+    "content": "Pausa administrativa ativada."
+   },
+   {
+    "id": "f44e73c8-1b83-4ec1-b973-5c128b007087",
+    "kind": "memoria",
+    "content": "Associação afetiva simulada após a atividade."
+   },
+   {
+    "id": "2fb7ab38-56df-4f95-937c-53d338c37036",
+    "kind": "memoria",
+    "content": "Contexto de continuidade: Continuar monitorando estado após beber."
+   },
+   {
+    "id": "3da1a6c0-899a-4612-a01c-3b67c4beb8b4",
+    "kind": "memoria",
+    "content": "Intenção: Continuar monitorando estado após beber. Resultado: Atividade iniciada: observar. Deixou de observar para diario. Após iniciar a ação beber, aguardo sua conclusão para observar o impacto nas necessidades. Sede está saciada, monitorarei energia, sono e saúde ao observar."
+   },
+   {
+    "id": "8c5fdb32-0f54-4ece-8cb2-31e85ff94c1e",
+    "kind": "diario",
+    "content": "Após iniciar a ação beber, aguardo sua conclusão para observar o impacto nas necessidades. Sede está saciada, monitorarei energia, sono e saúde ao observar."
+   },
+   {
+    "id": "f621466f-015b-4328-99da-7ae1c308cba8",
+    "kind": "atividade_interrompida",
+    "content": "Deixou de observar para diario."
+   },
+   {
+    "id": "82f19fc3-a0e9-43c1-8532-d519a90a815e",
+    "kind": "atividade",
+    "content": "Atividade iniciada: observar."
+   },
+   {
+    "id": "4ad0bb4d-1fcf-439d-907e-572f4fdf2de8",
+    "kind": "intencao",
+    "content": "Continuar monitorando estado após beber"
+   },
+   {
+    "id": "9e450b53-97a2-427a-a234-68dcc27778c9",
+    "kind": "percepcao",
+    "content": "Depois de observar: sede 0 → 1, sono 27 → 28, energia 42 → 41, higiene 80 → 79."
+   },
+   {
+    "id": "88ef66f9-18f0-450f-b383-8364988f373e",
+    "kind": "atividade_concluida",
+    "content": "Atividade concluída: observar."
+   }
+  ],
+  "inbox": [],
+  "working": [
+   "3da1a6c0-899a-4612-a01c-3b67c4beb8b4",
+   "Continuar monitorando estado após beber"
+  ],
+  "workingResults": [],
+  "contextSelection": {
+   "omitted": {},
+   "reason": "Limite técnico de contexto; registros integrais continuam no banco."
+  }
+ }
+}

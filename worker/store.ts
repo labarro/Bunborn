@@ -133,8 +133,8 @@ export class Store {
       .first<Row>();
     return r ? decode(r) : null;
   }
-  async memories(query: string, now: number, limit = 14) {
-    const words = query.replace(/[a-f0-9]{8}-[a-f0-9-]{27,}/gi,'').match(/[\p{L}\p{N}]{3,}/gu)?.slice(0, 16) ?? [];
+  async memories(query: string, now: number, limit = 14, keep: (r: RecordEntry) => boolean = () => true) {
+    const words = query.replace(/[a-f0-9]{8}-[a-f0-9-]{27,}/gi,'').match(/[\p{L}\p{N}]{3,}/gu)?.slice(0, 24) ?? [];
     const matched = words.length
       ? (
           await this.db
@@ -163,6 +163,7 @@ export class Store {
     const entries = [
       ...new Map([...matched, ...recent, ...important,...linked].map((r) => [r.id, decode(r)])).values(),
     ]
+      .filter(keep)
       .map(record=>({record,score:memoryScore(record,query,now)+(linkedIds.has(record.id)?.22:0)}))
       .sort((a,b)=>b.score-a.score)
       .slice(0, limit).map(item=>item.record);
@@ -242,6 +243,18 @@ export class Store {
       this.db
         .prepare('UPDATE calls SET actual_tokens=?,status=?,latency_ms=? WHERE id=? AND actual_tokens IS NULL')
         .bind(tokens, status,latency, id),
+    ]);
+  }
+  /**
+   * Reservations never settled (Worker interrupted mid-call) are settled conservatively with the
+   * reserved tokens, as if the provider had processed them: limits are never exceeded and the
+   * day's token count is not undercounted. Idempotent (only rows with actual_tokens NULL).
+   */
+  async reconcileOrphans(now: number, olderThanMs = 10 * 60000) {
+    const cut = now - olderThanMs;
+    await this.db.batch([
+      this.db.prepare('UPDATE budgets SET tokens=tokens+COALESCE((SELECT SUM(reserved_tokens) FROM calls c WHERE c.day=budgets.day AND c.model=budgets.model AND c.actual_tokens IS NULL AND c.at<?),0) WHERE EXISTS(SELECT 1 FROM calls c WHERE c.day=budgets.day AND c.model=budgets.model AND c.actual_tokens IS NULL AND c.at<?)').bind(cut, cut),
+      this.db.prepare("UPDATE calls SET actual_tokens=reserved_tokens,status='orfa_conservadora' WHERE actual_tokens IS NULL AND at<?").bind(cut),
     ]);
   }
   async usage() {

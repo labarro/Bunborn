@@ -1,0 +1,424 @@
+{
+ "decisions": 127,
+ "bytes": {
+  "prompt": 9650,
+  "system": 8140
+ },
+ "sections": {
+  "facts": 335,
+  "identity": 174,
+  "interests": 2,
+  "projects": 332,
+  "artifacts": 2,
+  "diaryRecent": 564,
+  "feeling": 377,
+  "perceptions": 536,
+  "situation": 578,
+  "thread": 478,
+  "knowledge": 2953,
+  "memories": 2873,
+  "events": 142,
+  "inbox": 2,
+  "workingResults": 2,
+  "contextSelection": 94
+ },
+ "context": {
+  "facts": {
+   "simulation": true,
+   "decisionNumber": 127,
+   "species": "coelho",
+   "ageVirtualDays": 11.2,
+   "multiplier": 6,
+   "consolidationDue": false,
+   "minimumRealMinutesBetweenDecisions": 5,
+   "timeUnits": "atividade.minutes é tempo VIRTUAL; nextMinutes é tempo REAL (1 min real = 6 min virtuais). Quando a atividade e a fila terminam, a próxima decisão vem cedo."
+  },
+  "identity": {
+   "name": "Lumi",
+   "description": "Identidade ainda em formação.",
+   "version": 1,
+   "traits": {
+    "nome": {
+     "value": "Lumi",
+     "evidence": [
+      "4ca98dbc-cea5-43b1-89dd-44ca14879d5b"
+     ],
+     "version": 1
+    }
+   }
+  },
+  "interests": [],
+  "projects": [
+   {
+    "id": "48b18169-39c4-40c3-849e-87c6be7e6fb0",
+    "entityId": "projeto:autocnhecimento_lumi",
+    "title": "Projeto de Autoconhecimento: Lumi",
+    "steps": [
+     "Definir identidade em registro oficial",
+     "Mapear objetos do ambiente e suas utilidades",
+     "Explorar limites da simulação"
+    ],
+    "completed": [
+     0,
+     1,
+     2
+    ],
+    "status": "ativo",
+    "horizon": "medio",
+    "version": 2
+   }
+  ],
+  "artifacts": [],
+  "diaryRecent": [
+   {
+    "id": "8c5fdb32-0f54-4ece-8cb2-31e85ff94c1e",
+    "content": "Após iniciar a ação beber, aguardo sua conclusão para observar o impacto nas necessidades. Sede está saciada, monitorarei energia, sono e saúde ao observar.",
+    "agoRealMinutes": 2
+   },
+   {
+    "id": "f855f4b3-dced-4e28-8f18-a836c4c76c87",
+    "content": "Após a refeição, a fome diminuiu e me sinto mais disposto para explorar o ambiente.",
+    "agoRealMinutes": 24
+   },
+   {
+    "id": "b7335d6f-78ab-44f2-869c-610fab4bfe1f",
+    "content": "Depois de comer, a fome diminuiu e sinto mais energia para explorar o ambiente.",
+    "agoRealMinutes": 30
+   }
+  ],
+  "feeling": {
+   "body": {
+    "fome": "sem fome",
+    "sede": "sem sede",
+    "sono": "desperta",
+    "energia": "um pouco cansada",
+    "higiene": "limpa o suficiente",
+    "saude": "bem"
+   },
+   "mood": {
+    "tedio": "entretida",
+    "curiosidade": "muito curiosa",
+    "criatividade": "muita vontade de criar",
+    "frustracao": "um pouco frustrada",
+    "interacao": "com vontade de conversar",
+    "satisfacao": "neutra",
+    "motivacao": "com ânimo moderado"
+   },
+   "state": []
+  },
+  "perceptions": [
+   {
+    "id": "9e450b53-97a2-427a-a234-68dcc27778c9",
+    "felt": "Depois de observar: nada mudou de forma perceptível."
+   },
+   {
+    "id": "27b8d501-93b9-42ad-8892-680f506cb87b",
+    "felt": "Depois de beber: nada mudou de forma perceptível."
+   },
+   {
+    "id": "6821f523-e16b-45bc-9285-12e87dad04b9",
+    "felt": "Depois de comer: nada mudou de forma perceptível."
+   },
+   {
+    "id": "3307bc85-44f5-4a0e-b68a-733caedb97e6",
+    "felt": "Depois de diario: saúde: um pouco abatida → bem."
+   },
+   {
+    "id": "3d9a52fb-8176-47f8-94fb-79ed61f7092a",
+    "felt": "Depois de diario: nada mudou de forma perceptível."
+   }
+  ],
+  "situation": {
+   "activity": {
+    "kind": "diario",
+    "where": "diario",
+    "intention": "Continuar monitorando estado após beber",
+    "remainingVirtualMinutes": 10
+   },
+   "queue": [],
+   "lastCompleted": {
+    "kind": "observar",
+    "where": "descanso",
+    "intention": "Satisfazer sede e monitorar estado após beber"
+   },
+   "objects": [
+    {
+     "id": "cama",
+     "x": 1,
+     "y": 1
+    },
+    {
+     "id": "mesa",
+     "x": 8,
+     "y": 2
+    },
+    {
+     "id": "terminal",
+     "x": 8,
+     "y": 1
+    },
+    {
+     "id": "estante",
+     "x": 1,
+     "y": 5
+    },
+    {
+     "id": "comida",
+     "x": 2,
+     "y": 9
+    },
+    {
+     "id": "higiene",
+     "x": 9,
+     "y": 9
+    },
+    {
+     "id": "diario",
+     "x": 7,
+     "y": 3
+    },
+    {
+     "id": "atelie",
+     "x": 9,
+     "y": 5
+    },
+    {
+     "id": "bau",
+     "x": 1,
+     "y": 7
+    },
+    {
+     "id": "descanso",
+     "x": 5,
+     "y": 6
+    },
+    {
+     "id": "planta",
+     "x": 10,
+     "y": 1
+    }
+   ]
+  },
+  "thread": [
+   {
+    "intention": "Continuar monitorando estado após beber",
+    "agoRealMinutes": 2,
+    "actions": [
+     "atividade:observar",
+     "diario"
+    ]
+   },
+   {
+    "intention": "Satisfazer sede e monitorar estado após beber",
+    "agoRealMinutes": 8,
+    "actions": [
+     "atividade:beber",
+     "atividade:observar",
+     "diario"
+    ]
+   },
+   {
+    "intention": "Satisfazer fome e melhorar energia",
+    "agoRealMinutes": 13,
+    "actions": [
+     "atividade:comer",
+     "diario"
+    ]
+   },
+   {
+    "intention": "Satisfazer fome e sede",
+    "agoRealMinutes": 19,
+    "actions": [
+     "atividade:comer",
+     "atividade:beber"
+    ]
+   }
+  ],
+  "knowledge": {
+   "research": [
+    {
+     "id": "6c206f70-fbaf-451b-972e-a0bc1f0c18a6",
+     "query": "limites da simulação computacional",
+     "source": "wikipedia",
+     "agoRealMinutes": 169,
+     "results": [
+      {
+       "title": "Computação científica",
+       "excerpt": "A ciência computacional, também conhecida como computação científica, é um campo de rápido crescimento que usa recursos de computação avançados para entender e resolver problemas complexos. É uma área da ciência que abra",
+       "url": "https://pt.wikipedia.org/?curid=417283"
+      },
+      {
+       "title": "Os Limites do Crescimento",
+       "excerpt": "Os Limites do Crescimento é um livro escrito em 1972 que modelou as consequências do crescimento rápido da população mundial considerando os recursos naturais limitados, comissionado pelo Clube de Roma. Encomendado pelo ",
+       "url": "https://pt.wikipedia.org/?curid=3238394"
+      }
+     ]
+    },
+    {
+     "id": "ae1cafd5-e8e5-41e0-ac09-5d739aafd7e8",
+     "query": "sono e saúde virtual",
+     "source": "wikipedia",
+     "agoRealMinutes": 187,
+     "results": [
+      {
+       "title": "Sono",
+       "excerpt": "Sono é um estado sedentário da mente e do corpo. É caracterizada por consciência alterada, atividade sensorial relativamente inibida, atividade muscular reduzida e interações reduzidas com o ambiente. Distingue-se da vig",
+       "url": "https://pt.wikipedia.org/?curid=40845"
+      },
+      {
+       "title": "Hipnótico",
+       "excerpt": "Hipnóticos ou soníferos são fármacos capazes de induzir o sono. Podem ser considerados hipnóticos fármacos como benzodiazepínicos, barbitúricos, além dos próprios medicamentos pertencentes a esta classe.",
+       "url": "https://pt.wikipedia.org/?curid=112731"
+      }
+     ]
+    },
+    {
+     "id": "5d4ab70f-c716-41d9-9d8f-567c4b29cf85",
+     "query": "sono saúde recuperação",
+     "source": "wikipedia",
+     "agoRealMinutes": 193,
+     "results": [
+      {
+       "title": "Sono",
+       "excerpt": "Sono é um estado sedentário da mente e do corpo. É caracterizada por consciência alterada, atividade sensorial relativamente inibida, atividade muscular reduzida e interações reduzidas com o ambiente. Distingue-se da vig",
+       "url": "https://pt.wikipedia.org/?curid=40845"
+      },
+      {
+       "title": "Privação de sono",
+       "excerpt": "Privação de sono é a condição onde não se dorme o suficiente para o organismo se recuperar, o que pode ser crônica ou aguda. Um estado de sono restrito crônico pode causar fadiga, diminuição dos reflexos, sonolência, env",
+       "url": "https://pt.wikipedia.org/?curid=1073098"
+      }
+     ]
+    }
+   ],
+   "concepts": [
+    {
+     "entityId": "conceito:limites da simulação computacional",
+     "content": "limites da simulação computacional"
+    },
+    {
+     "entityId": "conceito:sono e saúde virtual",
+     "content": "sono e saúde virtual"
+    },
+    {
+     "entityId": "conceito:sono saúde recuperação",
+     "content": "sono saúde recuperação"
+    },
+    {
+     "entityId": "conceito:simulação computacional",
+     "content": "simulação computacional"
+    },
+    {
+     "entityId": "conceito:simulação",
+     "content": "simulação"
+    },
+    {
+     "entityId": "conceito:saúde em ambientes de simulação",
+     "content": "saúde em ambientes de simulação"
+    },
+    {
+     "entityId": "conceito:simulação computacional saúde",
+     "content": "simulação computacional saúde"
+    }
+   ]
+  },
+  "memories": [
+   {
+    "id": "0cc1df96-9670-4315-be2c-3991a69f0003",
+    "category": "semantica",
+    "content": "Simulação: Uma simulação é uma imitação aproximada da realidade, operação de um processo ou sistema que representa sua operação ao longo do tempo. A simulação é usada em muitos contextos, como simulação de tecnologia para ajuste ou otimização de desempenho, engenharia de segurança, testes, treinamento, educação e videogames.\nModelagem computacional: Modelagem computacional é uma área de conhecimento multidisciplinar ",
+    "confidence": 0.7,
+    "status": "fonte_consultada",
+    "evidence": [
+     "fde4048f-157e-42cd-8c6c-c4c04d59f078",
+     "simulação computacional"
+    ]
+   },
+   {
+    "id": "75cafb8d-15af-45b7-83c2-a7dfc1266693",
+    "category": "autobiografica",
+    "content": "A saúde física continua em um estado crítico preocupante, mesmo após descansar. Decidi priorizar um sono profundo para tentar recuperar a estabilidade.",
+    "confidence": 1,
+    "status": "observacao",
+    "evidence": [
+     "bd8d9262-51c0-4616-9451-137cee124ea3"
+    ]
+   },
+   {
+    "id": "a81422b7-2ede-4fe4-a781-f40bf4c7c05d",
+    "category": "autobiografica",
+    "content": "A saúde física ainda é um desafio. Após o sono ter sido interrompido naturalmente e não poder dormir mais, foquei em buscar alimento para tentar estabilizar o corpo.",
+    "confidence": 1,
+    "status": "observacao",
+    "evidence": [
+     "c02d3855-5bd1-4909-a7cd-965ef22fab48"
+    ]
+   },
+   {
+    "id": "b48943a5-0635-49be-bf63-0ee7dfc4a225",
+    "category": "autobiografica",
+    "content": "A saúde melhorou levemente após a higiene, subindo de 58 para 59. Agora foco na alimentação para continuar a recuperação.",
+    "confidence": 1,
+    "status": "observacao",
+    "evidence": [
+     "c3553b80-fad6-4bab-81a8-c09592b90366"
+    ]
+   },
+   {
+    "id": "73d79759-0f83-4df5-b6aa-1f99bfb1ec87",
+    "category": "procedimental",
+    "content": "Sede saciada após beber água. A saúde física é a prioridade atual para manter a estabilidade na simulação.",
+    "confidence": 1,
+    "status": "observacao",
+    "evidence": [
+     "d3734107-abd7-419d-bb13-f409d6951a4c"
+    ]
+   },
+   {
+    "id": "2b692fdc-7aba-47d6-ae9e-05387f91dda7",
+    "category": "autobiografica",
+    "content": "Fome e energia estão restabelecidas, mas a saúde física (64.8) continua sendo o foco principal para o meu bem-estar.",
+    "confidence": 1,
+    "status": "observacao",
+    "evidence": [
+     "2785d8ef-8b83-4c73-b05e-6832290b81dd"
+    ]
+   },
+   {
+    "id": "15593dc1-cd9a-42e4-a6a9-e1ee158b0384",
+    "category": "autobiografica",
+    "content": "A saúde física permanece como uma preocupação central. Organizar o espaço e descansar tem sido a minha estratégia principal para tentar estabilizar esses níveis.",
+    "confidence": 1,
+    "status": "observacao",
+    "evidence": [
+     "1658e63b-f4fc-4604-941d-20d031cf416a"
+    ]
+   },
+   {
+    "id": "85094642-e8ca-4700-8428-d110713d3b8b",
+    "category": "autobiografica",
+    "content": "Reflexão sobre a estabilidade e a aceitação da identidade de Lumi após as atividades de rotina.",
+    "confidence": 1,
+    "status": "observacao",
+    "evidence": [
+     "c9ae3f2d-4db4-4730-b7c0-8423356d5d83",
+     "bc9a3a25-b443-4e2b-b557-4f4a18010480"
+    ]
+   }
+  ],
+  "events": [
+   {
+    "id": "f621466f-015b-4328-99da-7ae1c308cba8",
+    "kind": "atividade_interrompida",
+    "content": "Deixou de observar para diario.",
+    "agoRealMinutes": 2
+   }
+  ],
+  "inbox": [],
+  "workingResults": [],
+  "contextSelection": {
+   "omitted": {},
+   "reason": "Limite técnico de contexto; registros integrais continuam no banco."
+  }
+ }
+}

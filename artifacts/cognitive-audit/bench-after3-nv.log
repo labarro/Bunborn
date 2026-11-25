@@ -1,0 +1,34 @@
+
+ RUN  v5.1.1 C:/projects/petsoso
+
+(node:3052) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"projeto-disponivel","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"projeto-disponivel","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"apos-refeicao-pendente","ok":true,"o":"aceita","c":1,"t":2898,"act":["pesquisar(por que vulcões ficam adormeci"]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"apos-refeicao-pendente","ok":true,"o":"aceita","c":1,"t":3504,"act":["pesquisar(vulcão adormecido mecanismo do","atividade:observar"]}
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"despertar","ok":false,"o":"sobrecarga","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"despertar","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"descoberta","ok":true,"o":"aceita","c":0.9,"t":3991,"act":["pesquisar(visão de coelhos comparação ou","diario: Descobri que coelhos enxergam qu","criar"]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"descoberta","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"continuar-obra","ok":true,"o":"aceita","c":1,"t":3047,"act":["criar"]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"continuar-obra","ok":true,"o":"aceita","c":1,"t":3879,"act":["criar"]}
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"falha-ferramenta","ok":true,"o":"aceita","c":1,"t":2726,"act":["pesquisar(pixel art história e técnicas)","atividade:observar"]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"falha-ferramenta","ok":true,"o":"aceita","c":1,"t":3641,"act":["pesquisar(simulação computacional)"]}
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"troca-modelo","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"troca-modelo","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"ausencia-observador","ok":true,"o":"aceita","c":1,"t":2752,"act":["mensagem: Oi! Voltei a me encontrar com ","pesquisar(coelhos comportamento curiosid"]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"ausencia-observador","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"descanso-voluntario","ok":true,"o":"aceita","c":1,"t":2961,"act":["criar"]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"descanso-voluntario","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"necessidade-vs-objetivo","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"necessidade-vs-objetivo","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+{"a":"after3-nv","m":"nvidia:minimaxai/minimax-m3.1-flash","s":"lumi-real","ok":true,"o":"aceita","c":0.89,"t":5458,"act":["criar","diario: Criei meu primeiro texto, \"Lumi,","identidade"]}
+{"a":"after3-nv","m":"nvidia:nvidia/nemotron-3-ultra-550b-a55b","s":"lumi-real","ok":false,"o":"timeout","c":0,"t":0,"act":[]}
+·
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:49:07
+   Duration  719.68s (tests 100%)
+
