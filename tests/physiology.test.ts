@@ -159,3 +159,39 @@ describe('tools are usable while doing something passive', () => {
     expect(results).toEqual([{ title: 'Artificial Life Models', url: 'https://arxiv.org/abs/2401.00001v1', excerpt: 'A study & more.', accessedAt: 1, source: 'arxiv' }]);
   });
 });
+
+describe('review 25/11: idleness, motives and backup compatibility', () => {
+  it('a state with involuntary sleep and decision timestamp still passes the strict backup schema', async () => {
+    const { stateSchema } = await import('../shared/validation');
+    let s = born(0);
+    s.needs.sono = 100;
+    s = reconcile(s, 60000).state;
+    s.lastCompleted = { ...s.activity };
+    s.lastDecisionAt = 123;
+    expect(stateSchema.safeParse(s).success).toBe(true);
+  });
+  it('decides again soon after the activity ends instead of waiting the whole chosen interval', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    await seed(store, () => {}, t0);
+    const calls: number[] = [];
+    const provider: CognitionProvider = { async decide() { calls.push(1); return { decision: { intention: 'Fixture', summary: 'teste', nextMinutes: 60, complexNext: false, actions: [{ type: 'atividade', activity: 'beber', minutes: 15 }] }, model: 'gemini-3.1-flash-lite' }; } };
+    await tick(env, t0, provider);
+    expect(calls.length).toBe(1);
+    // beber 15 virtual min = 2.5 real min; pacing floor in tool-tests is 0 here
+    await tick(env, t0 + 3 * 60000, provider);
+    expect(calls.length).toBe(2);
+  });
+  it('boredom grows while idle and falls with engaging work; frustration fades', () => {
+    let s = born(0);
+    s.motives = { ...s.motives, tedio: 20, frustracao: 40 };
+    s.activity.until = 0;
+    s = reconcile(s, 4 * hour).state;
+    expect(s.motives.tedio).toBeGreaterThan(30);
+    expect(s.motives.frustracao).toBeLessThan(30);
+    s.activity = { kind: 'pesquisar', until: s.virtualMinutes + 120, target: 'terminal', intention: 't' };
+    const before = s.motives.tedio;
+    s = reconcile(s, s.updatedAt + 2 * hour).state;
+    expect(s.motives.tedio).toBeLessThan(before - 15);
+  });
+});

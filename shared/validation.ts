@@ -63,9 +63,9 @@ export const stateSchema = z
         motivacao: meter,
       })
       .strict(),
-    activity: z.object({ kind: short, until: time, target: short, intention: short }).strict(),
-    queue:z.array(z.object({kind:short,until:time,target:short,intention:short}).strict()).max(4).optional(),
-    lastCompleted:z.object({kind:short,until:time,target:short,intention:short}).strict().optional(),
+    activity: z.object({kind:short,until:time,target:short,intention:short,involuntary:z.boolean().optional()}).strict(),
+    queue:z.array(z.object({kind:short,until:time,target:short,intention:short,involuntary:z.boolean().optional()}).strict()).max(4).optional(),
+    lastCompleted:z.object({kind:short,until:time,target:short,intention:short,involuntary:z.boolean().optional()}).strict().optional(),
     position: z.object(point).strict(),
     objects: z
       .array(
@@ -86,5 +86,6 @@ export const stateSchema = z
     lastConsolidation: time,
     working: z.array(z.string().max(2000)).max(8),
     lastModel: short.nullable(),
+    lastDecisionAt: time.optional(),
   })
   .strict();

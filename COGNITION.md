@@ -61,6 +61,17 @@ Sono limita a energia disponível: o teto de energia é 100 − 2×(sono − 60)
 
 `pesquisar` consulta fontes reais, sem chave e com origens fixas (o modelo só escolhe o texto da busca): Wikipedia em português e em inglês, Wikidata, Wikcionário, Open Library (livros) e arXiv (artigos científicos). `criar` gera obras em texto ou em pixels (até 32x32 com paleta própria), `mover` reposiciona móveis e `expor` coloca uma obra num objeto. Essas capacidades estão descritas como fatos do ambiente no prompt, sem sugerir temas. Pesquisar, escrever no diário, criar e mover substituem automaticamente uma atividade passiva (observar, descansar, organizar), e a substituição é registrada como interrupção. Antes, essas ações eram recusadas com `atividade_em_andamento` sempre que ela estava observando, o que explica o diário bloqueado várias vezes. Comer, beber, dormir, higiene, criar e pesquisar em andamento continuam bloqueando, assim como o sono involuntário.
 
+## Revisão de 25/11: tempo parado, motivações e backup
+
+- **Unidades de tempo:** ela escolhia "dormir 60" (minutos virtuais, ou seja, 10 min reais) e "nextMinutes 60" (minutos reais), e por isso acordava e ficava 50 min parada. Agora, quando a atividade e a fila terminam, a próxima decisão vem assim que o ritmo mínimo permite (5 min em produção); `nextMinutes` passou a ser só a espera máxima enquanto ela está ocupada. O contexto explica as unidades (`timeUnits`) e diz se a atividade ainda está em andamento (`activityStatus`).
+- **Motivações com dinâmica:**
+  - Tédio: sobe 4/h parada e 1,5/h em atividade passiva; cai com pesquisar, criar, diário, mensagens e mover móveis.
+  - Frustração: cai 3/h (antes só subia).
+  - Satisfação: volta para 50 com o tempo e cai enquanto há necessidade crítica.
+  - Motivação: acompanha energia, saúde, satisfação e frustração.
+  - Curiosidade e vontade de criar: crescem com o tédio e diminuem ao pesquisar ou criar.
+- **Backup:** o esquema estrito do estado não aceitava os campos novos `involuntary` e `lastDecisionAt`, e um backup feito depois de 25/11 02:27Z seria recusado na restauração. Corrigido, e o estado real de produção foi conferido contra o esquema.
+
 ## Falhas do provedor (25/11)
 
 Sobrecarga (503), timeout e resposta malformada esperam 5, 10 e depois 20 min, no máximo. Antes, a espera dobrava até 6 h: 7 erros 503 seguidos deixaram Lumi parada por 5h20 em 24/11. Uma intenção longa demais agora é cortada no limite em vez de descartar a decisão. Uma atividade escrita como tipo (`{type:"observar"}`) é lida como `atividade`. Rejeições repetitivas ganharam detalhe: `ja_registrado` para identidade, e etapas de projeto aceitam como evidência qualquer trabalho próprio novo (`etapa_sem_evidencia`).

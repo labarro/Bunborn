@@ -276,6 +276,7 @@ export type State = {
   lastConsolidation: number;
   working: string[];
   lastModel: string | null;
+  lastDecisionAt?: number;
 };
 export type RecordEntry = {
   seq?: number;
@@ -395,8 +396,23 @@ export function reconcile(input: State, now: number): { state: State; gap: boole
   n.conforto = clamp(100 - (n.fome + n.sede + n.sono) / 3 - (100 - n.higiene) / 6 + (over.descansar ?? 0) * 20);
   const deficit = (n.fome >= 90 ? 4 : 0) + (n.sede >= 90 ? 4 : 0) + (n.sono >= 95 ? 2 : 0) + (n.higiene <= 15 ? 1 : 0);
   n.saude = clamp(deficit ? n.saude - hours * deficit : n.fome < 70 && n.sede < 70 && n.sono < 80 ? n.saude + hours * 1.5 : n.saude, 10);
-  s.motives.tedio = clamp(s.motives.tedio + hours);
-  s.motives.interacao = clamp(s.motives.interacao + hours * 0.3);
+  // Motives drift by rules too: boredom grows when idle and falls with engaging work,
+  // frustration fades with time, satisfaction returns to a baseline and drops while needs are
+  // critical, motivation follows energy, health and satisfaction. Choices stay with the creature.
+  const m = s.motives;
+  const engaged = (over.pesquisar ?? 0) + (over.criar ?? 0) + (over.diario ?? 0);
+  const passiveH = (over.observar ?? 0) + (over.descansar ?? 0) + (over.organizar ?? 0);
+  const careH = (over.comer ?? 0) + (over.beber ?? 0) + (over.higiene ?? 0);
+  const idleH = Math.max(0, awakeH - engaged - passiveH - careH);
+  m.tedio = clamp(m.tedio + idleH * 4 + passiveH * 1.5 - engaged * 12 - careH * 2);
+  m.frustracao = clamp(m.frustracao - hours * 3);
+  m.curiosidade = clamp(m.curiosidade + awakeH * (m.tedio > 60 ? 1 : 0.5) - (over.pesquisar ?? 0) * 6);
+  m.criatividade = clamp(m.criatividade + awakeH * (m.tedio > 60 ? 0.6 : 0.2) - (over.criar ?? 0) * 8);
+  const critical = (n.fome >= 90 ? 1 : 0) + (n.sede >= 90 ? 1 : 0) + (n.sono >= 95 ? 1 : 0);
+  m.satisfacao = clamp(m.satisfacao + (50 - m.satisfacao) * Math.min(1, hours * 0.05) - critical * hours * 2 + completed.filter((a) => ['comer', 'beber', 'dormir', 'higiene'].includes(a.kind)).length * 3);
+  const target = (n.energia + n.saude + m.satisfacao) / 3 - m.frustracao / 3;
+  m.motivacao = clamp(m.motivacao + (target - m.motivacao) * Math.min(1, hours * 0.2));
+  m.interacao = clamp(m.interacao + hours * 0.3);
   while(s.activity.until<=s.virtualMinutes&&s.queue?.length){s.activity=s.queue.shift()!;const object=s.objects.find(o=>o.id===s.activity.target);if(object){const path=approach(s.position,object,s.objects);if(path.length)s.position=path[path.length-1];}}
   const events: string[] = [];
   const sleeping = s.activity.kind === 'dormir' && s.activity.until > s.virtualMinutes;

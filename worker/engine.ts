@@ -184,13 +184,14 @@ async function applyAction(
         { sources: results.map((x) => x.url), related: s.working.slice(0, 4), researchId: r.id },
         { entityId: 'conceito:' + a.query.toLocaleLowerCase('pt-BR'), associations: [r.id] },
       );
-      s.motives.curiosidade = clamp(s.motives.curiosidade + 2);
-      s.motives.tedio = clamp(s.motives.tedio - 8);
+      s.motives.tedio = clamp(s.motives.tedio - 10);
+      s.motives.satisfacao = clamp(s.motives.satisfacao + 3);
       break;
     }
     case 'diario':
       start('diario', 20);
       record('diario', a.content);
+      s.motives.tedio = clamp(s.motives.tedio - 5);
       break;
     case 'relacionar': {
       const [from, to] = await Promise.all([store.entity(a.from), store.entity(a.to)]);
@@ -217,6 +218,7 @@ async function applyAction(
     case 'mensagem':
       record('conversa', a.content, { role: 'criatura' });
       s.motives.interacao = clamp(s.motives.interacao - 10);
+      s.motives.tedio = clamp(s.motives.tedio - 5);
       break;
     case 'memoria': {
       if(a.status==='fato_do_ambiente'&&!evidenceRecords.some(r=>r.data.status==='fato_do_ambiente'||r.kind==='nascimento'))throw new Error('fato_do_ambiente_sem_origem');
@@ -360,8 +362,9 @@ async function applyAction(
         },
         { entityId: prior?.entityId ?? entityId('artefato', a.id), importance: 0.8 },
       );
-      s.motives.satisfacao = clamp(s.motives.satisfacao + 3);
-      s.motives.criatividade = clamp(s.motives.criatividade + 1);
+      s.motives.satisfacao = clamp(s.motives.satisfacao + 6);
+      s.motives.criatividade = clamp(s.motives.criatividade - 10);
+      s.motives.tedio = clamp(s.motives.tedio - 12);
       break;
     }
     case 'mover': {
@@ -373,6 +376,7 @@ async function applyAction(
       if (!validLayout(objects, s.position)) throw new Error('posicao_bloqueia_acesso');
       s.objects = objects;
       record('habitat', `Reposicionou ${object.label}.`, { object });
+      s.motives.tedio = clamp(s.motives.tedio - 4);
       start('organizar', 20);
       break;
     }
@@ -424,6 +428,11 @@ export async function tick(
           { realMinutes: (now - original.updatedAt) / 60000 },
         ),
       );
+    // The chosen interval is the longest wait while busy, not forced idleness: when the current
+    // activity and queue are over, the next decision comes as soon as pacing allows. Before this,
+    // "nextMinutes: 60" (real) after "dormir 60" (virtual, 10 real min) left her still for 50 min.
+    const idle = s.activity.until <= s.virtualMinutes && !s.queue?.length;
+    if (idle && s.failures === 0 && s.nextDecisionAt > now) s.nextDecisionAt = Math.max(now, (s.lastDecisionAt ?? 0) + decisionFloor(env));
     if (s.nextDecisionAt > now) {
       await store.commit(token, s, records);
       return { status: 'tempo_atualizado' };
@@ -451,12 +460,14 @@ export async function tick(
         realAt: now,
         consolidationDue: s.virtualMinutes - s.lastConsolidation > 1440,
         minimumRealMinutesBetweenDecisions: decisionFloor(env) / 60000,
+        timeUnits: `atividade.minutes é tempo VIRTUAL; nextMinutes é tempo REAL. 1 minuto real = ${s.multiplier} minutos virtuais (dormir 60 dura ${Math.round(60 / s.multiplier)} min reais). Quando a atividade e a fila terminam, a próxima decisão vem cedo; nextMinutes é só a espera máxima enquanto ocupada.`,
       },
       identity: s.identity,
       needs: s.needs,
       body: bodyAlerts(s),
       motives: s.motives,
       activity: s.activity,
+      activityStatus: s.activity.until > s.virtualMinutes ? { ongoing: true, remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes), remainingRealMinutes: Math.round((s.activity.until - s.virtualMinutes) / s.multiplier) } : { ongoing: false, note: 'nenhuma atividade em andamento' },
       queuedActivities:s.queue??[],
       lastCompletedActivity:s.lastCompleted??null,
       objects: s.objects,
@@ -546,7 +557,7 @@ export async function tick(
               ...(e instanceof ToolError ? { detail: e.detail } : {}),
             }),
           );
-          s.motives.frustracao = clamp(s.motives.frustracao + 2);
+          s.motives.frustracao = clamp(s.motives.frustracao + 4);
         }
       }
       for (const message of inbox)
@@ -602,6 +613,7 @@ export async function tick(
       s.complexNext = decision.complexNext;
       const floor=decisionFloor(env);
       s.nextDecisionAt = now + Math.max(floor, decision.nextMinutes * 60000);
+      s.lastDecisionAt = now;
       records.push(
         entry(
           s,
