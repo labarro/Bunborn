@@ -167,8 +167,10 @@ async function applyAction(
         throw new ToolError('ja_limpa', { higiene: Math.round(s.needs.higiene), maximo: physiology.needToStart.higiene });
       if (a.activity === 'observar') {
         // Looking again at a room she already knows, unchanged, shows nothing new: the body refuses and says why.
-        const last = (await store.latest('percepcao', 30)).find((r) => r.data.activity === 'observar' && r.data.room);
-        if (last && last.data.room === roomSignature(s) && s.virtualMinutes - last.virtualAt < 24 * 60)
+        // The room only changes when furniture moves or a work is exposed (habitat records).
+        const last = (await store.latest('percepcao', 60)).find((r) => r.data.activity === 'observar');
+        const changed = (await store.latest('habitat', 1))[0];
+        if (last && (last.data.room ? last.data.room === roomSignature(s) : !changed || changed.realAt < last.realAt))
           throw new ToolError('nada_novo_para_observar', { lastObserved: new Date(last.realAt).toISOString(), objects: s.objects.map((o) => o.label), note: 'você já observou o quarto e nada mudou desde então' });
       }
       const previous = s.activity;
@@ -476,6 +478,11 @@ export async function tick(
       store.latest('leitura', 2),
     ]);
     const perceptions = (await store.latest('percepcao', 6)).map((r) => ({ id: r.id, content: r.content }));
+    const lastIntent = (await store.latest('intencao', 1))[0];
+    // Her own recent diary (continuity of voice and of what she already wrote).
+    const diaryRecent = (await store.latest('diario', 3)).map((r) => ({ id: r.id, content: r.content.slice(0, 400) }));
+    // What happened to each action of the previous decision (done or refused, and why), stated plainly.
+    const previousDecision = lastIntent ? { intention: lastIntent.content, outcomes: lastIntent.data.outcomes ?? null } : null;
     let complex =
       (s.complexNext || (s.decisions > 0 && s.decisions % 24 === 0)) && s.decisions > 0;
     const context = {
@@ -496,7 +503,10 @@ export async function tick(
       body: bodyAlerts(s),
       perceptions,
       motives: Object.fromEntries(Object.entries(s.motives).map(([k, v]) => [k, Math.round(v)])),
-      activity: brief(s.activity),
+      // A finished activity is not shown as current (it confused models into thinking it was still going on).
+      activity: s.activity.until > s.virtualMinutes ? brief(s.activity) : null,
+      previousDecision,
+      diaryRecent,
       activityStatus: s.activity.until > s.virtualMinutes ? { ongoing: true, remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes), remainingRealMinutes: Math.round((s.activity.until - s.virtualMinutes) / s.multiplier) } : { ongoing: false, note: 'nenhuma atividade em andamento' },
       queuedActivities:(s.queue??[]).map(brief),
       lastCompletedActivity:s.lastCompleted?brief(s.lastCompleted):null,
@@ -547,7 +557,6 @@ export async function tick(
     };
     try {
       // Category steers model choice only; the decision is still ONE request with the same context.
-      const lastIntent = (await store.latest('intencao', 1))[0];
       const lastRoute = lastIntent?.data.route as { selected?: string; category?: Category } | undefined;
       const { category, reason: categoryReason } = categorize({
         inbox: inbox.length,
@@ -565,8 +574,9 @@ export async function tick(
       const { decision, model, invalidActions = [], route } = reply;
       s.lastModel = model;
       s.activity.intention = decision.intention;
-      records.push(
-        entry(s, 'intencao', decision.intention, {
+      const outcomes: { action: string; result: 'feita' | 'recusada'; code?: string; detail?: unknown }[] = [];
+      const label = (a: { type: string; activity?: string }) => a.type + (a.activity ? ':' + a.activity : '');
+      const intent = entry(s, 'intencao', decision.intention, {
           summary: decision.summary,
           model,
           proposed: decision.actions.map((a) => a.type),
@@ -575,9 +585,11 @@ export async function tick(
           proposals:decision.actions.map(a=>a.type==='criar'?{...a,artifact:{format:a.artifact.format}}:a),
           // Technical routing metadata (why this model), never the creature's own intention.
           ...(route ? { route } : {}),
-        }),
-      );
+          outcomes,
+        });
+      records.push(intent);
       for (const bad of invalidActions) {
+        outcomes.push({ action: bad.type, result: 'recusada', code: 'acao_malformada' });
         records.push(entry(s, 'erro_ferramenta', 'Ação rejeitada ou indisponível.', { tool: bad.type, code: 'acao_malformada', detail: { issues: bad.issues, hint: 'Corrija os campos listados em issues conforme o contrato da ferramenta: ' + bad.issues.map((i) => (i.path || 'type') + ' (' + i.message + ')').join('; ').slice(0, 400) } }));
         s.motives.frustracao = clamp(s.motives.frustracao + 4);
       }
@@ -586,6 +598,7 @@ export async function tick(
       for (const a of decision.actions) {
         if (a.type === 'pesquisar' && external++ >= 1) {
           records.push(entry(s, 'erro_ferramenta', 'Máximo de uma pesquisa por ciclo.'));
+          outcomes.push({ action: label(a), result: 'recusada', code: 'uma_pesquisa_por_ciclo' });
           continue;
         }
         const draft = structuredClone(s);
@@ -594,7 +607,9 @@ export async function tick(
           await applyAction(draft, a, store.withPending(records), output, now, fetcher);
           Object.assign(s, draft);
           records.push(...output);
+          outcomes.push({ action: label(a), result: 'feita' });
         } catch (e) {
+          outcomes.push({ action: label(a), result: 'recusada', code: safeError(e), ...(e instanceof ToolError ? { detail: e.detail } : {}) });
           records.push(
             entry(s, 'erro_ferramenta', 'Ação rejeitada ou indisponível.', {
               tool: a.type,

@@ -6,6 +6,7 @@
 // category when it is within 0.08 of the best (continuity of conversations/projects).
 import { catalog, modelKey, nvidiaEntry, type Category, type ModelEntry } from '../../shared/ai-catalog';
 import quality from '../../shared/model-quality.json';
+import evidence from '../../shared/production-evidence.json';
 import { callable, type Health } from './health';
 
 export type AiConfig = {
@@ -20,9 +21,11 @@ export type AiConfig = {
 export const defaultConfig: AiConfig = { disabledProviders: [], disabledModels: [], strategy: 'auto', manual: {}, allowTrialInProduction: false, dailyCaps: {} };
 type QualityFile = { generatedAt: string | null; models: Record<string, { entry?: Partial<ModelEntry>; scores: Partial<Record<Category, number>>; homologated: Category[]; note?: string }> };
 let q = quality as QualityFile;
+let adjustments: Record<string, { adjust: Partial<Record<Category, number>> }> = evidence.models;
 /** Benchmarks and tests may evaluate against another quality table (never used by production). */
 export function useQuality(file: QualityFile) {
   q = file;
+  adjustments = {};
 }
 export type { QualityFile };
 
@@ -38,8 +41,14 @@ export function knownModels(): ModelEntry[] {
   }
   return list;
 }
+/** Benchmark quality plus production-evidence adjustments (shared/production-evidence.json). */
 export function qualityOf(key: string) {
-  return q.models[key] ?? { scores: {}, homologated: [] as Category[] };
+  const base = q.models[key] ?? { scores: {}, homologated: [] as Category[] };
+  const adjust = adjustments[key]?.adjust;
+  if (!adjust) return base;
+  const scores = { ...base.scores };
+  for (const [c, d] of Object.entries(adjust) as [Category, number][]) if (scores[c] !== undefined) scores[c] = Math.max(0, Math.round((scores[c]! + d) * 1000) / 1000);
+  return { ...base, scores };
 }
 
 export type CategorySignals = { inbox: number; complexNext: boolean; decisionNumber: number; consolidationDue: boolean; recentResearch: boolean; creativity: number; boredom: number; activeCreativeProject: boolean };

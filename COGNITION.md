@@ -96,6 +96,14 @@ Comportamento observado entre 05:44Z e 12:53Z, sem nenhuma instrução sobre o c
 
 Pesquisar e recordar ficam disponíveis em qualquer estado do corpo, mas não durante uma atividade física em andamento nem durante o sono. Antes, fome, sede ou cansaço extremos bloqueavam a pesquisa justamente quando ela mais precisava descobrir o que fazer. O prompt diz que ela é autônoma: diante de qualquer dúvida, sobre o mundo, sobre si, sobre o corpo ou sobre como fazer algo, pode pesquisar ou recordar. Novas sensações em `body`: suja, muito entediada, frustrada.
 
+## Estado interno e diário, segunda revisão (25/11 22h)
+
+- **Diário:** a pedido do responsável, as 5 entradas de 20:19Z a 22:04Z (registros de ações e planos, não reflexões) foram apagadas da produção depois de um backup assinado (`production-752330c9…`). O índice de busca e os vínculos dessas entradas também foram limpos; as memórias de observação que citam o resultado do ciclo ficaram.
+- **O que é o diário:** as instruções agora dizem que ele guarda opiniões, descobertas, pensamentos, dúvidas e sentimentos dela, em primeira pessoa, e não registro de ações, planos imediatos ou monitoramento de necessidades. As 3 últimas entradas vão no contexto (`diaryRecent`), para dar continuidade de voz.
+- **Resultado da decisão anterior:** `previousDecision.outcomes` diz, para cada ação, se foi feita ou recusada e por quê. Antes, a recusa podia sair dos 10 registros recentes, empurrada pelas memórias do ciclo, e ela tentava comer sem fome 4 vezes seguidas.
+- **Atividade concluída:** deixou de aparecer como atual (`activity` fica nulo, e a concluída aparece em `lastCompletedActivity`). Às 22:04Z o modelo leu "beber" como ainda em andamento.
+- **Evidência de produção no roteamento:** `shared/production-evidence.json` rebaixa o gpt-oss-120b e o gpt-oss-20b em cotidiana e criatividade (−0,3), com a evidência registrada. Os preferidos passam a ser Gemini 3.5 Flash Lite, Qwen e MiniMax.
+
 ## Tédio, criatividade, curiosidade e observar (25/11)
 
 Pedido do responsável: o tédio só deve baixar com atividades que engajam, e criar deve aumentar a criatividade.
@@ -103,7 +111,7 @@ Pedido do responsável: o tédio só deve baixar com atividades que engajam, e c
 - **Criatividade:** sobe ao criar e escrever no diário (+10/h, mais +8 por obra e +3 por entrada) e um pouco ao pesquisar. Sem isso, volta devagar para 40.
 - **Curiosidade:** descobrir alimenta a curiosidade: pesquisar sobe +8/h, mais +4 por pesquisa. Sem novas descobertas, volta devagar para 55.
 - **Percepções:** agora mostram também a mudança de tédio, criatividade e curiosidade em cada atividade. Ela aprende pela experiência o que alivia o tédio; ninguém conta.
-- **Observar de novo:** se ela já observou o quarto e nada mudou (mesmos objetos, posições e obras expostas) nas últimas 24 h virtuais, o corpo recusa com `nada_novo_para_observar`, com a lista do que existe no quarto. Se algo mudar, ela pode observar de novo.
+- **Observar de novo:** se ela já observou o quarto e nada mudou desde então (nenhum móvel movido nem obra exposta), o corpo recusa com `nada_novo_para_observar`, sem prazo, com a lista do que existe no quarto. Vale também para observações anteriores a esta regra. Se algo mudar, ela pode observar de novo. A instrução "pode escolher observar sem agir" virou "pode escolher não agir".
 - **Roteamento:** a categoria criatividade agora vale com criatividade ≥ 70 ou tédio ≥ 70 (antes: as duas juntas).
 
 ## Diário (25/11)

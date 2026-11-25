@@ -40,6 +40,8 @@ score = 0,55 · qualidade homologada na categoria
       − 0,10 se degradado, − 0,05 se em teste de recuperação
 ```
 
+**Evidência de produção:** `shared/production-evidence.json` soma ajustes à nota do benchmark quando um modelo se comporta mal na criatura real ao longo de muitos ciclos, o que o benchmark não mede. Cada ajuste registra a data e a evidência. Desde 25/11, o gpt-oss-120b e o gpt-oss-20b têm −0,3 em cotidiana e criatividade.
+
 **Exclusões** (cada uma registrada com o motivo):
 - provedor sem chave, ou provedor/modelo desligado pelo responsável;
 - termos do provedor proíbem o ambiente (NVIDIA em produção), exceto quando o responsável liga `allowTrialInProduction`, como fez em 25/11;

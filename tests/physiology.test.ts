@@ -311,3 +311,35 @@ describe('boredom, creativity, curiosity and observing (feedback 25/11)', () => 
     expect((refused.data.detail as { objects: string[] }).objects).toContain('Diário');
   });
 });
+
+describe('internal state clarity (review 25/11 22:00Z)', () => {
+  it('the next decision sees what happened to each previous action, and no finished activity as current', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    await seed(store, (s) => { s.needs.fome = 2; s.needs.sede = 40; s.activity.until = 0; }, t0);
+    await tick(env, t0, fixture([{ type: 'atividade', activity: 'comer', minutes: 30 }, { type: 'atividade', activity: 'beber', minutes: 10 }]));
+    let seen: Record<string, unknown> = {};
+    const spy: CognitionProvider = { async decide(context) { seen = context as Record<string, unknown>; return fixture([]).decide(context, false, 0); } };
+    await tick(env, t0 + 10 * 60000, spy);
+    const previous = seen.previousDecision as { outcomes: { action: string; result: string; code?: string }[] };
+    expect(previous.outcomes).toEqual([
+      expect.objectContaining({ action: 'atividade:comer', result: 'recusada', code: 'sem_fome' }),
+      expect.objectContaining({ action: 'atividade:beber', result: 'feita' }),
+    ]);
+    expect(seen.activity).toBeNull();
+    expect(seen.lastCompletedActivity).toMatchObject({ kind: 'beber' });
+  });
+});
+
+describe('observing a known room (feedback 25/11 22:10Z)', () => {
+  it('an older observation without fingerprint still counts while no furniture moved since', async () => {
+    const { env, store } = setup();
+    const t0 = Date.now();
+    const s = await seed(store, (st) => { st.activity.until = 0; }, t0);
+    const token = await store.acquire(t0 + 1);
+    await store.commit(token!, s, [entry(s, 'percepcao', 'Depois de observar: nada mudou no corpo.', { activity: 'observar', before: {}, after: {} })], [], false);
+    await store.release(token!);
+    await tick(env, t0 + 60000, fixture([{ type: 'atividade', activity: 'observar', minutes: 30 }]));
+    expect((await store.records('erro_ferramenta')).at(-1)!.data).toMatchObject({ code: 'nada_novo_para_observar' });
+  });
+});

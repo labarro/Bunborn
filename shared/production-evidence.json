@@ -1,0 +1,15 @@
+{
+  "note": "Ajustes de qualidade por evidência da produção (Lumi), somados à nota do benchmark. O benchmark mede formato e leitura do contexto; não mediu o comportamento ao longo de muitos ciclos.",
+  "models": {
+    "groq:openai/gpt-oss-120b": {
+      "adjust": { "cotidiana": -0.3, "criatividade": -0.3 },
+      "since": "2026-11-25",
+      "evidence": "25/11 20:19–22:04Z: diário usado como registro de ações e planos (5 entradas apagadas a pedido do responsável), 4 tentativas seguidas de comer sem fome apesar da recusa visível, leu atividade já concluída como em andamento."
+    },
+    "groq:openai/gpt-oss-20b": {
+      "adjust": { "cotidiana": -0.3, "criatividade": -0.3 },
+      "since": "2026-11-25",
+      "evidence": "25/11 19:17–19:34Z: repetiu a mesma pesquisa 4 vezes seguidas e propôs pesquisar enquanto dormia."
+    }
+  }
+}
