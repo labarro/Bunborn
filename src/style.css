@@ -1642,3 +1642,42 @@ pre {
 .provider-table{width:100%;border-collapse:collapse;font-size:.85rem}
 .provider-table th,.provider-table td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line,rgba(127,127,127,.2));vertical-align:top}
 .route-list{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+
+/* House v2 (26/11): camera, room shortcuts, sound and immersive observation over the canvas. */
+.habitat-shell { position: absolute; inset: 0; background: #1d1828; }
+.habitat-shell.immersive .habitat-caption { opacity: 0.6; }
+.habitat-shell .phaser-host { touch-action: none; }
+.habitat-tools {
+  position: absolute; right: 10px; top: 10px; display: flex; gap: 4px; align-items: center;
+  background: #241d31cc; border: 1px solid #4a3d5a; border-radius: 10px; padding: 4px;
+  transition: opacity 0.4s;
+}
+.habitat-tools button, .habitat-tools select {
+  background: transparent; border: 0; color: #e8dcf0; border-radius: 7px; height: 28px; min-width: 28px;
+  display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; font-size: 12px;
+}
+.habitat-tools select { background: #2e263c; border: 1px solid #4a3d5a; }
+.habitat-tools button:hover, .habitat-tools button.on { background: #4a3d5a; }
+.habitat-tools button:disabled { opacity: 0.4; }
+.habitat-tools button:focus-visible, .habitat-tools select:focus-visible { outline: 2px solid #ead29e; }
+.habitat-caption {
+  position: absolute; left: 10px; bottom: 10px; color: #efe6f5; font-size: 12px; letter-spacing: 0.02em;
+  background: #241d31b3; border-radius: 8px; padding: 4px 9px; pointer-events: none; transition: opacity 0.4s;
+}
+.sound-panel {
+  position: absolute; right: 10px; top: 50px; background: #241d31ee; border: 1px solid #4a3d5a; border-radius: 10px;
+  padding: 10px 12px; color: #e8dcf0; font-size: 12px; display: grid; gap: 6px; min-width: 190px;
+}
+.sound-panel label { display: grid; grid-template-columns: 70px 1fr; align-items: center; gap: 8px; }
+.sound-panel .text-button { color: #ead29e; justify-self: end; }
+.chrome-hidden .habitat-tools, .chrome-hidden .habitat-caption, .chrome-hidden .sound-panel { opacity: 0; pointer-events: none; }
+.habitat-shell:fullscreen { background: #1d1828; }
+@media (max-width: 640px) {
+  .habitat-tools { left: 8px; right: 8px; top: 8px; flex-wrap: wrap; justify-content: center; }
+  .habitat-tools select { max-width: 104px; }
+  .habitat-caption { font-size: 11px; bottom: 6px; left: 6px; }
+}
+.object-tooltip small { display: block; margin-top: 4px; line-height: 1.35; }
+.object-tooltip .muted, .object-tooltip p .muted { color: #9a88a5; }
+.exposed-work canvas, .exposed-work svg { max-width: 120px !important; max-height: 120px; margin: 6px 0 0 !important; border-width: 4px !important; }
+.exposed-work .artifact-text { max-height: 90px; overflow: auto; font-size: 12px; }

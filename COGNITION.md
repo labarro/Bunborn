@@ -170,3 +170,13 @@ Rejeições de ferramentas trazem código e detalhe factual no ciclo seguinte: r
 ## Limites de autonomia
 
 O modelo escolhe dentre ferramentas permitidas e pode recusar sugestões do observador. Autonomia é simulada, limitada por orçamento, infraestrutura e capacidades implementadas. Não afirmamos emergência até observar execuções reais e analisar repetição, coerência, diversidade e retomada por período prolongado. Testes dirigidos de nome, projetos e interesses demonstram somente os respectivos mecanismos.
+
+
+## Casa e mundo no contexto (26/11)
+
+- **O que ela percebe:** o cômodo em que está (`situation.room` e os objetos dele, com posição); os demais cômodos só por id; e `world` (período, estação, tempo, ar, vento). Os canteiros, os objetos guardados e as cores das paredes só aparecem quando existem.
+- **Ferramentas novas:** `decorar`, `guardar`, `jardim`, `catalogo` e `tocar`; `recurso` aceita `catalogId`; `atividade` aceita `objectId` para descansar ou observar.
+- **Observar:** devolve o que ela vê (lá fora ou no cômodo), como fato.
+- **Prompt:** descreve essas possibilidades e diz que nada é obrigatório. Nenhuma preferência, de clima, de cômodo ou de jardinagem, é definida antes.
+- **Migração:** registrada como alteração externa do ambiente, sem sugerir reação.
+- **Custo:** cerca de +520 tokens por decisão no contexto real (HABITAT.md).

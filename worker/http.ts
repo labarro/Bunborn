@@ -116,10 +116,24 @@ export async function api(request: Request, env: Env): Promise<Response> {
           'SELECT id,content,at,author FROM inbox WHERE consumed=0 ORDER BY at DESC LIMIT 24',
         ).all(),
       ]);
+      // Works shown in the house (exposed on objects, or the composition being played): their real
+      // content, so frames and easels show what she actually made (never a placeholder image).
+      const ids = [...new Set((state?.objects ?? []).map((o) => o.artifactId).filter((x): x is string => !!x))];
+      if (state?.activity.kind === 'tocar') {
+        const played = await env.DB.prepare("SELECT data FROM records WHERE kind='musica' ORDER BY seq DESC LIMIT 1").first<{ data: string }>();
+        const id = played ? (JSON.parse(played.data) as { artifactId?: string }).artifactId : undefined;
+        if (id) ids.push(id);
+      }
+      const works: Record<string, { title: string; artifact: unknown; version: number; realAt: number }> = {};
+      if (ids.length) {
+        const rows = await env.DB.prepare(`SELECT entity_id, content, data, real_at FROM records WHERE kind='artefato' AND entity_id IN (${ids.map(() => '?').join(',')}) ORDER BY seq DESC LIMIT 40`).bind(...ids).all<{ entity_id: string; content: string; data: string; real_at: number }>();
+        for (const r of rows.results) if (!works[r.entity_id]) { const d = JSON.parse(r.data) as { artifact: unknown; version?: number }; works[r.entity_id] = { title: r.content, artifact: d.artifact, version: d.version ?? 1, realAt: r.real_at }; }
+      }
       return json({
         state,
         recent,
         usage,
+        works,
         pending: pending.results,
         ready: !!env.GEMINI_API_KEY && env.FREE_TIER_CONFIRMED === 'true'&&env.BIRTH_ENABLED!=='false',
         birthEnabled:env.BIRTH_ENABLED==='true',
@@ -310,33 +324,15 @@ export async function api(request: Request, env: Env): Promise<Response> {
         if (!old || old.kind !== 'recurso' || old.data.status !== 'pendente')
           throw new Error('pedido_invalido');
         if (b.approve) {
-          const occupied = new Set(s.objects.map((o) => `${o.x},${o.y}`));
-          let place: { x: number; y: number } | null = null;
-          for (let y = 0; y < 12 && !place; y++)
-            for (let x = 0; x < 12; x++)
-              if (!occupied.has(`${x},${y}`) && !(s.position.x === x && s.position.y === y)) {
-                const object = {
-                  id: old.entityId,
-                  label: old.content,
-                  kind: 'decoracao',
-                  x,
-                  y,
-                  color: '#b8a2d0',
-                };
-                const { validLayout } = await import('../shared/domain');
-                if (validLayout([...s.objects, object], s.position)) {
-                  place = { x, y };
-                  break;
-                }
-              }
+          // House v2: a catalogue request becomes that object, placed in a room where it fits;
+          // anything else becomes a generic decoration. The creature decides later where it goes.
+          const { catalogueEntry, findPlacement, kinds } = await import('../shared/house');
+          const item = typeof old.data.catalogId === 'string' ? catalogueEntry(old.data.catalogId) : null;
+          const kind = item?.kind ?? 'decoracao';
+          const object = { id: old.entityId, label: old.content.slice(0, 80), kind, x: 0, y: 0, color: item ? '#b88b68' : '#b8a2d0' };
+          const place = findPlacement(s.objects, s.position, object, item?.rooms ?? (kinds[kind].outdoor ? ['jardim'] : ['sala', 'estudio', 'quarto', 'cozinha']));
           if (!place) throw new Error('sem_espaco');
-          s.objects.push({
-            id: old.entityId,
-            label: old.content,
-            kind: 'decoracao',
-            ...place,
-            color: '#b8a2d0',
-          });
+          s.objects.push({ ...object, ...place });
         }
         return [
           entry(

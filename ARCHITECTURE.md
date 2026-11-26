@@ -86,3 +86,8 @@ Login com comparação de hashes e rate limit (5 por IP e 30 globais a cada 15 m
 ## Evolução
 
 Migrações apenas aditivas (0001–0009). `0007_backup_segments`, `0008_message_author` e `0009_insights_visits` foram aplicadas aos quatro bancos de existência; `bunborn-budget` está na 0003 (só usa `budgets`/`calls`). `tests/database.ts` enumera as migrações explicitamente.
+
+
+## Casa (habitat v2, 26/11)
+
+A planta, as paredes, as portas, os tipos de objeto, os caminhos e a validade do arranjo estão em `shared/house.ts`. Período, estações, clima, céu e jardim estão em `shared/world.ts` e são funções puras do relógio virtual: o mesmo código roda no Worker e no navegador, sem escrita extra no D1. A cena (`src/habitat/`) só desenha o estado persistido, mais detalhes corporais locais que não geram registros. Detalhes em HABITAT.md e ART_DIRECTION.md.

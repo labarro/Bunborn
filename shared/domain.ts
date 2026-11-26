@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { GRID, approach as houseApproach, defaultPosition, houseObjects, pathfind as housePathfind, rooms, validLayout as houseValidLayout, type HouseObject, type RoomId } from './house.ts';
+import { species, type Plot } from './world.ts';
 export const categories = [
   'episodica',
   'semantica',
@@ -103,6 +105,8 @@ export const actionSchema = z.discriminatedUnion('type', [
         'organizar',
       ]),
       minutes: z.number().int().min(5).max(480),
+      // Where (optional): descansar/observar can use any object that offers it; null = the usual spot.
+      objectId: z.string().max(160).nullable().optional(),
     })
     .strict(),
   z
@@ -186,12 +190,18 @@ export const actionSchema = z.discriminatedUnion('type', [
     .object({
       type: z.literal('mover'),
       objectId: short,
-      x: z.number().int().min(0).max(11),
-      y: z.number().int().min(0).max(11),
+      x: z.number().int().min(0).max(GRID.w - 1),
+      y: z.number().int().min(0).max(GRID.h - 1),
     })
     .strict(),
   z.object({ type: z.literal('expor'), artifactId: short, objectId: short }).strict(),
-  z.object({ type: z.literal('recurso'), id: short, title: short, reason: text }).strict(),
+  z.object({ type: z.literal('recurso'), id: short, title: short, reason: text, catalogId: z.string().max(60).nullable().optional() }).strict(),
+  // House v2 (26/11): personal touches, garden, catalogue on demand, playing her own music.
+  z.object({ type: z.literal('decorar'), objectId: z.string().max(160).nullable(), room: z.enum(['quarto', 'estudio', 'banheiro', 'sala', 'cozinha']).nullable(), color: z.string().regex(/^#[0-9a-fA-F]{6}$/) }).strict(),
+  z.object({ type: z.literal('guardar'), objectId: short }).strict(),
+  z.object({ type: z.literal('jardim'), acao: z.enum(['plantar', 'regar', 'colher']), canteiro: short, especie: z.enum(Object.keys(species) as [string, ...string[]]).nullable() }).strict(),
+  z.object({ type: z.literal('catalogo'), categoria: z.string().max(40).nullable() }).strict(),
+  z.object({ type: z.literal('tocar'), artifactId: short, objectId: short }).strict(),
 ]);
 export const decisionSchema = z
   .object({
@@ -225,6 +235,13 @@ function trimTooBig(value: unknown, issues: z.ZodIssue[]): unknown {
 }
 function normalizeAction(action: unknown): unknown {
   const a = action as Record<string, unknown> | null;
+  // A painting with one malformed stroke keeps its valid strokes (the painter repaints it anyway;
+  // 26/11 a single bad stroke discarded a whole creation). Nothing is invented.
+  const art = a?.type === 'criar' ? (a.artifact as { format?: unknown; strokes?: unknown } | undefined) : undefined;
+  if (art && art.format === 'pintura' && Array.isArray(art.strokes)) {
+    const strokes = art.strokes.filter((x) => strokeSchema.safeParse(x).success);
+    if (strokes.length && strokes.length < art.strokes.length) return { ...a, artifact: { ...art, strokes } };
+  }
   if (a && typeof a === 'object' && typeof a.type === 'string' && activityKinds.includes(a.type)) {
     const minutes = Number(a.minutes ?? a.duration ?? 30);
     return { type: 'atividade', activity: a.type, minutes: Math.max(5, Math.min(480, Math.round(Number.isFinite(minutes) ? minutes : 30))) };
@@ -263,13 +280,9 @@ export function parseDecision(raw: unknown): { decision: Decision; invalidAction
 export type Action = z.infer<typeof actionSchema>;
 export type Artifact = z.infer<typeof artifactSchema>;
 export type Point = { x: number; y: number };
-export type HabitatObject = Point & {
-  id: string;
-  label: string;
-  kind: string;
-  color: string;
-  artifactId?: string;
-};
+export type HabitatObject = HouseObject;
+/** House v2 state: wall colours she chose, objects she put away, garden beds. */
+export type HouseState = { version: 2; walls?: Partial<Record<RoomId, string>>; inventory?: HabitatObject[]; garden?: Record<string, Plot> };
 export type State = {
   schema: 1;
   id: 'principal';
@@ -295,6 +308,7 @@ export type State = {
   lastCompleted?:State['activity'];
   position: Point;
   objects: HabitatObject[];
+  house?: HouseState;
   complexNext: boolean;
   lastConsolidation: number;
   working: string[];
@@ -316,19 +330,7 @@ export type RecordEntry = {
   associations: string[];
   origin: string;
 };
-export const initialObjects: HabitatObject[] = [
-  { id: 'cama', label: 'Cama', kind: 'cama', x: 1, y: 1, color: '#a38ab9' },
-  { id: 'mesa', label: 'Mesa de trabalho', kind: 'mesa', x: 8, y: 2, color: '#b88b68' },
-  { id: 'terminal', label: 'Terminal de pesquisa', kind: 'terminal', x: 8, y: 1, color: '#91aab0' },
-  { id: 'estante', label: 'Estante', kind: 'estante', x: 1, y: 5, color: '#bb946b' },
-  { id: 'comida', label: 'Alimentação e água', kind: 'comida', x: 2, y: 9, color: '#d4ad78' },
-  { id: 'higiene', label: 'Área de higiene', kind: 'higiene', x: 9, y: 9, color: '#8fbbba' },
-  { id: 'diario', label: 'Diário', kind: 'diario', x: 7, y: 3, color: '#b389a6' },
-  { id: 'atelie', label: 'Ateliê', kind: 'atelie', x: 9, y: 5, color: '#d7ba90' },
-  { id: 'bau', label: 'Armazenamento', kind: 'bau', x: 1, y: 7, color: '#b08767' },
-  { id: 'descanso', label: 'Almofada de descanso', kind: 'descanso', x: 5, y: 6, color: '#9eae84' },
-  { id: 'planta', label: 'Planta', kind: 'planta', x: 10, y: 1, color: '#91ad7e' },
-];
+export const initialObjects: HabitatObject[] = houseObjects;
 export function born(now: number): State {
   return {
     schema: 1,
@@ -359,9 +361,10 @@ export function born(now: number): State {
       target: 'descanso',
       intention: 'Conhecer o ambiente disponível.',
     },
-    position: { x: 5, y: 5 },
+    position: { ...defaultPosition },
     queue:[],
     objects: structuredClone(initialObjects),
+    house: { version: 2 },
     complexNext: false,
     lastConsolidation: 0,
     working: [],
@@ -481,50 +484,10 @@ export function reconcile(input: State, now: number): { state: State; gap: boole
   }
   return { state: s, gap: elapsed > 15,completed,events };
 }
-export function pathfind(start: Point, end: Point, objects: HabitatObject[]): Point[] {
-  const blocked = new Set(objects.map((o) => `${o.x},${o.y}`));
-  const queue: Point[][] = [[start]];
-  const seen = new Set([`${start.x},${start.y}`]);
-  while (queue.length) {
-    const path = queue.shift()!;
-    const p = path[path.length - 1];
-    if (p.x === end.x && p.y === end.y) return path;
-    for (const [dx, dy] of [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-    ]) {
-      const n = { x: p.x + dx, y: p.y + dy };
-      const key = `${n.x},${n.y}`;
-      if (n.x < 0 || n.y < 0 || n.x > 11 || n.y > 11 || blocked.has(key) || seen.has(key)) continue;
-      seen.add(key);
-      queue.push([...path, n]);
-    }
-  }
-  return [];
-}
-export function approach(start: Point, object: HabitatObject, objects: HabitatObject[]): Point[] {
-  return (
-    [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-    ]
-      .map(([x, y]) => pathfind(start, { x: object.x + x, y: object.y + y }, objects))
-      .filter((p) => p.length)
-      .sort((a, b) => a.length - b.length)[0] ?? []
-  );
-}
-export function validLayout(objects: HabitatObject[], position: Point): boolean {
-  return (
-    new Set(objects.map((o) => o.id)).size === objects.length &&
-    new Set(objects.map((o) => `${o.x},${o.y}`)).size === objects.length &&
-    !objects.some((o) => o.x === position.x && o.y === position.y) &&
-    objects.every((o) => approach(position, o, objects).length > 0)
-  );
-}
+export const pathfind = housePathfind;
+export const approach = houseApproach;
+export const validLayout = houseValidLayout;
+export { rooms };
 export function quotaDay(now: number): string {
   return new Intl.DateTimeFormat('en-CA', {
     timeZone: 'America/Los_Angeles',

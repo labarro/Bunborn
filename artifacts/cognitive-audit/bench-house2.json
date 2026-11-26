@@ -1,0 +1,143 @@
+{
+ "at": "2026-11-26T21:34:44.782Z",
+ "arch": "house2",
+ "rows": [
+  {
+   "arch": "house2",
+   "model": "nvidia:minimaxai/minimax-m3.1-flash",
+   "scenario": "ausencia-observador",
+   "valid": false,
+   "outcome": "sobrecarga",
+   "detail": "{\"error\": {\"message\": \"content safety screening is temporarily unavailable\"}}",
+   "latencyMs": 664,
+   "tokens": 0,
+   "tokensIn": 0,
+   "tokensOut": 0,
+   "executed": 0,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 0,
+   "refusalDetails": [],
+   "decidedBy": null,
+   "paintings": null,
+   "works": [],
+   "intention": null,
+   "summary": "",
+   "actions": []
+  },
+  {
+   "arch": "house2",
+   "model": "gemini:gemini-3.1-flash-lite",
+   "scenario": "ausencia-observador",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 1708,
+   "tokens": 3603,
+   "tokensIn": 3441,
+   "tokensOut": 162,
+   "executed": 0.5,
+   "refusals": [
+    "objeto_inexistente"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 0.9166666666666666,
+   "refusalDetails": [
+    "{\"tool\":\"mover\",\"code\":\"objeto_inexistente\",\"detail\":{\"objectId\":\"porta_jardim\",\"note\":\"mover reposiciona objetos da casa (ids em situation.objects e otherRooms); você mesma vai até um lugar pelas atividades, e descansar ou observar aceitam objectId\"}}"
+   ],
+   "decidedBy": "gemini-3.1-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Explorar o jardim sob a chuva leve para observar como as plantas reagem.",
+   "summary": "Vou até o jardim para observar a chuva e as plantas, aproveitando o clima calmo da primavera.",
+   "actions": [
+    "mover",
+    "atividade:observar"
+   ]
+  },
+  {
+   "arch": "house2",
+   "model": "gemini:gemini-3.1-flash-lite",
+   "scenario": "pedido-gato",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 2249,
+   "tokens": 3845,
+   "tokensIn": 3454,
+   "tokensOut": 391,
+   "executed": 0,
+   "refusals": [
+    "posicao_bloqueia_acesso",
+    "pintura_indisponivel"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 0.8333333333333334,
+   "refusalDetails": [
+    "{\"tool\":\"mover\",\"code\":\"posicao_bloqueia_acesso\",\"detail\":{\"note\":\"nessa posição algo ficaria bloqueado, atravessaria uma parede ou uma porta, ou ficaria fora do cômodo certo\"}}",
+    "{\"tool\":\"criar\",\"code\":\"pintura_indisponivel\",\"detail\":{\"note\":\"pintor indisponível: modelo desabilitado pelo responsável\"}}"
+   ],
+   "decidedBy": "gemini-3.1-flash-lite",
+   "paintings": [
+    {
+     "title": "Gato em pixels",
+     "error": "pintor indisponível: modelo desabilitado pelo responsável"
+    }
+   ],
+   "works": [],
+   "intention": "Desenhar um gato para o responsável e organizar o ambiente.",
+   "summary": "Aceitei o pedido de desenho e vou começar o processo criativo no estúdio, além de organizar os móveis na sala para um melhor fluxo.",
+   "actions": [
+    "mover",
+    "criar"
+   ]
+  },
+  {
+   "arch": "house2",
+   "model": "nvidia:minimaxai/minimax-m3.1-flash",
+   "scenario": "pedido-gato",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 25304,
+   "tokens": 3866,
+   "tokensIn": 3444,
+   "tokensOut": 422,
+   "executed": 1,
+   "refusals": [
+    "acao_malformada"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "refusalDetails": [
+    "{\"tool\":\"criar\",\"code\":\"acao_malformada\",\"detail\":{\"issues\":[{\"path\":\"artifact.strokes.6.tool\",\"message\":\"Invalid discriminator value. Expected 'pincel' | 'retangulo' | 'elipse' | 'poligono' | 'texto'\"},{\"path\":\"\",\"message\":\"Unrecognized key: \\\"expor\\\"\"}],\"hint\":\"Corrija os campos listados em issues"
+   ],
+   "decidedBy": "minimaxai/minimax-m3.1-flash",
+   "paintings": null,
+   "works": [],
+   "intention": "Criar um gato pixel art para a pessoa que me pediu e expor o desenho na sala.",
+   "summary": "Quero atender ao pedido com uma criação visual própria, usando a vontade de criar e a curiosidade que sinto agora.",
+   "actions": []
+  }
+ ]
+}

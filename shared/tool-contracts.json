@@ -14,7 +14,8 @@
   {
     "type": "atividade",
     "activity": "comer|beber|dormir|higiene|descansar|observar|organizar",
-    "minutes": "integer min 5 max 480"
+    "minutes": "integer min 5 max 480",
+    "objectId": "string maxLength 160 | null"
   },
   {
     "type": "pesquisar",
@@ -187,8 +188,8 @@
   {
     "type": "mover",
     "objectId": "string maxLength 160",
-    "x": "integer min 0 max 11",
-    "y": "integer min 0 max 11"
+    "x": "integer min 0 max 19",
+    "y": "integer min 0 max 15"
   },
   {
     "type": "expor",
@@ -199,6 +200,32 @@
     "type": "recurso",
     "id": "string maxLength 160",
     "title": "string maxLength 160",
-    "reason": "string maxLength 2000"
+    "reason": "string maxLength 2000",
+    "catalogId": "string maxLength 60 | null"
+  },
+  {
+    "type": "decorar",
+    "objectId": "string maxLength 160 | null",
+    "room": "quarto|estudio|banheiro|sala|cozinha | null",
+    "color": "string"
+  },
+  {
+    "type": "guardar",
+    "objectId": "string maxLength 160"
+  },
+  {
+    "type": "jardim",
+    "acao": "plantar|regar|colher",
+    "canteiro": "string maxLength 160",
+    "especie": "girassol|tomate|cenoura|lavanda|morango|alface | null"
+  },
+  {
+    "type": "catalogo",
+    "categoria": "string maxLength 40 | null"
+  },
+  {
+    "type": "tocar",
+    "artifactId": "string maxLength 160",
+    "objectId": "string maxLength 160"
   }
 ]

@@ -300,7 +300,7 @@ describe('boredom, creativity, curiosity and observing (feedback 25/11)', () => 
     const felt = (await store.records('percepcao'))[0];
     expect(felt.content).toMatch(/^Depois de diario: .*tédio 90 → \d+/);
   });
-  it('refuses to observe again an unchanged room she already observed, saying what is there', async () => {
+  it('refuses to observe again when nothing changed in the house or outside', async () => {
     const { env, store } = setup();
     const t0 = Date.now();
     await seed(store, (s) => { s.activity.until = 0; }, t0);
@@ -308,7 +308,7 @@ describe('boredom, creativity, curiosity and observing (feedback 25/11)', () => 
     await tick(env, t0 + 5 * 60000, fixture([{ type: 'atividade', activity: 'observar', minutes: 15 }]));
     const refused = (await store.records('erro_ferramenta')).at(-1)!;
     expect(refused.data).toMatchObject({ code: 'nada_novo_para_observar' });
-    expect((refused.data.detail as { objects: string[] }).objects).toContain('Diário');
+    expect((refused.data.detail as { note: string }).note).toMatch(/nada mudou/);
   });
 });
 

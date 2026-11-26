@@ -46,6 +46,9 @@ import { Explanation } from './explain';
 import { HighlightsPanel, LogbookPanel, useVisitors } from './insights';
 import {exportExistence,restoreExistence}from'./backups';
 const Habitat = lazy(() => import('./HabitatView'));
+import type { Work } from './habitat/scene';
+import { kindOf, roomAt } from '../shared/house';
+import { growth, species, stageLabel } from '../shared/world';
 type Data = {
   state: State | null;
   recent: RecordEntry[];
@@ -54,6 +57,7 @@ type Data = {
   environment: string;
   environmentId?:string;
   pending?: { id: string; content: string; at: number }[];
+  works?: Record<string, Work>;
 };
 type Tab =
   | 'Habitat'
@@ -138,6 +142,8 @@ const activityLabels: Record<string, string> = {
   criar: 'Criando',
   diario: 'Escrevendo no diário',
   organizar: 'Organizando',
+  jardinar: 'Cuidando do jardim',
+  tocar: 'Tocando uma composição',
 };
 const needLabels: Record<string, string> = {
   fome: 'Fome',
@@ -209,6 +215,7 @@ export function App() {
     [secret, setSecret] = useState(''),
     [settings, setSettings] = useState(false),
     [selected, setSelected] = useState<HabitatObject | null>(null),
+    [rabbitInfo, setRabbitInfo] = useState(false),
     [mobileNav, setMobileNav] = useState(false);
   const [records, setRecords] = useState<RecordEntry[]>([]),
     [next, setNext] = useState<number | null>(null),
@@ -521,7 +528,7 @@ export function App() {
                   </div>
                   <div className="scene-container">
                     <Suspense fallback={<div className="scene-loading">Preparando o refúgio…</div>}>
-                      <Habitat state={state} onSelect={setSelected} />
+                      <Habitat state={state} works={data?.works} onSelect={(o) => { setRabbitInfo(false); setSelected(o); }} onRabbit={() => { setSelected(null); setRabbitInfo(true); }} />
                     </Suspense>
                   </div>
                   <div className="scene-bottom">
@@ -559,11 +566,32 @@ export function App() {
                         <X size={16} />
                       </button>
                       <strong>{selected.label}</strong>
-                      <p>{objectDescription(selected.kind)}</p>
-                      <small>
-                        Posição {selected.x}, {selected.y}
-                        {selected.artifactId ? ' · Há uma criação exposta' : ''}
-                      </small>
+                      <p>{kindOf(selected).purpose} <span className="muted">· {roomAt(selected).label}</span></p>
+                      {kindOf(selected).offers?.length ? <small>Ela pode: {kindOf(selected).offers!.join(', ')}</small> : null}
+                      {selected.kind === 'canteiro' && state?.house?.garden?.[selected.id] ? (() => { const plot = state.house!.garden![selected.id]; const g = growth(plot, state.virtualMinutes); return <small>Plantado: {species[plot.species]?.label ?? plot.species} · {stageLabel[g.stage]}{g.moist ? ' · terra úmida' : ''}</small>; })() : selected.kind === 'canteiro' ? <small>Canteiro vazio</small> : null}
+                      {selected.artifactId ? (
+                        data?.works?.[selected.artifactId] ? (
+                          <div className="exposed-work">
+                            <small>Obra exposta: <strong>{data.works[selected.artifactId].title}</strong> · versão {data.works[selected.artifactId].version} · {formatDate(data.works[selected.artifactId].realAt)}</small>
+                            <ArtifactView artifact={data.works[selected.artifactId].artifact} />
+                          </div>
+                        ) : <small>Há uma criação exposta</small>
+                      ) : null}
+                      {(() => { const h = (data?.recent ?? []).filter((r) => r.kind === 'habitat' && JSON.stringify(r.data).includes(`"${selected.id}"`)).slice(0, 2); return h.length ? <small>Recente: {h.map((r) => r.content).join(' · ')}</small> : null; })()}
+                      <small className="muted">Posição {selected.x}, {selected.y}</small>
+                    </div>
+                  ) : null}
+                  {rabbitInfo && state ? (
+                    <div className="object-tooltip">
+                      <button className="icon-button" onClick={() => setRabbitInfo(false)} aria-label="Fechar"><X size={16} /></button>
+                      <strong>{state.identity.name ?? 'Ainda sem nome'}</strong>
+                      <p>
+                        {state.activity.until > state.virtualMinutes ? (activityLabels[state.activity.kind] ?? state.activity.kind) : 'Entre atividades'}
+                        {' · '}{roomAt(state.position).label}
+                        {state.activity.until > state.virtualMinutes ? ` · faltam ${Math.max(1, Math.round((state.activity.until - state.virtualMinutes) / state.multiplier))} min reais` : ''}
+                      </p>
+                      <small>Intenção declarada: “{state.activity.intention}”</small>
+                      <small>{expressionFor(state).label} — {expressionFor(state).reason}</small>
                     </div>
                   ) : null}
                 </section>

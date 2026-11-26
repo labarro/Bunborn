@@ -11,6 +11,7 @@ import {
   artifactSchema,
 } from '../shared/domain';
 import { Store, entry } from '../worker/store';
+import { wallBetween } from '../shared/house';
 import { birth, tick, packContext } from '../worker/engine';
 import {
   CognitiveError,
@@ -318,7 +319,7 @@ describe('evidence, tools, and autonomy contracts', () => {
       env,
       now,
       fixture([
-        { type: 'mover', objectId: 'cama', x: 8, y: 1 },
+        { type: 'mover', objectId: 'cama', x: 8, y: 0 }, // onto the terminal: refused
         { type: 'mover', objectId: 'planta', x: 10, y: 2 },
       ]),
     );
@@ -461,10 +462,12 @@ describe('deterministic time and geometry', () => {
     expect(quotaDay(Date.parse('2026-12-01T07:59:00Z'))).toBe('2026-11-30');
   });
   it('finds collision-free paths and all functional furniture is accessible', () => {
-    expect(validLayout(initialObjects, { x: 5, y: 5 })).toBe(true);
-    const path = pathfind({ x: 5, y: 5 }, { x: 0, y: 0 }, initialObjects);
+    expect(validLayout(initialObjects, { x: 5, y: 8 })).toBe(true);
+    // From the living room to the bedroom corner: through the doorway, never through a wall or furniture.
+    const path = pathfind({ x: 5, y: 8 }, { x: 0, y: 1 }, initialObjects);
     expect(path.length).toBeGreaterThan(1);
-    expect(path.every((p) => !initialObjects.some((o) => o.x === p.x && o.y === p.y))).toBe(true);
+    expect(path.some((p) => p.x === 3 && (p.y === 5 || p.y === 6))).toBe(true);
+    for (let i = 1; i < path.length; i++) expect(wallBetween(path[i - 1], path[i])).toBe(false);
   });
 });
 

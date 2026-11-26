@@ -6,7 +6,9 @@ Execução: **24/11/2026 (UTC)**, Windows 11, Node.js 24.13.0, Wrangler 4, Chrom
 
 | Camada | Ambiente | Resultado |
 |---|---|---|
-| TypeScript + build | local | Aprovado (main ~357 KB, Phaser ~1.217 KB antes do gzip) |
+| TypeScript + build | local | Aprovado (main ~387 KB, casa + Phaser ~1.269 KB antes do gzip) |
+| Casa v2 (`tests/house.test.ts`) | local, bancos descartáveis | Planta e portas, regras de layout, migração do quarto único (com os objetos de produção de 26/11), migração única registrada como alteração externa, clima/período/jardim determinísticos, ferramentas decorar/guardar/mover/jardim/catalogo/recurso/tocar, descanso e observação com objectId, contexto restrito ao cômodo |
+| Revisão visual da casa | `npm run dev` → `/preview.html` (estado de teste, nunca a criatura real) + Playwright | Capturas de dia, entardecer, noite, chuva, tempestade, inverno com neve, atividades (dormir, banho, pesquisa, sofá, cavalete, janela, horta), zoom e celular (390×740) |
 | Motor, memória, ferramentas | SQLite real + adaptador D1 (batch atômico síncrono) | **49 aprovados**, 1 de rede ignorado por padrão |
 | Backup v2 | idem, com >2.000 registros | 6 testes (incluídos nos 45) |
 | E2E | Chromium + Worker + **DO** + D1 locais (Wrangler), observatório público ligado | **6 aprovados** |

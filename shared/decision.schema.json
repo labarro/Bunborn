@@ -91,6 +91,16 @@
               },
               "minutes": {
                 "type": "integer"
+              },
+              "objectId": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               }
             },
             "required": [
@@ -802,6 +812,16 @@
               },
               "reason": {
                 "type": "string"
+              },
+              "catalogId": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               }
             },
             "required": [
@@ -809,6 +829,159 @@
               "id",
               "title",
               "reason"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "decorar"
+              },
+              "objectId": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "room": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "quarto",
+                      "estudio",
+                      "banheiro",
+                      "sala",
+                      "cozinha"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "color": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "objectId",
+              "room",
+              "color"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "guardar"
+              },
+              "objectId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "objectId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "jardim"
+              },
+              "acao": {
+                "type": "string",
+                "enum": [
+                  "plantar",
+                  "regar",
+                  "colher"
+                ]
+              },
+              "canteiro": {
+                "type": "string"
+              },
+              "especie": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "girassol",
+                      "tomate",
+                      "cenoura",
+                      "lavanda",
+                      "morango",
+                      "alface"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "acao",
+              "canteiro",
+              "especie"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "catalogo"
+              },
+              "categoria": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "categoria"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "tocar"
+              },
+              "artifactId": {
+                "type": "string"
+              },
+              "objectId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "artifactId",
+              "objectId"
             ],
             "additionalProperties": false
           }

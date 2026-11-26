@@ -10,6 +10,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "types": ["node", "@cloudflare/workers-types"]
   },
   "include": ["src", "worker", "shared", "tests", "vite.config.ts", "playwright.config.ts"]

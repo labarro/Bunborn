@@ -111,7 +111,7 @@ flowchart TD
 
 | Camada | Tecnologia |
 |---|---|
-| Interface | React 19, TypeScript, Vite; habitat em Phaser 3 desenhado por código (sem imagens externas) |
+| Interface | React 19, TypeScript, Vite; casa isométrica em Phaser 3 com seis cômodos, clima, estações e som sintetizado, toda desenhada por código, sem imagens externas (ver HABITAT.md e ART_DIRECTION.md) |
 | Borda | Cloudflare Workers (gateway leve, ≤ 10 ms de CPU) + Static Assets |
 | Execução | Durable Object SQLite `CognitionCoordinator`: ciclos, API e cognição em série |
 | Dados | Cloudflare D1: registros append-only, FTS5, vínculos entre memórias, métricas |

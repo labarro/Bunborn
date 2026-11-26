@@ -160,3 +160,13 @@ describe('painter output tolerance', () => {
     expect(readPainting({ ...painting, strokes: [{ tool: 'balde' }] }).artifact).toBeNull();
   });
 });
+
+describe('decision tolerance for paintings', () => {
+  it('a creation with one malformed stroke keeps its valid strokes instead of being discarded', async () => {
+    const { parseDecision } = await import('../shared/domain');
+    const bad = { ...painting, strokes: [...painting.strokes, { tool: 'balde', color: '#000000' }] };
+    const r = parseDecision({ intention: 'x', summary: 's', nextMinutes: 5, complexNext: false, actions: [{ type: 'criar', id: 'g', title: 'Gato', motivation: 'm', projectId: null, artifact: bad }] });
+    expect(r.invalidActions).toHaveLength(0);
+    expect((r.decision.actions[0] as { artifact: { strokes: unknown[] } }).artifact.strokes).toHaveLength(5);
+  });
+});

@@ -1,4 +1,6 @@
 import { lookAt } from '../shared/art';
+import { catalogue, catalogueEntry, kindOf, migrateObjects, roomAt, rooms as houseRooms } from '../shared/house';
+import { conditionLabel, feltTemperature, growth, outsideView, periodLabel, periodOf, seasonLabel, seasonOf, species, stageLabel, weatherAt } from '../shared/world';
 import {
   artifactSchema,
   creatableArtifactSchema,
@@ -80,8 +82,8 @@ export async function birth(env: Env, now = Date.now()) {
 // Passive voluntary activities give way to a concrete tool use (searching, writing, creating,
 // moving furniture); the replacement is recorded as an interruption, never hidden.
 const passive = ['observar', 'descansar', 'organizar', 'diario'];
-function activate(s: State, kind: string, minutes = 30,allowQueue=false) {
-  const target = targetFor[kind] ?? 'mesa';
+function activate(s: State, kind: string, minutes = 30,allowQueue=false, chosen?: string) {
+  const target = chosen ?? targetFor[kind] ?? 'mesa';
   const object = s.objects.find((o) => o.id === target);
   if (!object) throw new Error('objeto_indisponivel');
   const route = approach(s.position, object, s.objects);
@@ -118,13 +120,13 @@ async function applyAction(
   // demanding work, and involuntary sleep cannot be cut short while still exhausted.
   const n = s.needs;
   // Searching and remembering stay available in any bodily state: when unsure, the creature can look it up.
-  if (['criar', 'projeto', 'relacionar', 'mover', 'organizar'].includes(a.type === 'atividade' ? a.activity : a.type) && (n.energia <= 15 || n.sono >= 95 || n.fome >= 95 || n.sede >= 95))
+  if (['criar', 'projeto', 'relacionar', 'mover', 'organizar', 'jardim', 'decorar', 'guardar'].includes(a.type === 'atividade' ? a.activity : a.type) && (n.energia <= 15 || n.sono >= 95 || n.fome >= 95 || n.sede >= 95))
     throw new ToolError('corpo_sem_condicoes', { sente: feelings(s).body, note: 'o corpo está sem condições para isso agora' });
   if (a.type === 'interromper' && s.activity.involuntary && s.activity.until > s.virtualMinutes && n.sono > 60)
     throw new ToolError('sono_involuntario', { sente: feel('sono', n.sono), remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes), note: 'o corpo ainda não consegue acordar' });
-  const start = (kind: string, minutes: number) => {
+  const start = (kind: string, minutes: number, chosen?: string) => {
     const previous = s.activity;
-    if (activate(s, kind, minutes) === 'substituida') record('atividade_interrompida', `Deixou de ${previous.kind} para ${kind}.`, { activity: previous, replacedBy: kind, automatic: true });
+    if (activate(s, kind, minutes, false, chosen) === 'substituida') record('atividade_interrompida', `Deixou de ${previous.kind} para ${kind}.`, { activity: previous, replacedBy: kind, automatic: true });
   };
   let evidenceRecords:RecordEntry[]=[];
   if('evidence' in a){evidenceRecords=await store.resolveEvidence(a.evidence);a.evidence=evidenceRecords.map(r=>r.id);}
@@ -172,6 +174,15 @@ async function applyAction(
         throw new ToolError(rule[1], { sente: feel(rule[0], s.needs[rule[0]]), note: 'o corpo ' + rule[2] });
       if (a.activity === 'higiene' && s.needs.higiene > physiology.needToStart.higiene)
         throw new ToolError('ja_limpa', { sente: feel('higiene', s.needs.higiene), note: 'já está limpa' });
+      let place: string | undefined;
+      if (a.objectId) {
+        const o = s.objects.find((x) => x.id === a.objectId);
+        if (!o) throw new ToolError('objeto_inexistente', { objectId: a.objectId, note: 'esse objeto não existe na casa' });
+        const offers = kindOf(o).offers ?? [];
+        const ok = a.activity === 'descansar' ? offers.includes('descansar') : a.activity === 'observar' ? offers.includes('observar') || offers.includes('descansar') : a.activity === 'dormir' ? o.kind === 'cama' : false;
+        if (!ok) throw new ToolError('lugar_inadequado', { objectId: o.id, offers, note: o.label + ' não serve para ' + a.activity });
+        place = o.id;
+      }
       if (a.activity === 'observar') {
         // Looking again at a room she already knows, unchanged, shows nothing new: the body refuses and says why.
         // The room only changes when furniture moves or a work is exposed (habitat records).
@@ -181,13 +192,14 @@ async function applyAction(
         const started = (await store.latest('atividade', 60)).find((r) => (r.data.activity as { kind?: string } | undefined)?.kind === 'observar' && ['iniciada', 'substituida'].includes(String(r.data.status)));
         const last = [perceived, started].filter((r): r is RecordEntry => !!r).sort((a, b) => b.realAt - a.realAt)[0];
         const changed = (await store.latest('habitat', 1))[0];
-        if (last && (last === perceived && last.data.room ? last.data.room === roomSignature(s) : !changed || changed.realAt < last.realAt))
-          throw new ToolError('nada_novo_para_observar', { lastObserved: new Date(last.realAt).toISOString(), objects: s.objects.map((o) => o.label), note: 'você já observou o quarto e nada mudou desde então' });
+        // Both perceptions and started observations carry the signature of the house + the world outside.
+        if (last && (last.data.room ? last.data.room === roomSignature(s) : !changed || changed.realAt <= last.realAt))
+          throw new ToolError('nada_novo_para_observar', { lastObserved: new Date(last.realAt).toISOString(), note: 'você já observou e nada mudou desde então (nem a casa, nem o tempo lá fora)' });
       }
       const previous = s.activity;
-      const status=activate(s, a.activity, a.minutes,true);
+      const status=activate(s, a.activity, a.minutes,true,place);
       if (status === 'substituida') record('atividade_interrompida', `Deixou de ${previous.kind} para ${a.activity}.`, { activity: previous, replacedBy: a.activity, automatic: true });
-      record('atividade', `Atividade ${status}: ${a.activity}.`, { activity:s.queue?.find(item=>item.kind===a.activity)??s.activity,status });
+      record('atividade', `Atividade ${status}: ${a.activity}.`, { activity:s.queue?.find(item=>item.kind===a.activity)??s.activity,status, ...(a.activity === 'observar' ? { room: roomSignature(s) } : {}) });
       break;
     }
     case 'pesquisar': {
@@ -407,12 +419,15 @@ async function applyAction(
     }
     case 'mover': {
       const objects = structuredClone(s.objects);
+      const stored = (s.house?.inventory ?? []).find((o) => o.id === a.objectId);
+      if (stored) objects.push(structuredClone(stored));
       const object = objects.find((o) => o.id === a.objectId);
-      if (!object) throw new Error('objeto_inexistente');
+      if (!object) throw new ToolError('objeto_inexistente', { objectId: a.objectId, note: 'mover reposiciona objetos da casa (ids em situation.objects e otherRooms); você mesma vai até um lugar pelas atividades, e descansar ou observar aceitam objectId' });
       object.x = a.x;
       object.y = a.y;
-      if (!validLayout(objects, s.position)) throw new Error('posicao_bloqueia_acesso');
+      if (!validLayout(objects, s.position)) throw new ToolError('posicao_bloqueia_acesso', { note: 'nessa posição algo ficaria bloqueado, atravessaria uma parede ou uma porta, ou ficaria fora do cômodo certo' });
       s.objects = objects;
+      if (stored && s.house) s.house.inventory = (s.house.inventory ?? []).filter((o) => o.id !== stored.id);
       record('habitat', `Reposicionou ${object.label}.`, { object });
       start('organizar', 20);
       break;
@@ -428,14 +443,85 @@ async function applyAction(
       });
       break;
     }
-    case 'recurso':
+    case 'recurso': {
+      const item = a.catalogId ? catalogueEntry(a.catalogId) : null;
+      if (a.catalogId && !item) throw new ToolError('catalogo_inexistente', { catalogId: a.catalogId, note: 'esse item não existe no catálogo (use catalogo para ver o que existe)' });
       record(
         'recurso',
         a.title,
-        { reason: a.reason, status: 'pendente' },
+        { reason: a.reason, status: 'pendente', ...(item ? { catalogId: item.id, kind: item.kind } : {}) },
         { entityId: 'recurso:' + a.id, category: 'prospectiva' },
       );
       break;
+    }
+    case 'decorar': {
+      s.house ??= { version: 2 };
+      if (a.room) {
+        s.house.walls = { ...(s.house.walls ?? {}), [a.room]: a.color };
+        record('habitat', `Pintou as paredes de ${houseRooms.find((r) => r.id === a.room)!.label} com ${a.color}.`, { room: a.room, color: a.color });
+      } else if (a.objectId) {
+        const o = s.objects.find((x) => x.id === a.objectId);
+        if (!o) throw new ToolError('objeto_inexistente', { objectId: a.objectId, note: 'esse objeto não existe na casa' });
+        if (!kindOf(o).recolor) throw new ToolError('sem_cor_mutavel', { objectId: o.id, note: o.label + ' não tem cor que possa mudar' });
+        o.color = a.color;
+        record('habitat', `Mudou a cor de ${o.label} para ${a.color}.`, { object: o });
+      } else throw new ToolError('decorar_sem_alvo', { note: 'diga o objeto (objectId) ou o cômodo (room)' });
+      start('organizar', 15);
+      break;
+    }
+    case 'guardar': {
+      const o = s.objects.find((x) => x.id === a.objectId);
+      if (!o) throw new ToolError('objeto_inexistente', { objectId: a.objectId, note: 'esse objeto não existe na casa' });
+      const info = kindOf(o);
+      if (info.station || o.kind === 'janela') throw new ToolError('nao_guardavel', { objectId: o.id, note: o.label + ' faz parte da casa ou do corpo e não pode ser guardado' });
+      s.objects = s.objects.filter((x) => x.id !== o.id);
+      s.house ??= { version: 2 };
+      s.house.inventory = [...(s.house.inventory ?? []), o].slice(-40);
+      record('habitat', `Guardou ${o.label}.`, { object: o, stored: true });
+      start('organizar', 15);
+      break;
+    }
+    case 'jardim': {
+      const bed = s.objects.find((x) => x.id === a.canteiro);
+      if (!bed || bed.kind !== 'canteiro') throw new ToolError('canteiro_inexistente', { canteiro: a.canteiro, note: 'não há canteiro com esse id' });
+      s.house ??= { version: 2 };
+      const garden = { ...(s.house.garden ?? {}) };
+      const plot = garden[bed.id];
+      if (a.acao === 'plantar') {
+        if (plot) throw new ToolError('canteiro_ocupado', { canteiro: bed.id, especie: plot.species, note: 'já há algo plantado aí' });
+        if (!a.especie) throw new ToolError('sem_especie', { opcoes: Object.keys(species), note: 'diga qual espécie plantar' });
+        garden[bed.id] = { species: a.especie, plantedAt: s.virtualMinutes, waterings: [s.virtualMinutes] };
+        record('jardim', `Plantou ${species[a.especie].label} no ${bed.label}.`, { canteiro: bed.id, especie: a.especie, acao: 'plantar' });
+      } else if (a.acao === 'regar') {
+        if (!plot) throw new ToolError('canteiro_vazio', { canteiro: bed.id, note: 'não há nada plantado aí' });
+        garden[bed.id] = { ...plot, waterings: [...plot.waterings, s.virtualMinutes].slice(-12) };
+        record('jardim', `Regou o ${bed.label}.`, { canteiro: bed.id, especie: plot.species, acao: 'regar' });
+      } else {
+        if (!plot) throw new ToolError('canteiro_vazio', { canteiro: bed.id, note: 'não há nada plantado aí' });
+        const g = growth(plot, s.virtualMinutes);
+        if (g.stage < 4) throw new ToolError('ainda_nao_pronta', { canteiro: bed.id, estagio: stageLabel[g.stage], note: 'a planta ainda não está pronta' });
+        delete garden[bed.id];
+        record('jardim', `Colheu ${species[plot.species].label} do ${bed.label}.`, { canteiro: bed.id, especie: plot.species, acao: 'colher' });
+      }
+      s.house.garden = garden;
+      start('jardinar', 20, bed.id);
+      break;
+    }
+    case 'catalogo': {
+      const wanted = a.categoria?.toLocaleLowerCase('pt-BR');
+      const items = catalogue.filter((c) => !wanted || c.category.includes(wanted)).map((c) => catalogueEntry(c.id)!).map((c) => ({ catalogId: c.id, nome: c.name, descricao: c.description, categoria: c.category, ocupa: c.footprint, oferece: c.offers, onde: c.rooms, restricoes: c.restrictions }));
+      record('leitura', 'Catálogo de objetos que podem ser pedidos ao observador.', { catalogo: items, nota: 'pedidos usam a ação recurso com catalogId; o observador aprova ou recusa' });
+      break;
+    }
+    case 'tocar': {
+      const o = s.objects.find((x) => x.id === a.objectId);
+      if (!o || !(kindOf(o).offers ?? []).includes('tocar')) throw new ToolError('sem_instrumento', { objectId: a.objectId, note: 'esse objeto não toca música' });
+      const work = await existingEntity(store, 'artefato', a.artifactId);
+      if (!work || (work.data.artifact as { format?: string })?.format !== 'musica') throw new ToolError('nao_e_musica', { artifactId: a.artifactId, note: 'só composições (formato musica) podem ser tocadas' });
+      start('tocar', 20, o.id);
+      record('musica', `Tocou ${work.content} em ${o.label}.`, { artifactId: work.entityId, objectId: o.id }, { associations: [work.id] });
+      break;
+    }
   }
 }
 export async function tick(
@@ -454,6 +540,7 @@ export async function tick(
     if (!(await store.capacity())) return { status: 'armazenamento_suspenso' };
     const { state: s, gap,completed,events } = reconcile(original, now);
     const records: RecordEntry[] = [];
+    if (s.house?.version !== 2) records.push(migrateHouse(s));
     for (const event of events) records.push(bodyEvent(s, event));
     for(const activity of completed){records.push(entry(s,'atividade_concluida',`Atividade concluída: ${activity.kind}.`,{activity},{virtualAt:activity.until,origin:'simulacao_deterministica'}));const felt=perception(s,activity);if(felt)records.push(felt);}
     if (gap)
@@ -560,7 +647,7 @@ export async function tick(
           await applyAction(draft, a, store.withPending(records), output, now, fetcher);
           Object.assign(s, draft);
           records.push(...output);
-          const seen = a.type === 'criar' ? lookAt(a.artifact) : null;
+          const seen = a.type === 'criar' ? lookAt(a.artifact) : a.type === 'atividade' && a.activity === 'observar' ? observeNote(draft) : null;
           outcomes.push({ action: label(a), result: 'feita', ...(seen ? { detail: { note: seen } } : {}) });
         } catch (e) {
           outcomes.push({ action: label(a), result: 'recusada', code: safeError(e), ...(e instanceof ToolError ? { detail: e.detail } : {}) });
@@ -728,9 +815,45 @@ const needLabel: Record<string, string> = { fome: 'fome', sede: 'sede', sono: 's
 // What changed in the body between the start and the end of an activity. The creature learns
 // cause and effect from these perceptions; the rules themselves are never told to it.
 /** Fingerprint of the room (objects, positions and what is exposed on them). */
-export function roomSignature(s: Pick<State, 'objects'>) {
+/**
+ * Version-1 single room → house (26/11). Ids, labels, colours and exposed works are kept; moves
+ * she made are re-applied where they still fit. Recorded as an EXTERNAL change of the world (the
+ * development of Bunborn), never as her choice, and without telling her how to feel about it.
+ */
+export function migrateHouse(s: State): RecordEntry {
+  const { objects, position, report } = migrateObjects(s.objects);
+  s.objects = objects;
+  const target = objects.find((o) => o.id === s.activity.target);
+  const path = target ? approach(position, target, objects) : [];
+  s.position = path.length ? path[path.length - 1] : position;
+  s.house = { version: 2 };
+  const reset = report.movedReset.map((id) => objects.find((o) => o.id === id)?.label ?? id);
+  return entry(
+    s,
+    'habitat',
+    'Alteração externa do ambiente (desenvolvimento do Bunborn, não uma escolha sua): o quarto único virou uma casa com quarto, estúdio, banheiro, sala, cozinha e jardim. Os objetos que já existiam e as obras expostas foram mantidos' + (reset.length ? `; ${reset.join(', ')} voltou à posição padrão porque o lugar anterior não existe na nova planta.` : '.'),
+    { external: true, origin: 'desenvolvimento', migration: report },
+    { origin: 'sistema', importance: 0.8 },
+  );
+}
+/** What she perceives when an observation starts (facts, never advice). */
+export function observeNote(s: State): string {
+  const o = s.objects.find((x) => x.id === s.activity.target);
+  const vm = s.virtualMinutes;
+  if (!o) return '';
+  const outside = ['janela', 'canteiro', 'arvore', 'flores', 'banco', 'telescopio'].includes(o.kind) || roomAt(o).outdoor;
+  if (outside) {
+    const garden = Object.entries(s.house?.garden ?? {}).map(([bed, plot]) => `${bed}: ${species[plot.species]?.label ?? plot.species} (${stageLabel[growth(plot, vm).stage]})`);
+    return 'lá fora: ' + outsideView(vm, o.kind === 'telescopio' ? 'telescopio' : o.kind === 'janela' ? 'janela' : 'jardim') + (garden.length && o.kind !== 'telescopio' ? '; canteiros: ' + garden.join(', ') : '');
+  }
+  const room = roomAt(o);
+  const here = s.objects.filter((x) => roomAt(x).id === room.id && x.kind !== 'tapete').map((x) => x.label + (x.artifactId ? ' (com obra exposta)' : ''));
+  return `no ${room.label.toLowerCase()}: ${here.join(', ')}`;
+}
+export function roomSignature(s: Pick<State, 'objects' | 'virtualMinutes'>) {
   let h = 2166136261;
-  for (const c of JSON.stringify(s.objects)) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  // The house and the world outside: a new period of the day or new weather is something new to see.
+  for (const c of JSON.stringify(s.objects) + periodOf(s.virtualMinutes ?? 0) + weatherAt(s.virtualMinutes ?? 0).condition) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
   return (h >>> 0).toString(36);
 }
 function perception(s: State, activity: State['activity']): RecordEntry | null {
@@ -766,13 +889,34 @@ export function bodyAlerts(s: State): string[] {
  * but no longer floods the context (audit 25/11: 85% of memories were such echoes).
  */
 const recallable = (r: RecordEntry) => ['memoria', 'diario', 'conversa', 'leitura'].includes(r.kind) && !['regra_afetiva', 'observacao'].includes(r.origin);
+/** The room she is in with its objects (positions for moving), other rooms by name only. */
+function houseContext(s: State) {
+  const here = roomAt(s.position);
+  // Ids are descriptive (cama, sofa, janela_sala); a label only when the id is not (approved resources).
+  const pick = (o: State['objects'][number]) => ({ id: o.id, x: o.x, y: o.y, ...(o.id.includes(':') ? { label: o.label } : {}), ...(o.artifactId ? { artifactId: o.artifactId } : {}) });
+  const others: Record<string, string[]> = {};
+  for (const o of s.objects) { const r = roomAt(o); if (r.id !== here.id && o.kind !== 'tapete') (others[r.label] ??= []).push(o.id); }
+  const garden = Object.entries(s.house?.garden ?? {}).map(([bed, plot]) => { const g = growth(plot, s.virtualMinutes); return { canteiro: bed, especie: plot.species, estagio: stageLabel[g.stage], umido: g.moist }; });
+  return {
+    room: here.label,
+    objects: s.objects.filter((o) => roomAt(o).id === here.id).map(pick),
+    otherRooms: others,
+    ...(garden.length ? { garden } : {}),
+    ...(s.house?.inventory?.length ? { stored: s.house.inventory.map((o) => o.id) } : {}),
+    ...(s.house?.walls && Object.keys(s.house.walls).length ? { wallColors: s.house.walls } : {}),
+  };
+}
+function worldContext(s: State) {
+  const w = weatherAt(s.virtualMinutes);
+  return { period: periodLabel[periodOf(s.virtualMinutes)], season: seasonLabel[seasonOf(s.virtualMinutes)], weather: conditionLabel[w.condition], air: feltTemperature(w.temp), ...(w.wind > 0.6 ? { wind: 'forte' } : w.wind > 0.35 ? { wind: 'brisa' } : {}) };
+}
 const ago = (now: number, at: number) => Math.max(0, Math.round((now - at) / 60000));
 const noteOf = (o: { result?: string; code?: string; detail?: unknown }) => {
   const d = o.detail as { note?: string } | undefined;
   return o.result === 'feita' ? (d?.note ? `feita (${d.note})` : 'feita') : `recusada (${d?.note ?? o.code ?? 'motivo não informado'})`;
 };
 /** Notable events she lived (not engine bookkeeping), newest first. */
-const eventKinds = ['conversa', 'artefato', 'habitat', 'identidade', 'interesse', 'projeto', 'interrupcao', 'corpo', 'atividade_interrompida', 'relacao'];
+const eventKinds = ['conversa', 'artefato', 'habitat', 'jardim', 'musica', 'recurso', 'identidade', 'interesse', 'projeto', 'interrupcao', 'corpo', 'atividade_interrompida', 'relacao'];
 /**
  * Everything the creature perceives when deciding, built from persisted state only.
  * Order follows a lived moment: who she is → how she feels → where she is → what she was doing
@@ -833,8 +977,9 @@ export async function buildContext(env: Env, store: Store, s: State, now: number
       activity: ongoing ? { ...situationOf(s.activity), remainingVirtualMinutes: Math.round(s.activity.until - s.virtualMinutes) } : null,
       queue: (s.queue ?? []).map(situationOf),
       lastCompleted: s.lastCompleted ? situationOf(s.lastCompleted) : null,
-      objects: s.objects.map((o) => ({ id: o.id, x: o.x, y: o.y, ...(o.artifactId ? { artifactId: o.artifactId } : {}) })),
+      ...houseContext(s),
     },
+    world: worldContext(s),
     // Continuity of thought: her last decisions and what happened to each action.
     thread: thread.map((r) => ({
       intention: r.content,
