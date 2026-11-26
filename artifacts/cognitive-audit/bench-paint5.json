@@ -1,0 +1,31 @@
+{
+ "at": "2026-11-26T00:24:50.620Z",
+ "arch": "paint5",
+ "rows": [
+  {
+   "arch": "paint5",
+   "model": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+   "scenario": "desenho-pendente",
+   "valid": false,
+   "outcome": "resposta_invalida",
+   "detail": "resposta truncada",
+   "latencyMs": 29726,
+   "tokens": 7555,
+   "tokensIn": 3459,
+   "tokensOut": 4096,
+   "executed": 0,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": false,
+   "engaged": false,
+   "coherence": 0,
+   "works": [],
+   "intention": null,
+   "summary": "",
+   "actions": []
+  }
+ ]
+}

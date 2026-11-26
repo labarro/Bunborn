@@ -22,19 +22,29 @@ export const categoryLabels: Record<string, string> = {
 const text = z.string().min(1).max(2000);
 const short = z.string().min(1).max(160);
 const evidence = z.array(z.string().max(100)).min(1).max(8);
-export const artifactSchema = z.discriminatedUnion('format', [
+const hex = z.string().regex(/^#[0-9a-fA-F]{6}$/);
+const coord = z.number().min(0).max(512);
+const point = z.object({ x: coord, y: coord }).strict();
+const stroke = z.discriminatedUnion('tool', [
+  z.object({ tool: z.literal('pincel'), color: hex, size: z.number().min(1).max(64), points: z.array(point).min(1).max(64) }).strict(),
+  z.object({ tool: z.literal('retangulo'), color: hex, fill: z.boolean(), x: coord, y: coord, w: coord, h: coord }).strict(),
+  z.object({ tool: z.literal('elipse'), color: hex, fill: z.boolean(), cx: coord, cy: coord, rx: coord, ry: coord }).strict(),
+  z.object({ tool: z.literal('poligono'), color: hex, fill: z.boolean(), points: z.array(point).min(3).max(64) }).strict(),
+  z.object({ tool: z.literal('texto'), color: hex, x: coord, y: coord, size: z.number().min(4).max(96), text: z.string().min(1).max(80) }).strict(),
+]);
+export type Stroke = z.infer<typeof stroke>;
+/** What she can create now. */
+export const creatableArtifactSchema = z.discriminatedUnion('format', [
   z.object({ format: z.literal('texto'), content: z.string().min(1).max(12000) }).strict(),
+  // Painting (25/11): a canvas with brush, shapes and text. A 32x32 index grid came out as a
+  // single colour twice in production; models handle coordinates and shapes far better.
   z
     .object({
-      format: z.literal('pixels'),
-      palette: z
-        .array(z.string().regex(/^#[0-9a-fA-F]{6}$/))
-        .min(1)
-        .max(16),
-      pixels: z
-        .array(z.array(z.number().int().min(0).max(15)).min(1).max(32))
-        .min(1)
-        .max(32),
+      format: z.literal('pintura'),
+      width: z.number().int().min(16).max(512),
+      height: z.number().int().min(16).max(512),
+      background: hex,
+      strokes: z.array(stroke).min(1).max(160),
     })
     .strict(),
   z
@@ -62,6 +72,19 @@ export const artifactSchema = z.discriminatedUnion('format', [
     })
     .strict(),
 ]);
+/**
+ * Every stored work, including the retired pixel grid: models wrote it row by row, background
+ * first, and either ran out of output room or filled the whole grid with one colour (production
+ * 25/11, Nemotron trace). Old pixel works stay valid and visible; new ones use the canvas.
+ */
+const pixelsSchema = z
+  .object({
+    format: z.literal('pixels'),
+    palette: z.array(hex).min(1).max(16),
+    pixels: z.array(z.array(z.number().int().min(0).max(15)).min(1).max(32)).min(1).max(32),
+  })
+  .strict();
+export const artifactSchema = z.discriminatedUnion('format', [...creatableArtifactSchema.options, pixelsSchema]);
 export const researchSources = ['wikipedia', 'wikipedia_en', 'wikidata', 'wikcionario', 'openlibrary', 'arxiv'] as const;
 export const actionSchema = z.discriminatedUnion('type', [
   z.object({type:z.literal('interromper'),reason:short}).strict(),
@@ -156,7 +179,7 @@ export const actionSchema = z.discriminatedUnion('type', [
       title: short,
       motivation: short,
       projectId: z.string().max(160).nullable(),
-      artifact: artifactSchema,
+      artifact: creatableArtifactSchema,
     })
     .strict(),
   z

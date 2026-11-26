@@ -67,7 +67,7 @@ async function usageMap(store: Store, budget: Store, now: number) {
 
 export class RoutedProvider {
   constructor(private env: Env, private store: Store, private fetcher: typeof fetch = fetch, private systemAddon = '') {}
-  async decide(context: unknown, complex: boolean, now: number, hint?: { category: Category; categoryReason: string; lastModel?: { key: string; category: Category } | null; hasMessages?: boolean }): Promise<RoutedDecision> {
+  async decide(context: unknown, complex: boolean, now: number, hint?: { category: Category; categoryReason: string; lastModel?: { key: string; category: Category } | null; hasMessages?: boolean; creativeRoom?: boolean }): Promise<RoutedDecision> {
     const category: Category = hint?.category ?? (complex ? 'complexa' : 'cotidiana');
     const keys = providerKeys(this.env);
     const availableProviders = Object.entries(keys).filter(([, k]) => !!k).map(([p]) => p);
@@ -95,6 +95,9 @@ export class RoutedProvider {
     const ranked = [...primary, ...general];
     const route: RouteRecord = { category, categoryReason: hint?.categoryReason ?? '', selected: null, provider: null, reasons: [], eligible: ranked.map((c) => ({ model: c.key, score: Math.round(c.score * 1000) / 1000 })), excluded, attempts: [], fallbacks: 0, tokens: 0, latencyMs: 0, validation: 'sem resposta' };
     const reasoning = category === 'complexa' || category === 'criatividade' ? 'medio' : 'baixo';
+    // A reply cut off by max_tokens usually means a long work (a painting, a long text): the next
+    // model gets the room of a creative decision (25/11: NVIDIA truncated mid-drawing).
+    let truncated = false;
     for (const candidate of ranked.slice(0, 3)) {
       const m = candidate.model;
       const key = candidate.key;
@@ -104,7 +107,7 @@ export class RoutedProvider {
       // Keep ~10% of each model's day for pending conversations.
       const daily = hint?.hasMessages ? rpd : Math.floor(rpd * 0.9);
       const inTokens = inputFor(m);
-      const maxOutput = maxOutputFor(m, category, inTokens);
+      const maxOutput = maxOutputFor(m, truncated || hint?.creativeRoom ? 'criatividade' : category, inTokens);
       // Reserve what the provider will count: input plus the output room requested.
       const reserveTokens = inTokens + maxOutput;
       const local = await this.store.reserve(m.id, day, now, daily, m.limits.rpm, reserveTokens, environment, m.limits.tpm, m.limits.tpd, m.provider, category);
@@ -153,6 +156,7 @@ export class RoutedProvider {
         tokensIn = partial?.tokensIn ?? tokensIn;
         tokensOut = partial?.tokensOut ?? tokensOut;
         status = f.kind;
+        if (/resposta truncada|MAX_TOKENS/.test(f.detail)) truncated = true;
         // A request we sized too large for the provider is our fault, not the model's: no health penalty.
         const sizing = f.kind === 'requisicao_invalida' && /too large/i.test(f.detail);
         if (!sizing) await saveHealth(this.store.db, onFailure(h, f.kind, f.detail, now, f.retryAfterMs), now);

@@ -1,4 +1,7 @@
+import { lookAt } from '../shared/art';
 import {
+  artifactSchema,
+  creatableArtifactSchema,
   approach,
   born,
   clamp,
@@ -16,7 +19,7 @@ import {
 } from '../shared/domain';
 import { CognitiveError, GeminiProvider, type CognitionProvider, type Env } from './provider';
 import { RoutedProvider, type RouteRecord } from './ai/cognition';
-import { categorize } from './ai/router';
+import { categorize, creativeSignals } from './ai/router';
 import type { Category } from '../shared/ai-catalog';
 import { research } from './research';
 import { entry, Store, ToolError } from './store';
@@ -133,7 +136,8 @@ async function applyAction(
       record(
         'leitura',
         `Leitura da própria obra: ${work.content}.`,
-        { artifact: work.data.artifact, version: work.data.version, sourceId: work.id },
+        // What she sees comes first: a raw pixel grid is thousands of zeros, not a picture.
+        { seen: (() => { const art = artifactSchema.safeParse(work.data.artifact); return art.success ? lookAt(art.data) : null; })(), artifact: work.data.artifact, version: work.data.version, sourceId: work.id },
         { associations: [work.id] },
       );
       break;
@@ -379,13 +383,8 @@ async function applyAction(
       const project = a.projectId ? await existingEntity(store, 'projeto', a.projectId) : null;
       if (a.projectId && !project) throw new Error('projeto_inexistente');
       const art = a.artifact;
-      if (
-        art.format === 'pixels' &&
-        art.pixels.some(
-          (row) => row.length !== art.pixels[0].length || row.some((p) => p >= art.palette.length),
-        )
-      )
-        throw new Error('pixels_invalidos');
+      // Providers are parsed upstream; this also guards fixtures and the retired pixel grid.
+      if (!creatableArtifactSchema.safeParse(art).success) throw new Error('formato_indisponivel');
       const prior = await existingEntity(store, 'artefato', a.id);
       start('criar', 40);
       record(
@@ -393,6 +392,7 @@ async function applyAction(
         a.title,
         {
           artifact: a.artifact,
+          seen: lookAt(a.artifact),
           motivation: a.motivation,
           projectId: project?.entityId ?? null,
           version: Number(prior?.data.version ?? 0) + 1,
@@ -478,7 +478,7 @@ export async function tick(
     try {
       // Category steers model choice only; the decision is still ONE request with the same context.
       const lastRoute = lastIntent?.data.route as { selected?: string; category?: Category } | undefined;
-      const { category, reason: categoryReason } = categorize({
+      const signals = {
         inbox: inbox.length,
         complexNext: complex,
         decisionNumber: s.decisions,
@@ -487,8 +487,9 @@ export async function tick(
         creativity: s.motives.criatividade,
         boredom: s.motives.tedio,
         activeCreativeProject: projects.some((p) => p.data.status === 'ativo' && artifacts.some((a) => a.data.projectId === p.entityId)),
-      });
-      const hint = { category, categoryReason, lastModel: lastRoute?.selected && lastRoute.category ? { key: lastRoute.selected, category: lastRoute.category } : null, hasMessages: inbox.length > 0 };
+      };
+      const { category, reason: categoryReason } = categorize(signals);
+      const hint = { category, categoryReason, lastModel: lastRoute?.selected && lastRoute.category ? { key: lastRoute.selected, category: lastRoute.category } : null, hasMessages: inbox.length > 0, creativeRoom: creativeSignals(signals) };
       const brain = provider ?? new RoutedProvider(env, store, fetcher);
       const reply = (await brain.decide(packContext(context), complex, now, hint)) as Awaited<ReturnType<CognitionProvider['decide']>> & { route?: RouteRecord };
       const { decision, model, invalidActions = [], route } = reply;
@@ -527,7 +528,8 @@ export async function tick(
           await applyAction(draft, a, store.withPending(records), output, now, fetcher);
           Object.assign(s, draft);
           records.push(...output);
-          outcomes.push({ action: label(a), result: 'feita' });
+          const seen = a.type === 'criar' ? lookAt(a.artifact) : null;
+          outcomes.push({ action: label(a), result: 'feita', ...(seen ? { detail: { note: seen } } : {}) });
         } catch (e) {
           outcomes.push({ action: label(a), result: 'recusada', code: safeError(e), ...(e instanceof ToolError ? { detail: e.detail } : {}) });
           records.push(
@@ -735,7 +737,7 @@ const recallable = (r: RecordEntry) => ['memoria', 'diario', 'conversa', 'leitur
 const ago = (now: number, at: number) => Math.max(0, Math.round((now - at) / 60000));
 const noteOf = (o: { result?: string; code?: string; detail?: unknown }) => {
   const d = o.detail as { note?: string } | undefined;
-  return o.result === 'feita' ? 'feita' : `recusada (${d?.note ?? o.code ?? 'motivo não informado'})`;
+  return o.result === 'feita' ? (d?.note ? `feita (${d.note})` : 'feita') : `recusada (${d?.note ?? o.code ?? 'motivo não informado'})`;
 };
 /** Notable events she lived (not engine bookkeeping), newest first. */
 const eventKinds = ['conversa', 'artefato', 'habitat', 'identidade', 'interesse', 'projeto', 'interrupcao', 'corpo', 'atividade_interrompida', 'relacao'];

@@ -32,6 +32,30 @@ export function ArtifactView({ artifact }: { artifact: Artifact }) {
         className="pixel-art"
       />
     );
+  if (artifact.format === 'pintura')
+    // Built from validated primitives only (hex colours, numbers, plain text): no raw SVG markup.
+    return (
+      <svg className="painting" viewBox={`0 0 ${artifact.width} ${artifact.height}`} role="img" aria-label="Pintura criada pela criatura">
+        <rect width={artifact.width} height={artifact.height} fill={artifact.background} />
+        {artifact.strokes.map((s, i) => {
+          const paint = 'fill' in s && s.fill ? { fill: s.color } : { fill: 'none', stroke: s.color, strokeWidth: Math.max(1, Math.min(artifact.width, artifact.height) / 100) };
+          switch (s.tool) {
+            case 'pincel':
+              return s.points.length === 1
+                ? <circle key={i} cx={s.points[0].x} cy={s.points[0].y} r={s.size / 2} fill={s.color} />
+                : <polyline key={i} points={s.points.map((p) => `${p.x},${p.y}`).join(' ')} fill="none" stroke={s.color} strokeWidth={s.size} strokeLinecap="round" strokeLinejoin="round" />;
+            case 'retangulo':
+              return <rect key={i} x={s.x} y={s.y} width={s.w} height={s.h} {...paint} />;
+            case 'elipse':
+              return <ellipse key={i} cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry} {...paint} />;
+            case 'poligono':
+              return <polygon key={i} points={s.points.map((p) => `${p.x},${p.y}`).join(' ')} {...paint} />;
+            case 'texto':
+              return <text key={i} x={s.x} y={s.y} fontSize={s.size} fill={s.color} fontFamily="sans-serif">{s.text}</text>;
+          }
+        })}
+      </svg>
+    );
   if (artifact.format === 'objeto')
     return (
       <svg className="object-art" viewBox="0 0 100 100" role="img" aria-label={artifact.shape}>

@@ -332,6 +332,33 @@ O ponto em que isso pesa é a continuidade dos assuntos: o projeto de observaç�
 - **Painel e transparência:** painel Provedores, transparência da rota, segurança do observatório público.
 - **Testes:** 106 testes unitários e 6 E2E (Playwright).
 
+## 12. Tela de pintura (26/11 00:20Z)
+
+**Problema observado.** Os dois desenhos da Lumi em 25/11 ("Planta do quarto de Lumi" e a versão "depois da reorganização") saíram com todos os pixels no mesmo índice de cor: um bloco de uma cor só.
+
+**Causa (rastro real do Nemotron, banco descartável).** No formato de grade, o modelo escreve a matriz linha por linha, a partir do fundo: `[0,0,0,…]` × 32. Ou o espaço de saída acaba antes de chegar ao desenho (truncado a 3072 e a 4096 tokens), ou a grade é fechada só com fundo. A causa está no formato, não no modelo, e ela nunca soube que o desenho tinha saído vazio.
+
+**O que mudou.**
+- **Formato `pintura`:** tela de 16 a 512 px com cor de fundo e até 160 traços sobrepostos na ordem em que são feitos. As ferramentas são `pincel` (pontos e espessura), `retangulo`, `elipse`, `poligono` (com ou sem preenchimento) e `texto`. As cores são hex validadas.
+- **Na interface:** renderizado como SVG montado só a partir de primitivas validadas, sem nenhum markup vindo do modelo; o texto é escapado.
+- **Grade de pixels:** saiu do contrato de criação (`creatableArtifactSchema`). As obras antigas em pixels continuam válidas em backups e visíveis no acervo (`artifactSchema`).
+- **Ela vê a obra:** depois de criar, o resultado da ação traz o que ela vê, por exemplo "ao olhar a obra: 12 traços; 7 cores visíveis (#f5f0e8 86%, …)" ou "uma só cor cobre a tela inteira". A percepção usa amostragem adaptativa de até 24×24 com caixas delimitadoras (`shared/art.ts`; pior caso medido em cerca de 3 ms, contra 23 ms sem o limite), aparece em `thread` na decisão seguinte e fica gravada em `artefato.data.seen`. É percepção, não conselho.
+- **Ao reler uma obra (`ler_obra`), ela também vê:** o "ao olhar a obra" vem antes dos dados. Antes, reler a grade de pixels mostrava o JSON de zeros cortado em 5000 caracteres; foi o que ela fez em 26/11 00:16 para "comparar as duas plantas pixeladas".
+- **Espaço de saída:**
+  - com sinal criativo (projeto criativo ativo, criatividade ≥ 70 ou tédio ≥ 70), o teto de saída é o de criação (4096) mesmo quando outra categoria escolhe o modelo, por exemplo "pesquisa" logo depois de pesquisar;
+  - depois de uma resposta truncada, o modelo seguinte também recebe 4096.
+- **Custo:** o contrato de ferramentas cresceu de 2.784 para 3.641 caracteres, cerca de 250 tokens por decisão. Só cotas gratuitas, sem custo adicional.
+
+**Evidência com chamadas reais** (`artifacts/cognitive-audit/bench-paint*.json`; cenários "projeto-disponivel" e o novo "desenho-pendente"; nada no contexto diz como desenhar):
+
+| Rodada | Resultado |
+|---|---|
+| paint/paint3/paint4 (grade de pixels ainda disponível) | Nemotron e MiniMax truncados escrevendo a grade; Gemini cortado em MAX_TOKENS a 1519 tokens quando a categoria era "pesquisa" |
+| paint6 (pintura) | 6 de 6 decisões que tentaram desenhar viraram pintura válida, sem truncamento: Gemini 3.1 e 3.5 com 1 a 2 traços, gpt-oss com 4 traços, Nemotron com 12 traços e 7 cores (uma samambaia com caule, frondes e título) |
+| paint6, falhas | MiniMax e Nemotron com tempo esgotado (45 s) em um cenário, com 503 de "content safety" da NVIDIA; o fallback cobre |
+
+As pinturas ainda são simples. Isso é dela e pode mudar com a prática; a percepção dá o retorno de que precisa para revisar a obra pelo mesmo id.
+
 ## 11. Limitações e pendências reais
 
 - **Groq:** a comparação completa ficou pendente por cota (item 7).

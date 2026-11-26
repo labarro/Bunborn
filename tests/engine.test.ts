@@ -8,6 +8,7 @@ import {
   reconcile,
   validLayout,
   type Decision,
+  artifactSchema,
 } from '../shared/domain';
 import { Store, entry } from '../worker/store';
 import { birth, tick, packContext } from '../worker/engine';
@@ -554,7 +555,7 @@ describe('extended contracts', () => {
       'resposta_excessiva',
     );
   });
-  it('persists all supported creative formats and rejects invalid palettes', async () => {
+  it('persists all supported creative formats and rejects the retired pixel grid', async () => {
     const { env, store } = setup();
     const now = Date.now();
     await seed(store, now);
@@ -564,17 +565,16 @@ describe('extended contracts', () => {
       fixture([
         {
           type: 'criar',
-          id: 'pixels',
-          title: 'Pixels fixture',
+          id: 'pintura',
+          title: 'Pintura fixture',
           motivation: 'Teste',
           projectId: null,
           artifact: {
-            format: 'pixels',
-            palette: ['#123456'],
-            pixels: [
-              [0, 0],
-              [0, 0],
-            ],
+            format: 'pintura',
+            width: 64,
+            height: 64,
+            background: '#123456',
+            strokes: [{ tool: 'elipse', color: '#abcdef', fill: true, cx: 32, cy: 32, rx: 10, ry: 10 }],
           },
         },
         {
@@ -596,22 +596,10 @@ describe('extended contracts', () => {
       ]),
     );
     expect(await store.records('artefato')).toHaveLength(3);
-    await tick(
-      env,
-      now + 300000,
-      fixture([
-        {
-          type: 'criar',
-          id: 'bad',
-          title: 'Erro',
-          motivation: 'Teste',
-          projectId: null,
-          artifact: { format: 'pixels', palette: ['#123456'], pixels: [[1]] },
-        },
-      ]),
-    );
-    expect(await store.records('artefato')).toHaveLength(3);
-    expect(await store.records('erro_ferramenta')).toHaveLength(1);
+    // The retired pixel grid is no longer part of the creation contract (old works stay valid).
+    const pixels = { type: 'criar', id: 'bad', title: 'Erro', motivation: 'Teste', projectId: null, artifact: { format: 'pixels', palette: ['#123456'], pixels: [[0]] } };
+    expect(decisionSchema.safeParse({ intention: 'x', summary: 'x', nextMinutes: 5, complexNext: false, actions: [pixels] }).success).toBe(false);
+    expect(artifactSchema.safeParse(pixels.artifact).success).toBe(true);
   });
   it('uses actual provider JSON contract and reserves a single call without leaking secrets', async () => {
     const { env, store } = setup();

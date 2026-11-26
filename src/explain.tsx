@@ -63,6 +63,7 @@ const errors: Record<string, string> = {
   objeto_inacessivel: 'não conseguia chegar até o objeto',
   posicao_bloqueia_acesso: 'mudar o objeto ali bloquearia a passagem',
   pixels_invalidos: 'o desenho tinha um formato inválido',
+  formato_indisponivel: 'esse formato de obra não está disponível',
   gemini_http_503: 'o serviço de IA estava sobrecarregado',
   gemini_fetch_timeouterror: 'o serviço de IA demorou demais para responder',
   gemini_response_zoderror: 'a resposta da IA veio num formato inválido',

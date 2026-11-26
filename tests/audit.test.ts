@@ -134,6 +134,25 @@ describe('errors and ledger', () => {
     await store.settle(id!, 10, 'sucesso'); // a late settle cannot double count
     expect((d.sqlite.prepare("SELECT tokens FROM budgets WHERE model='m'").get() as { tokens: number }).tokens).toBe(5000);
   });
+  it('after a truncated reply the next model gets the room of a creative decision', async () => {
+    const { env, store } = setup();
+    await seedState(store);
+    const asked: { url: string; max: number }[] = [];
+    const decision = JSON.stringify({ intention: 'Pintar a planta', summary: 's', nextMinutes: 5, complexNext: false, actions: [{ type: 'atividade', activity: 'descansar', minutes: 10 }] });
+    const fetcher = (async (url: string, init: RequestInit) => {
+      const body = JSON.parse(String(init.body));
+      if (String(url).includes('groq')) {
+        asked.push({ url: 'groq', max: body.max_tokens });
+        return Response.json({ choices: [{ finish_reason: 'length', message: { content: '{"intention":"Pin' } }], usage: { prompt_tokens: 100, completion_tokens: 2560, total_tokens: 2660 } });
+      }
+      asked.push({ url: 'gemini', max: body.generationConfig.maxOutputTokens });
+      return Response.json({ candidates: [{ finishReason: 'STOP', content: { parts: [{ text: decision }] } }], usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 50, totalTokenCount: 150 } });
+    }) as unknown as typeof fetch;
+    const r = await tick(env, Date.now() + 1000, undefined, fetcher);
+    expect(r.status).toBe('decisao_registrada');
+    expect(asked[0].url).toBe('groq');
+    expect(asked[1]).toEqual({ url: 'gemini', max: 4096 });
+  });
   it('a ledger failure after a valid answer never discards the decision', async () => {
     const { env, store } = setup();
     await seedState(store);

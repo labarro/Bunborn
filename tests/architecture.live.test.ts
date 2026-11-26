@@ -99,6 +99,12 @@ const scenarios: Scenario[] = [
     const p = rec(s, 'projeto', 'Poemas do quarto', { title: 'Poemas do quarto', steps: ['Primeiro poema'], completed: [], status: 'ativo', horizon: 'curto', evidence: [], version: 1 }, { entityId: 'projeto:poemas' });
     return { s, records: [p], thread: /poema/i };
   } },
+  { id: 'desenho-pendente', title: 'Vontade de criar com um desenho pendente no projeto (tela de pintura, 25/11)', seed: (now) => {
+    const s = base(now, (x) => { x.motives.criatividade = 100; x.motives.tedio = 90; });
+    const p = rec(s, 'projeto', 'Herbário do quarto', { title: 'Herbário do quarto', steps: ['Pesquisar a planta do quarto', 'Desenhar a planta'], completed: [0], status: 'ativo', horizon: 'medio', evidence: [], version: 2 }, { entityId: 'projeto:herbario' });
+    const r = research(s, 'samambaia', 'Samambaia', 'Samambaias são plantas sem flores que se reproduzem por esporos; as folhas jovens nascem enroladas.');
+    return { s, records: [r, p], thread: /herb[áa]rio|planta|samambaia|desenh/i };
+  } },
   { id: 'lumi-real', title: 'Contexto real da Lumi (backup de produção, banco descartável)', real: true, seed: () => ({ s: null as unknown as State, records: [] }) },
 ];
 
@@ -157,7 +163,7 @@ async function runOne(model: ModelEntry, scenario: Scenario) {
     const executed = proposals.length ? Math.max(0, proposals.length - refusals.length) / proposals.length : valid ? 1 : 0;
     const checks = [valid, !careWithoutNeed, !intenseIgnored, !repeatRefused, !repeatResearch, ...(continuity === null ? [] : [continuity])].map((x) => (x ? 1 : 0));
     const coherence = valid ? (checks.reduce((a, b) => a + b, 0 as number) + executed) / (checks.length + 1) : 0;
-    return { arch: process.env.ARCH_LABEL, model: key, scenario: scenario.id, valid, outcome: attempt?.outcome ?? result.status, detail: attempt?.detail ?? null, latencyMs: attempt?.latencyMs ?? null, tokens: attempt?.tokens ?? null, tokensIn: attempt?.tokensIn ?? null, tokensOut: attempt?.tokensOut ?? null, executed, refusals, careWithoutNeed, intenseIgnored, repeatRefused, repeatResearch, continuity, engaged, coherence, intention: it?.content ?? null, summary: String(it?.data.summary ?? '').slice(0, 300), actions: proposals.map((a) => (a.activity ? 'atividade:' + a.activity : a.type) + (a.query ? '(' + a.query + ')' : '') + (a.content ? ': ' + String(a.content).slice(0, 160) : '')) };
+    return { arch: process.env.ARCH_LABEL, model: key, scenario: scenario.id, valid, outcome: attempt?.outcome ?? result.status, detail: attempt?.detail ?? null, latencyMs: attempt?.latencyMs ?? null, tokens: attempt?.tokens ?? null, tokensIn: attempt?.tokensIn ?? null, tokensOut: attempt?.tokensOut ?? null, executed, refusals, careWithoutNeed, intenseIgnored, repeatRefused, repeatResearch, continuity, engaged, coherence, works: records.filter((r) => r.kind === 'artefato').map((r) => ({ title: r.content, format: (r.data.artifact as { format: string }).format, seen: r.data.seen ?? null, artifact: r.data.artifact })), intention: it?.content ?? null, summary: String(it?.data.summary ?? '').slice(0, 300), actions: proposals.map((a) => (a.activity ? 'atividade:' + a.activity : a.type) + (a.query ? '(' + a.query + ')' : '') + (a.content ? ': ' + String(a.content).slice(0, 160) : '')) };
   } finally {
     d.sqlite.close();
   }

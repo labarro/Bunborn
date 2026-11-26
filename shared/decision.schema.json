@@ -448,28 +448,220 @@
                     "properties": {
                       "format": {
                         "type": "string",
-                        "const": "pixels"
+                        "const": "pintura"
                       },
-                      "palette": {
+                      "width": {
+                        "type": "integer"
+                      },
+                      "height": {
+                        "type": "integer"
+                      },
+                      "background": {
+                        "type": "string"
+                      },
+                      "strokes": {
                         "type": "array",
                         "items": {
-                          "type": "string"
-                        }
-                      },
-                      "pixels": {
-                        "type": "array",
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "type": "integer"
-                          }
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "tool": {
+                                  "type": "string",
+                                  "const": "pincel"
+                                },
+                                "color": {
+                                  "type": "string"
+                                },
+                                "size": {
+                                  "type": "number"
+                                },
+                                "points": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "x": {
+                                        "type": "number"
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "x",
+                                      "y"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "tool",
+                                "color",
+                                "size",
+                                "points"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "tool": {
+                                  "type": "string",
+                                  "const": "retangulo"
+                                },
+                                "color": {
+                                  "type": "string"
+                                },
+                                "fill": {
+                                  "type": "boolean"
+                                },
+                                "x": {
+                                  "type": "number"
+                                },
+                                "y": {
+                                  "type": "number"
+                                },
+                                "w": {
+                                  "type": "number"
+                                },
+                                "h": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "tool",
+                                "color",
+                                "fill",
+                                "x",
+                                "y",
+                                "w",
+                                "h"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "tool": {
+                                  "type": "string",
+                                  "const": "elipse"
+                                },
+                                "color": {
+                                  "type": "string"
+                                },
+                                "fill": {
+                                  "type": "boolean"
+                                },
+                                "cx": {
+                                  "type": "number"
+                                },
+                                "cy": {
+                                  "type": "number"
+                                },
+                                "rx": {
+                                  "type": "number"
+                                },
+                                "ry": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "tool",
+                                "color",
+                                "fill",
+                                "cx",
+                                "cy",
+                                "rx",
+                                "ry"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "tool": {
+                                  "type": "string",
+                                  "const": "poligono"
+                                },
+                                "color": {
+                                  "type": "string"
+                                },
+                                "fill": {
+                                  "type": "boolean"
+                                },
+                                "points": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "x": {
+                                        "type": "number"
+                                      },
+                                      "y": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "x",
+                                      "y"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "tool",
+                                "color",
+                                "fill",
+                                "points"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "tool": {
+                                  "type": "string",
+                                  "const": "texto"
+                                },
+                                "color": {
+                                  "type": "string"
+                                },
+                                "x": {
+                                  "type": "number"
+                                },
+                                "y": {
+                                  "type": "number"
+                                },
+                                "size": {
+                                  "type": "number"
+                                },
+                                "text": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "tool",
+                                "color",
+                                "x",
+                                "y",
+                                "size",
+                                "text"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
                         }
                       }
                     },
                     "required": [
                       "format",
-                      "palette",
-                      "pixels"
+                      "width",
+                      "height",
+                      "background",
+                      "strokes"
                     ],
                     "additionalProperties": false
                   },

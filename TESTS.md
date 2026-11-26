@@ -102,7 +102,7 @@ Nenhuma restauração foi testada em produção. D1 Time Travel (7 dias no Free)
 | Cenário | Resultado real |
 |---|---|
 | research | `pesquisar` Wikipedia "água": 3 fontes reais gravadas (curid 5313, 13963, 1604421) + conceito |
-| create | Projeto `ensaio` (etapas, sem marcar concluído) + poema (texto) + desenho (pixels) |
+| create | Projeto `ensaio` (etapas, sem marcar concluído) + poema (texto) + pintura (tela) |
 | music_object | 1ª tentativa: HTTP 503 do Gemini; 2ª: `projeto_inexistente` — **bug do motor** (o modelo citou o UUID real do projeto). Após a correção: música + objeto criados |
 | read | Antes da correção: `obra_inexistente` (UUID real citado). Depois: leitura do poema persistido |
 | revise | Versão 2 do mesmo `artefato:texto-ensaio` |

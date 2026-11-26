@@ -924,6 +924,13 @@ pre {
   max-height: 450px;
   overflow: auto;
 }
+.painting {
+  width: min(100%, 320px);
+  height: auto;
+  margin: 20px auto;
+  display: block;
+  border: 10px solid #e5d9ed;
+}
 .pixel-art {
   width: min(100%, 260px);
   image-rendering: pixelated;

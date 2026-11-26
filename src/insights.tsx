@@ -33,7 +33,7 @@ type Day = {
   projects: { title: string; status: string }[];
   talks: Record<string, number>;
 };
-const formats: Record<string, string> = { texto: 'texto', pixels: 'desenho', musica: 'música', objeto: 'objeto' };
+const formats: Record<string, string> = { texto: 'texto', pixels: 'desenho', pintura: 'pintura', musica: 'música', objeto: 'objeto' };
 const activityNames: Record<string, string> = {
   comer: 'comeu', beber: 'bebeu água', dormir: 'dormiu', higiene: 'se limpou', descansar: 'descansou', observar: 'observou ao redor',
   organizar: 'organizou as coisas', pesquisar: 'pesquisou', criar: 'criou', diario: 'escreveu no diário',

@@ -103,17 +103,66 @@
           "content": "string maxLength 12000"
         },
         {
-          "format": "pixels",
-          "palette": {
-            "LISTA_DE": "string",
-            "maxItens": 16
-          },
-          "pixels": {
+          "format": "pintura",
+          "width": "integer min 16 max 512",
+          "height": "integer min 16 max 512",
+          "background": "string",
+          "strokes": {
             "LISTA_DE": {
-              "LISTA_DE": "integer min 0 max 15",
-              "maxItens": 32
+              "UM_DESTES_OBJETOS (escolha exatamente um; o valor é um objeto, nunca uma lista)": [
+                {
+                  "tool": "pincel",
+                  "color": "string",
+                  "size": "number min 1 max 64",
+                  "points": {
+                    "LISTA_DE": {
+                      "x": "number min 0 max 512",
+                      "y": "number min 0 max 512"
+                    },
+                    "maxItens": 64
+                  }
+                },
+                {
+                  "tool": "retangulo",
+                  "color": "string",
+                  "fill": "boolean",
+                  "x": "number min 0 max 512",
+                  "y": "number min 0 max 512",
+                  "w": "number min 0 max 512",
+                  "h": "number min 0 max 512"
+                },
+                {
+                  "tool": "elipse",
+                  "color": "string",
+                  "fill": "boolean",
+                  "cx": "number min 0 max 512",
+                  "cy": "number min 0 max 512",
+                  "rx": "number min 0 max 512",
+                  "ry": "number min 0 max 512"
+                },
+                {
+                  "tool": "poligono",
+                  "color": "string",
+                  "fill": "boolean",
+                  "points": {
+                    "LISTA_DE": {
+                      "x": "number min 0 max 512",
+                      "y": "number min 0 max 512"
+                    },
+                    "maxItens": 64
+                  }
+                },
+                {
+                  "tool": "texto",
+                  "color": "string",
+                  "x": "number min 0 max 512",
+                  "y": "number min 0 max 512",
+                  "size": "number min 4 max 96",
+                  "text": "string maxLength 80"
+                }
+              ]
             },
-            "maxItens": 32
+            "maxItens": 160
           }
         },
         {

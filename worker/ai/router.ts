@@ -53,13 +53,18 @@ export function qualityOf(key: string) {
 }
 
 export type CategorySignals = { inbox: number; complexNext: boolean; decisionNumber: number; consolidationDue: boolean; recentResearch: boolean; creativity: number; boredom: number; activeCreativeProject: boolean };
+/**
+ * Wanting to create (or an ongoing creative project) needs output room even when another
+ * category picks the model: a painting after research truncated at 1536 tokens (25/11).
+ */
+export const creativeSignals = (s: Pick<CategorySignals, 'activeCreativeProject' | 'creativity' | 'boredom'>) => s.activeCreativeProject || s.creativity >= 70 || s.boredom >= 70;
 /** One decision = one request; the category only steers model choice, it never splits the call. */
 export function categorize(s: CategorySignals): { category: Category; reason: string } {
   if (s.inbox > 0) return { category: 'comunicacao', reason: 'há mensagens pendentes' };
   if (s.complexNext || (s.decisionNumber > 0 && s.decisionNumber % 24 === 0)) return { category: 'complexa', reason: s.complexNext ? 'a própria decisão anterior pediu revisão complexa' : 'revisão periódica (a cada 24 decisões)' };
   if (s.consolidationDue) return { category: 'memoria', reason: 'consolidação de memória pendente' };
   if (s.recentResearch) return { category: 'pesquisa', reason: 'resultados de pesquisa recentes para interpretar' };
-  if (s.activeCreativeProject || s.creativity >= 70 || s.boredom >= 70) return { category: 'criatividade', reason: s.activeCreativeProject ? 'projeto criativo em andamento' : s.creativity >= 70 ? 'criatividade alta' : 'tédio alto' };
+  if (creativeSignals(s)) return { category: 'criatividade', reason: s.activeCreativeProject ? 'projeto criativo em andamento' : s.creativity >= 70 ? 'criatividade alta' : 'tédio alto' };
   return { category: 'cotidiana', reason: 'decisão cotidiana' };
 }
 
