@@ -22,13 +22,16 @@ export type AiConfig = {
 export const defaultConfig: AiConfig = { disabledProviders: [], disabledModels: [], strategy: 'auto', manual: {}, allowTrialInProduction: false, dailyCaps: {} };
 type QualityFile = { generatedAt: string | null; models: Record<string, { entry?: Partial<ModelEntry>; scores: Partial<Record<Category, number>>; homologated: Category[]; note?: string }> };
 let q = quality as QualityFile;
-let adjustments: Record<string, { adjust: Partial<Record<Category, number>> }> = evidence.models;
+type Evidence = { adjust?: Partial<Record<Category, number>>; homologate?: Category[]; revoke?: Category[] };
+let adjustments: Record<string, Evidence> = evidence.models as Record<string, Evidence>;
 /** Benchmarks and tests may evaluate against another quality table (never used by production). */
-export function useQuality(file: QualityFile) {
+export function useQuality(file: QualityFile, withEvidence: Record<string, Evidence> = {}) {
   q = file;
-  adjustments = {};
+  adjustments = withEvidence;
 }
 export type { QualityFile };
+/** Every painting of hers is made by this model (observer's decision, 26/11). */
+export const PAINTER = 'nvidia:nvidia/nemotron-3-ultra-550b-a55b';
 
 /** Catalog plus models that passed homologation (e.g. NVIDIA or newer Gemini entries). */
 export function knownModels(): ModelEntry[] {
@@ -45,11 +48,13 @@ export function knownModels(): ModelEntry[] {
 /** Benchmark quality plus production-evidence adjustments (shared/production-evidence.json). */
 export function qualityOf(key: string) {
   const base = q.models[key] ?? { scores: {}, homologated: [] as Category[] };
-  const adjust = adjustments[key]?.adjust;
-  if (!adjust) return base;
+  const ev = adjustments[key];
+  if (!ev) return base;
   const scores = { ...base.scores };
-  for (const [c, d] of Object.entries(adjust) as [Category, number][]) if (scores[c] !== undefined) scores[c] = Math.max(0, Math.round((scores[c]! + d) * 1000) / 1000);
-  return { ...base, scores };
+  for (const [c, d] of Object.entries(ev.adjust ?? {}) as [Category, number][]) if (scores[c] !== undefined) scores[c] = Math.max(0, Math.round((scores[c]! + d) * 1000) / 1000);
+  // Homologation decided from production/drawing evidence, kept apart from the regenerated benchmark table.
+  const homologated = [...new Set([...base.homologated, ...(ev.homologate ?? [])])].filter((c) => !(ev.revoke ?? []).includes(c) && scores[c] !== undefined);
+  return { ...base, scores, homologated };
 }
 
 export type CategorySignals = { inbox: number; complexNext: boolean; decisionNumber: number; consolidationDue: boolean; recentResearch: boolean; creativity: number; boredom: number; activeCreativeProject: boolean };

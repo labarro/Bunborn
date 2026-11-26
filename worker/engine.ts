@@ -19,7 +19,7 @@ import {
 } from '../shared/domain';
 import { CognitiveError, GeminiProvider, type CognitionProvider, type Env } from './provider';
 import { RoutedProvider, type RouteRecord } from './ai/cognition';
-import { categorize, creativeSignals } from './ai/router';
+import { categorize, creativeSignals, PAINTER } from './ai/router';
 import type { Category } from '../shared/ai-catalog';
 import { research } from './research';
 import { entry, Store, ToolError } from './store';
@@ -493,6 +493,30 @@ export async function tick(
       const brain = provider ?? new RoutedProvider(env, store, fetcher);
       const reply = (await brain.decide(packContext(context), complex, now, hint)) as Awaited<ReturnType<CognitionProvider['decide']>> & { route?: RouteRecord };
       const { decision, model, invalidActions = [], route } = reply;
+      // Every painting of hers is made by the painter model (observer's decision, 26/11). When
+      // another model decided to paint, the decision stays (what, why, when) and the painter paints
+      // it with the same context. If the painter cannot answer now, that creation is refused with
+      // the reason and she can try again later; no other model paints in its place.
+      const painterId = PAINTER.slice(PAINTER.indexOf(':') + 1);
+      const paintings: { title: string; attempt?: unknown; error?: string }[] = [];
+      const unpainted = new Map<object, string>();
+      const painter = brain as { paint?: RoutedProvider['paint'] };
+      if (model !== painterId && painter.paint)
+        for (const a of decision.actions) {
+          if (a.type !== 'criar' || a.artifact.format !== 'pintura') continue;
+          try {
+            const ask = () => painter.paint!.call(brain, packContext(context), { title: a.title, motivation: a.motivation }, now);
+            // One more try when the answer was malformed or cut (not on timeouts or limits): ~30%
+            // of painter answers failed that way in the 26/11 tests.
+            const done = await ask().catch((e: { kind?: string }) => { if (e?.kind === 'resposta_invalida') return ask(); throw e; });
+            a.artifact = done.artifact;
+            paintings.push({ title: a.title, attempt: done.attempt });
+          } catch (e) {
+            const why = String((e as { detail?: string; message?: string })?.detail ?? (e as Error)?.message ?? e).slice(0, 160);
+            unpainted.set(a, why);
+            paintings.push({ title: a.title, error: why });
+          }
+        }
       s.lastModel = model;
       s.activity.intention = decision.intention;
       const outcomes: { action: string; result: 'feita' | 'recusada'; code?: string; detail?: unknown }[] = [];
@@ -506,6 +530,7 @@ export async function tick(
           proposals:decision.actions.map(a=>a.type==='criar'?{...a,artifact:{format:a.artifact.format}}:a),
           // Technical routing metadata (why this model), never the creature's own intention.
           ...(route ? { route } : {}),
+          ...(paintings.length ? { paintings } : {}),
           outcomes,
         });
       records.push(intent);
@@ -518,6 +543,12 @@ export async function tick(
       // Apply each tool against a draft so rejected actions cannot partially mutate state.
       let external = 0;
       for (const a of decision.actions) {
+        if (unpainted.has(a)) {
+          const why = unpainted.get(a)!;
+          outcomes.push({ action: label(a), result: 'recusada', code: 'pintura_indisponivel', detail: { note: 'não foi possível pintar agora (' + why + ')' } });
+          records.push(entry(s, 'erro_ferramenta', 'Ação rejeitada ou indisponível.', { tool: 'criar', code: 'pintura_indisponivel', detail: { note: why } }));
+          continue;
+        }
         if (a.type === 'pesquisar' && external++ >= 1) {
           records.push(entry(s, 'erro_ferramenta', 'Máximo de uma pesquisa por ciclo.'));
           outcomes.push({ action: label(a), result: 'recusada', code: 'uma_pesquisa_por_ciclo' });

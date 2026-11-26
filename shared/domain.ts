@@ -25,14 +25,14 @@ const evidence = z.array(z.string().max(100)).min(1).max(8);
 const hex = z.string().regex(/^#[0-9a-fA-F]{6}$/);
 const coord = z.number().min(0).max(512);
 const point = z.object({ x: coord, y: coord }).strict();
-const stroke = z.discriminatedUnion('tool', [
+export const strokeSchema = z.discriminatedUnion('tool', [
   z.object({ tool: z.literal('pincel'), color: hex, size: z.number().min(1).max(64), points: z.array(point).min(1).max(64) }).strict(),
   z.object({ tool: z.literal('retangulo'), color: hex, fill: z.boolean(), x: coord, y: coord, w: coord, h: coord }).strict(),
   z.object({ tool: z.literal('elipse'), color: hex, fill: z.boolean(), cx: coord, cy: coord, rx: coord, ry: coord }).strict(),
   z.object({ tool: z.literal('poligono'), color: hex, fill: z.boolean(), points: z.array(point).min(3).max(64) }).strict(),
   z.object({ tool: z.literal('texto'), color: hex, x: coord, y: coord, size: z.number().min(4).max(96), text: z.string().min(1).max(80) }).strict(),
 ]);
-export type Stroke = z.infer<typeof stroke>;
+export type Stroke = z.infer<typeof strokeSchema>;
 /** What she can create now. */
 export const creatableArtifactSchema = z.discriminatedUnion('format', [
   z.object({ format: z.literal('texto'), content: z.string().min(1).max(12000) }).strict(),
@@ -44,7 +44,7 @@ export const creatableArtifactSchema = z.discriminatedUnion('format', [
       width: z.number().int().min(16).max(512),
       height: z.number().int().min(16).max(512),
       background: hex,
-      strokes: z.array(stroke).min(1).max(160),
+      strokes: z.array(strokeSchema).min(1).max(160),
     })
     .strict(),
   z

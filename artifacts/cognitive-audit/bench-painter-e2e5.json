@@ -1,0 +1,400 @@
+{
+ "at": "2026-11-26T02:59:17.094Z",
+ "arch": "painter-e2e5",
+ "rows": [
+  {
+   "arch": "painter-e2e5",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "desenho-pendente",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 5138,
+   "tokens": 3478,
+   "tokensIn": 3134,
+   "tokensOut": 344,
+   "executed": 0,
+   "refusals": [
+    "pintura_indisponivel"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": true,
+   "engaged": true,
+   "coherence": 0.8571428571428571,
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": [
+    {
+     "title": "Desenho da samambaia do quarto",
+     "error": "pintura fora do contrato"
+    }
+   ],
+   "works": [],
+   "intention": "Desenhar a planta do quarto para avançar no projeto do herbário",
+   "summary": "Iniciando a criação do desenho da planta com base na pesquisa anterior para completar a segunda etapa do herbário.",
+   "actions": [
+    "criar"
+   ]
+  },
+  {
+   "arch": "painter-e2e5",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "pedido-gato",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 5766,
+   "tokens": 3283,
+   "tokensIn": 2952,
+   "tokensOut": 331,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 1,
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": [
+    {
+     "title": "Gato em pixel art",
+     "attempt": {
+      "model": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+      "provider": "nvidia",
+      "outcome": "aceita",
+      "latencyMs": 32007,
+      "tokens": 3865,
+      "tokensIn": 2265,
+      "tokensOut": 1600,
+      "estimatedIn": 2558,
+      "maxOutput": 6144
+     }
+    }
+   ],
+   "works": [
+    {
+     "title": "Gato em pixel art",
+     "format": "pintura",
+     "seen": "ao olhar a obra: 16 traços; 2 cores visíveis (#e8e8e8 90%, #8b7355 10%)",
+     "artifact": {
+      "format": "pintura",
+      "width": 512,
+      "height": 512,
+      "background": "#e8e8e8",
+      "strokes": [
+       {
+        "tool": "elipse",
+        "color": "#8b7355",
+        "fill": true,
+        "cx": 256,
+        "cy": 320,
+        "rx": 80,
+        "ry": 60
+       },
+       {
+        "tool": "elipse",
+        "color": "#8b7355",
+        "fill": true,
+        "cx": 256,
+        "cy": 200,
+        "rx": 55,
+        "ry": 50
+       },
+       {
+        "tool": "poligono",
+        "color": "#8b7355",
+        "fill": true,
+        "points": [
+         {
+          "x": 210,
+          "y": 160
+         },
+         {
+          "x": 185,
+          "y": 110
+         },
+         {
+          "x": 235,
+          "y": 150
+         }
+        ]
+       },
+       {
+        "tool": "poligono",
+        "color": "#8b7355",
+        "fill": true,
+        "points": [
+         {
+          "x": 302,
+          "y": 160
+         },
+         {
+          "x": 327,
+          "y": 110
+         },
+         {
+          "x": 277,
+          "y": 150
+         }
+        ]
+       },
+       {
+        "tool": "elipse",
+        "color": "#000000",
+        "fill": true,
+        "cx": 235,
+        "cy": 195,
+        "rx": 8,
+        "ry": 12
+       },
+       {
+        "tool": "elipse",
+        "color": "#000000",
+        "fill": true,
+        "cx": 277,
+        "cy": 195,
+        "rx": 8,
+        "ry": 12
+       },
+       {
+        "tool": "elipse",
+        "color": "#ffffff",
+        "fill": true,
+        "cx": 232,
+        "cy": 192,
+        "rx": 3,
+        "ry": 3
+       },
+       {
+        "tool": "elipse",
+        "color": "#ffffff",
+        "fill": true,
+        "cx": 274,
+        "cy": 192,
+        "rx": 3,
+        "ry": 3
+       },
+       {
+        "tool": "poligono",
+        "color": "#ff6b6b",
+        "fill": true,
+        "points": [
+         {
+          "x": 256,
+          "y": 210
+         },
+         {
+          "x": 248,
+          "y": 220
+         },
+         {
+          "x": 264,
+          "y": 220
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#000000",
+        "size": 2,
+        "points": [
+         {
+          "x": 210,
+          "y": 215
+         },
+         {
+          "x": 170,
+          "y": 210
+         },
+         {
+          "x": 160,
+          "y": 205
+         },
+         {
+          "x": 155,
+          "y": 215
+         },
+         {
+          "x": 150,
+          "y": 225
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#000000",
+        "size": 2,
+        "points": [
+         {
+          "x": 210,
+          "y": 225
+         },
+         {
+          "x": 168,
+          "y": 228
+         },
+         {
+          "x": 160,
+          "y": 235
+         },
+         {
+          "x": 155,
+          "y": 242
+         },
+         {
+          "x": 150,
+          "y": 250
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#000000",
+        "size": 2,
+        "points": [
+         {
+          "x": 210,
+          "y": 235
+         },
+         {
+          "x": 165,
+          "y": 245
+         },
+         {
+          "x": 158,
+          "y": 255
+         },
+         {
+          "x": 152,
+          "y": 262
+         },
+         {
+          "x": 148,
+          "y": 270
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#000000",
+        "size": 2,
+        "points": [
+         {
+          "x": 302,
+          "y": 215
+         },
+         {
+          "x": 342,
+          "y": 210
+         },
+         {
+          "x": 352,
+          "y": 205
+         },
+         {
+          "x": 357,
+          "y": 215
+         },
+         {
+          "x": 362,
+          "y": 225
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#000000",
+        "size": 2,
+        "points": [
+         {
+          "x": 302,
+          "y": 225
+         },
+         {
+          "x": 344,
+          "y": 228
+         },
+         {
+          "x": 352,
+          "y": 235
+         },
+         {
+          "x": 357,
+          "y": 242
+         },
+         {
+          "x": 362,
+          "y": 250
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#000000",
+        "size": 2,
+        "points": [
+         {
+          "x": 302,
+          "y": 235
+         },
+         {
+          "x": 347,
+          "y": 245
+         },
+         {
+          "x": 354,
+          "y": 255
+         },
+         {
+          "x": 360,
+          "y": 262
+         },
+         {
+          "x": 364,
+          "y": 270
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#8b7355",
+        "size": 6,
+        "points": [
+         {
+          "x": 336,
+          "y": 320
+         },
+         {
+          "x": 370,
+          "y": 300
+         },
+         {
+          "x": 400,
+          "y": 270
+         },
+         {
+          "x": 420,
+          "y": 230
+         },
+         {
+          "x": 430,
+          "y": 190
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ],
+   "intention": "Desenhar um gato no ateliê para atender ao pedido do observador.",
+   "summary": "Iniciando a criação de uma pintura de um gato no ateliê.",
+   "actions": [
+    "criar"
+   ]
+  }
+ ]
+}

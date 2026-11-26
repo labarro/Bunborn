@@ -1,0 +1,81 @@
+{
+ "at": "2026-11-26T02:50:09.177Z",
+ "arch": "painter-e2e",
+ "rows": [
+  {
+   "arch": "painter-e2e",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "desenho-pendente",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 4438,
+   "tokens": 3765,
+   "tokensIn": 3131,
+   "tokensOut": 634,
+   "executed": 0,
+   "refusals": [
+    "pintura_indisponivel",
+    "conclusao_sem_resultado"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": true,
+   "engaged": true,
+   "coherence": 0.8571428571428571,
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": [
+    {
+     "title": "Samambaia do Quarto",
+     "error": "sem resposta em 45000 ms"
+    }
+   ],
+   "works": [],
+   "intention": "Continuar o projeto do herbário desenhando a planta do quarto no ateliê",
+   "summary": "Vou avançar na segunda etapa do projeto do herbário, criando uma pintura da samambaia baseada na pesquisa anterior.",
+   "actions": [
+    "criar",
+    "projeto"
+   ]
+  },
+  {
+   "arch": "painter-e2e",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "pedido-gato",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 2335,
+   "tokens": 3458,
+   "tokensIn": 2953,
+   "tokensOut": 505,
+   "executed": 0.5,
+   "refusals": [
+    "pintura_indisponivel"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 0.9166666666666666,
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": [
+    {
+     "title": "Gato em Pixel Art",
+     "error": "pintura fora do contrato"
+    }
+   ],
+   "works": [],
+   "intention": "Desenhar um gatinho no ateliê para atender ao pedido do observador.",
+   "summary": "Vou criar uma pintura de um gato no ateliê para atender ao pedido recebido.",
+   "actions": [
+    "criar",
+    "diario: O observador me pediu para desenhar um gato. Tentei fazer uma pintura simples em pixel art no ateliê. Espero que ele goste!"
+   ]
+  }
+ ]
+}

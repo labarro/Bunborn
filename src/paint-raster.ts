@@ -93,7 +93,9 @@ export function paint(canvas: HTMLCanvasElement, layer: HTMLCanvasElement, a: Pa
     draw(lc, s, scale, line, n * 7919 + 17);
     const mask = lc.getImageData(0, 0, W, H).data;
     const [r, g, b] = rgb(s.color);
-    for (let i = 3; i < mask.length; i += 4) if (mask[i] >= 128) { px[i - 3] = r; px[i - 2] = g; px[i - 1] = b; }
+    // Thin glyph stems (the i in "Samambaia") stay below 50% coverage: text uses a lower cut.
+    const cut = s.tool === 'texto' ? 40 : 128;
+    for (let i = 3; i < mask.length; i += 4) if (mask[i] >= cut) { px[i - 3] = r; px[i - 2] = g; px[i - 1] = b; }
   });
   ctx.putImageData(image, 0, 0);
 }

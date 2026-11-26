@@ -8,7 +8,8 @@ import { Store, entry } from '../worker/store';
 import { buildContext, tick } from '../worker/engine';
 import { instructionsFor, systemFor, type Env } from '../worker/provider';
 import { classifyHttp, retryAfterMs } from '../worker/ai/adapters';
-import { useQuality, type QualityFile } from '../worker/ai/router';
+import { qualityOf, useQuality, type QualityFile } from '../worker/ai/router';
+import productionEvidence from '../shared/production-evidence.json';
 import quality from '../shared/model-quality.json';
 import { database } from './database';
 
@@ -107,6 +108,16 @@ describe('tokens and output budgets', () => {
     expect(maxOutputFor(catalog[0], 'criatividade', 5000)).toBe(4096);
     expect(maxOutputFor(catalog[0], 'cotidiana', 5000)).toBe(1536);
     expect(estimateInput(33000, nvidiaEntry('x/y'))).toBeGreaterThan(estimateInput(33000, catalog[0]));
+  });
+});
+
+describe('drawing evidence in routing', () => {
+  it('Nemotron is homologated for creativity and Gemini 3.1 Lite no longer is (26/11 paintings)', () => {
+    useQuality(quality as QualityFile, productionEvidence.models as never);
+    expect(qualityOf('nvidia:nvidia/nemotron-3-ultra-550b-a55b').homologated).toContain('criatividade');
+    expect(qualityOf('gemini:gemini-3.1-flash-lite').homologated).not.toContain('criatividade');
+    expect(qualityOf('gemini:gemini-3.1-flash-lite').homologated).toContain('cotidiana');
+    expect(qualityOf('groq:openai/gpt-oss-120b').scores.cotidiana).toBeCloseTo(0.62);
   });
 });
 

@@ -1,0 +1,472 @@
+{
+ "at": "2026-11-26T02:54:36.576Z",
+ "arch": "painter-e2e4",
+ "rows": [
+  {
+   "arch": "painter-e2e4",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "desenho-pendente",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 2407,
+   "tokens": 3559,
+   "tokensIn": 3130,
+   "tokensOut": 429,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": true,
+   "engaged": true,
+   "coherence": 1,
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": [
+    {
+     "title": "Estudo da Samambaia",
+     "attempt": {
+      "model": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+      "provider": "nvidia",
+      "outcome": "aceita",
+      "latencyMs": 23182,
+      "tokens": 4201,
+      "tokensIn": 2458,
+      "tokensOut": 1743,
+      "estimatedIn": 2725,
+      "maxOutput": 4096
+     }
+    }
+   ],
+   "works": [
+    {
+     "title": "Estudo da Samambaia",
+     "format": "pintura",
+     "seen": "ao olhar a obra: 16 traços; 9 cores visíveis (#f5f0e1 92%, #3d3d3d 2%, #666666 2%, #7ae872 1%, #2d5a27 1% e mais 4)",
+     "artifact": {
+      "format": "pintura",
+      "width": 320,
+      "height": 240,
+      "background": "#f5f0e1",
+      "strokes": [
+       {
+        "tool": "pincel",
+        "color": "#2d5a27",
+        "size": 3,
+        "points": [
+         {
+          "x": 160,
+          "y": 220
+         },
+         {
+          "x": 158,
+          "y": 180
+         },
+         {
+          "x": 155,
+          "y": 140
+         },
+         {
+          "x": 150,
+          "y": 100
+         },
+         {
+          "x": 145,
+          "y": 60
+         },
+         {
+          "x": 140,
+          "y": 30
+         },
+         {
+          "x": 135,
+          "y": 15
+         },
+         {
+          "x": 130,
+          "y": 5
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3a7d32",
+        "size": 2,
+        "points": [
+         {
+          "x": 155,
+          "y": 200
+         },
+         {
+          "x": 120,
+          "y": 195
+         },
+         {
+          "x": 100,
+          "y": 185
+         },
+         {
+          "x": 85,
+          "y": 170
+         },
+         {
+          "x": 75,
+          "y": 150
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3a7d32",
+        "size": 2,
+        "points": [
+         {
+          "x": 155,
+          "y": 200
+         },
+         {
+          "x": 190,
+          "y": 195
+         },
+         {
+          "x": 210,
+          "y": 185
+         },
+         {
+          "x": 225,
+          "y": 170
+         },
+         {
+          "x": 235,
+          "y": 150
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#4a9d42",
+        "size": 2,
+        "points": [
+         {
+          "x": 150,
+          "y": 170
+         },
+         {
+          "x": 110,
+          "y": 165
+         },
+         {
+          "x": 85,
+          "y": 150
+         },
+         {
+          "x": 70,
+          "y": 130
+         },
+         {
+          "x": 60,
+          "y": 110
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#4a9d42",
+        "size": 2,
+        "points": [
+         {
+          "x": 150,
+          "y": 170
+         },
+         {
+          "x": 190,
+          "y": 165
+         },
+         {
+          "x": 215,
+          "y": 150
+         },
+         {
+          "x": 230,
+          "y": 130
+         },
+         {
+          "x": 240,
+          "y": 110
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#5abd52",
+        "size": 2,
+        "points": [
+         {
+          "x": 145,
+          "y": 140
+         },
+         {
+          "x": 100,
+          "y": 135
+         },
+         {
+          "x": 75,
+          "y": 115
+         },
+         {
+          "x": 60,
+          "y": 90
+         },
+         {
+          "x": 50,
+          "y": 65
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#5abd52",
+        "size": 2,
+        "points": [
+         {
+          "x": 145,
+          "y": 140
+         },
+         {
+          "x": 190,
+          "y": 135
+         },
+         {
+          "x": 215,
+          "y": 115
+         },
+         {
+          "x": 230,
+          "y": 90
+         },
+         {
+          "x": 240,
+          "y": 65
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#6ade62",
+        "size": 2,
+        "points": [
+         {
+          "x": 140,
+          "y": 110
+         },
+         {
+          "x": 90,
+          "y": 105
+         },
+         {
+          "x": 65,
+          "y": 85
+         },
+         {
+          "x": 50,
+          "y": 60
+         },
+         {
+          "x": 40,
+          "y": 35
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#6ade62",
+        "size": 2,
+        "points": [
+         {
+          "x": 140,
+          "y": 110
+         },
+         {
+          "x": 190,
+          "y": 105
+         },
+         {
+          "x": 215,
+          "y": 85
+         },
+         {
+          "x": 230,
+          "y": 60
+         },
+         {
+          "x": 240,
+          "y": 35
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#7ae872",
+        "size": 2,
+        "points": [
+         {
+          "x": 135,
+          "y": 80
+         },
+         {
+          "x": 80,
+          "y": 75
+         },
+         {
+          "x": 55,
+          "y": 55
+         },
+         {
+          "x": 40,
+          "y": 30
+         },
+         {
+          "x": 30,
+          "y": 10
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#7ae872",
+        "size": 2,
+        "points": [
+         {
+          "x": 135,
+          "y": 80
+         },
+         {
+          "x": 190,
+          "y": 75
+         },
+         {
+          "x": 215,
+          "y": 55
+         },
+         {
+          "x": 230,
+          "y": 30
+         },
+         {
+          "x": 240,
+          "y": 10
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#1a3d16",
+        "size": 4,
+        "points": [
+         {
+          "x": 158,
+          "y": 220
+         },
+         {
+          "x": 160,
+          "y": 200
+         }
+        ]
+       },
+       {
+        "tool": "elipse",
+        "color": "#8fbc8f",
+        "fill": true,
+        "cx": 160,
+        "cy": 20,
+        "rx": 8,
+        "ry": 6
+       },
+       {
+        "tool": "pincel",
+        "color": "#2d5a27",
+        "size": 2,
+        "points": [
+         {
+          "x": 160,
+          "y": 20
+         },
+         {
+          "x": 165,
+          "y": 15
+         },
+         {
+          "x": 170,
+          "y": 10
+         },
+         {
+          "x": 175,
+          "y": 5
+         }
+        ]
+       },
+       {
+        "tool": "texto",
+        "color": "#3d3d3d",
+        "x": 20,
+        "y": 20,
+        "size": 14,
+        "text": "Samambaia - Estudo"
+       },
+       {
+        "tool": "texto",
+        "color": "#666666",
+        "x": 20,
+        "y": 220,
+        "size": 10,
+        "text": "Herbário do quarto • Lumi"
+       }
+      ]
+     }
+    }
+   ],
+   "intention": "Desenhar a planta do quarto para avançar no projeto do herbário",
+   "summary": "Vou dar o próximo passo no meu projeto de herbário criando uma pintura inspirada na planta do quarto.",
+   "actions": [
+    "criar"
+   ]
+  },
+  {
+   "arch": "painter-e2e4",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "pedido-gato",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 2972,
+   "tokens": 3470,
+   "tokensIn": 2957,
+   "tokensOut": 513,
+   "executed": 0,
+   "refusals": [
+    "pintura_indisponivel"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 0.8333333333333334,
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": [
+    {
+     "title": "Gato em pixel art",
+     "error": "pintura fora do contrato"
+    }
+   ],
+   "works": [],
+   "intention": "Desenhar um gato no ateliê para atender ao pedido do observador.",
+   "summary": "Iniciando a criação de uma pintura de um gato conforme solicitado na mensagem.",
+   "actions": [
+    "criar"
+   ]
+  }
+ ]
+}

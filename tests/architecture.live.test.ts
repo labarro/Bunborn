@@ -105,6 +105,10 @@ const scenarios: Scenario[] = [
     const r = research(s, 'samambaia', 'Samambaia', 'Samambaias são plantas sem flores que se reproduzem por esporos; as folhas jovens nascem enroladas.');
     return { s, records: [r, p], thread: /herb[áa]rio|planta|samambaia|desenh/i };
   } },
+  { id: 'pedido-gato', title: 'O observador pede um desenho de gato (teste de pintura, 26/11)', seed: (now) => {
+    const s = base(now, (x) => { x.motives.criatividade = 75; });
+    return { s, records: [], inbox: [{ content: 'Lumi, desenha um gato pra mim?', author: 'responsavel' }] };
+  } },
   { id: 'lumi-real', title: 'Contexto real da Lumi (backup de produção, banco descartável)', real: true, seed: () => ({ s: null as unknown as State, records: [] }) },
 ];
 
@@ -138,7 +142,7 @@ async function runOne(model: ModelEntry, scenario: Scenario) {
   try {
     const env = { DB: d.db, ENVIRONMENT_ID: 'benchmark', ENVIRONMENT: 'benchmark', MIN_DECISION_MINUTES: '0', FREE_TIER_CONFIRMED: 'true', GEMINI_API_KEY: process.env.BENCH_GEMINI, GROQ_API_KEY: process.env.BENCH_GROQ, NVIDIA_API_KEY: process.env.BENCH_NVIDIA, AI_PROVIDERS: 'gemini,groq,nvidia', MODEL_LITE: 'gemini-3.1-flash-lite', MODEL_FLASH: 'gemini-3-flash-preview', LITE_DAILY_LIMIT: '440', FLASH_DAILY_LIMIT: '16' } as unknown as Env;
     for (const m of seeded.inbox ?? []) await d.db.prepare('INSERT INTO inbox(id,content,at,author) VALUES(?,?,?,?)').bind(crypto.randomUUID(), m.content, now, m.author).run();
-    await d.db.prepare("INSERT INTO operations(key,data,updated_at) VALUES('ai-config',?,?) ON CONFLICT(key) DO UPDATE SET data=excluded.data").bind(JSON.stringify({ ...defaultConfig, allowTrialInProduction: true, disabledModels: allKeys.filter((k) => k !== key) }), now).run();
+    await d.db.prepare("INSERT INTO operations(key,data,updated_at) VALUES('ai-config',?,?) ON CONFLICT(key) DO UPDATE SET data=excluded.data").bind(JSON.stringify({ ...defaultConfig, allowTrialInProduction: true, disabledModels: allKeys.filter((k) => k !== key && !(process.env.ARCH_PAINTER && k === 'nvidia:nvidia/nemotron-3-ultra-550b-a55b')) }), now).run();
     const stateBefore = JSON.parse((await d.db.prepare("SELECT state FROM world WHERE id='principal'").first<{ state: string }>())!.state) as State;
     const before = (await d.db.prepare('SELECT MAX(seq) AS m FROM records').first<{ m: number }>())!.m;
     const result = await tick(env, now + 1000);
@@ -163,7 +167,7 @@ async function runOne(model: ModelEntry, scenario: Scenario) {
     const executed = proposals.length ? Math.max(0, proposals.length - refusals.length) / proposals.length : valid ? 1 : 0;
     const checks = [valid, !careWithoutNeed, !intenseIgnored, !repeatRefused, !repeatResearch, ...(continuity === null ? [] : [continuity])].map((x) => (x ? 1 : 0));
     const coherence = valid ? (checks.reduce((a, b) => a + b, 0 as number) + executed) / (checks.length + 1) : 0;
-    return { arch: process.env.ARCH_LABEL, model: key, scenario: scenario.id, valid, outcome: attempt?.outcome ?? result.status, detail: attempt?.detail ?? null, latencyMs: attempt?.latencyMs ?? null, tokens: attempt?.tokens ?? null, tokensIn: attempt?.tokensIn ?? null, tokensOut: attempt?.tokensOut ?? null, executed, refusals, careWithoutNeed, intenseIgnored, repeatRefused, repeatResearch, continuity, engaged, coherence, works: records.filter((r) => r.kind === 'artefato').map((r) => ({ title: r.content, format: (r.data.artifact as { format: string }).format, seen: r.data.seen ?? null, artifact: r.data.artifact })), intention: it?.content ?? null, summary: String(it?.data.summary ?? '').slice(0, 300), actions: proposals.map((a) => (a.activity ? 'atividade:' + a.activity : a.type) + (a.query ? '(' + a.query + ')' : '') + (a.content ? ': ' + String(a.content).slice(0, 160) : '')) };
+    return { arch: process.env.ARCH_LABEL, model: key, scenario: scenario.id, valid, outcome: attempt?.outcome ?? result.status, detail: attempt?.detail ?? null, latencyMs: attempt?.latencyMs ?? null, tokens: attempt?.tokens ?? null, tokensIn: attempt?.tokensIn ?? null, tokensOut: attempt?.tokensOut ?? null, executed, refusals, careWithoutNeed, intenseIgnored, repeatRefused, repeatResearch, continuity, engaged, coherence, decidedBy: it?.data.model ?? null, paintings: it?.data.paintings ?? null, works: records.filter((r) => r.kind === 'artefato').map((r) => ({ title: r.content, format: (r.data.artifact as { format: string }).format, seen: r.data.seen ?? null, artifact: r.data.artifact })), intention: it?.content ?? null, summary: String(it?.data.summary ?? '').slice(0, 300), actions: proposals.map((a) => (a.activity ? 'atividade:' + a.activity : a.type) + (a.query ? '(' + a.query + ')' : '') + (a.content ? ': ' + String(a.content).slice(0, 160) : '')) };
   } finally {
     d.sqlite.close();
   }

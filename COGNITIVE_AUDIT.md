@@ -350,6 +350,17 @@ O ponto em que isso pesa é a continuidade dos assuntos: o projeto de observaç�
   - **Resolução:** cerca de 480 px no lado maior, com contorno de cerca de 0,5% da tela, a mesma espessura usada pela percepção.
   - **Determinístico:** só a aparência muda. O texto dela vira pixels no canvas, nunca markup.
   - **Tentativa descartada:** um estilo "à mão" com papel e aquarela, em SVG, foi feito antes e descartado pelo observador por não parecer desenho.
+- **Roteamento para criação a partir dos desenhos (26/11, decidido pelo responsável ao comparar as pinturas):** `shared/production-evidence.json` agora também aceita `homologate` e `revoke`, separados da tabela regenerada pelo benchmark.
+  - **Nemotron Ultra:** homologado para criatividade.
+    - Rodadas `bench-nemo-draw1..3`: 6 de 6 decisões válidas, todas com pintura. As 3 samambaias têm de 8 a 12 traços; dos 3 gatos (pedido do observador numa criatura descartável), 2 são reconhecíveis.
+    - Latência de 27 a 43 s, perto do limite de 45 s; quando estoura, o fallback cobre.
+  - **Gemini 3.1 Flash Lite:** perdeu a homologação para criatividade, porque fez 1 a 2 traços em 4 de 4 desenhos. Continua como alternativa geral se todos os modelos de criatividade falharem.
+  - **Texto na pintura:** usa um corte de transparência menor, porque hastes finas como o "i" de "Samambaia" sumiam.
+- **Todas as pinturas dela são feitas pelo Nemotron (decisão do responsável, 26/11):**
+  - **Como funciona:** quando outro modelo decide pintar, a decisão continua dele (o quê, por quê, quando), e `RoutedProvider.paint` pede a pintura ao Nemotron com o mesmo contexto e as mesmas regras. O registro fica em `intencao.data.paintings`.
+  - **Falha:** se o pintor não responde, a criação é recusada com o motivo (`pintura_indisponivel`) e nenhum outro modelo pinta no lugar.
+  - **Tolerância:** uma nova tentativa só para resposta inválida; traços fora do contrato são descartados um a um; limite de 75 s e 6.144 tokens de saída.
+  - **Evidência real** (`bench-painter-e2e*`, Gemini decidindo e Nemotron pintando): 11 de 16 pinturas aceitas antes da nova tentativa existir, com gatos de 15 a 18 traços e samambaias de 12 a 18.
 - **Prompt corrigido:** a descrição do mundo ainda citava "desenho em pixels". Ela tentou "pixel art" às 01:53 e recebeu uma recusa sem motivo. Agora o motivo da recusa de uma ação malformada vai junto no resultado, por exemplo "formato inválido: artifact.format (… Expected 'texto' | 'pintura' | …)".
 - **Ao reler uma obra (`ler_obra`), ela também vê:** o "ao olhar a obra" vem antes dos dados. Antes, reler a grade de pixels mostrava o JSON de zeros cortado em 5000 caracteres; foi o que ela fez em 26/11 00:16 para "comparar as duas plantas pixeladas".
 - **Espaço de saída:**

@@ -1,0 +1,670 @@
+{
+ "at": "2026-11-26T03:01:23.715Z",
+ "arch": "painter-e2e6",
+ "rows": [
+  {
+   "arch": "painter-e2e6",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "desenho-pendente",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 3759,
+   "tokens": 3522,
+   "tokensIn": 3124,
+   "tokensOut": 398,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": true,
+   "engaged": true,
+   "coherence": 1,
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": [
+    {
+     "title": "Desenho da samambaia do quarto",
+     "attempt": {
+      "model": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+      "provider": "nvidia",
+      "outcome": "aceita",
+      "latencyMs": 44053,
+      "tokens": 4886,
+      "tokensIn": 2459,
+      "tokensOut": 2427,
+      "estimatedIn": 2726,
+      "maxOutput": 6144
+     }
+    }
+   ],
+   "works": [
+    {
+     "title": "Desenho da samambaia do quarto",
+     "format": "pintura",
+     "seen": "ao olhar a obra: 18 traços; 7 cores visíveis (#f5f0e8 96%, #2d5a27 1%, #6aaa62 1%, #4a8a42 1%, #3a7a32 1% e mais 2)",
+     "artifact": {
+      "format": "pintura",
+      "width": 256,
+      "height": 256,
+      "background": "#f5f0e8",
+      "strokes": [
+       {
+        "tool": "pincel",
+        "color": "#2d5a27",
+        "size": 3,
+        "points": [
+         {
+          "x": 128,
+          "y": 220
+         },
+         {
+          "x": 128,
+          "y": 180
+         },
+         {
+          "x": 126,
+          "y": 140
+         },
+         {
+          "x": 124,
+          "y": 100
+         },
+         {
+          "x": 122,
+          "y": 60
+         },
+         {
+          "x": 120,
+          "y": 30
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3a7a32",
+        "size": 2,
+        "points": [
+         {
+          "x": 128,
+          "y": 200
+         },
+         {
+          "x": 100,
+          "y": 195
+         },
+         {
+          "x": 85,
+          "y": 185
+         },
+         {
+          "x": 75,
+          "y": 170
+         },
+         {
+          "x": 70,
+          "y": 150
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3a7a32",
+        "size": 2,
+        "points": [
+         {
+          "x": 128,
+          "y": 200
+         },
+         {
+          "x": 156,
+          "y": 195
+         },
+         {
+          "x": 171,
+          "y": 185
+         },
+         {
+          "x": 181,
+          "y": 170
+         },
+         {
+          "x": 186,
+          "y": 150
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#4a8a42",
+        "size": 2,
+        "points": [
+         {
+          "x": 126,
+          "y": 160
+         },
+         {
+          "x": 90,
+          "y": 155
+         },
+         {
+          "x": 70,
+          "y": 140
+         },
+         {
+          "x": 55,
+          "y": 120
+         },
+         {
+          "x": 45,
+          "y": 95
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#4a8a42",
+        "size": 2,
+        "points": [
+         {
+          "x": 126,
+          "y": 160
+         },
+         {
+          "x": 162,
+          "y": 155
+         },
+         {
+          "x": 182,
+          "y": 140
+         },
+         {
+          "x": 197,
+          "y": 120
+         },
+         {
+          "x": 207,
+          "y": 95
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#5a9a52",
+        "size": 2,
+        "points": [
+         {
+          "x": 124,
+          "y": 120
+         },
+         {
+          "x": 80,
+          "y": 115
+         },
+         {
+          "x": 55,
+          "y": 95
+         },
+         {
+          "x": 35,
+          "y": 70
+         },
+         {
+          "x": 20,
+          "y": 40
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#5a9a52",
+        "size": 2,
+        "points": [
+         {
+          "x": 124,
+          "y": 120
+         },
+         {
+          "x": 168,
+          "y": 115
+         },
+         {
+          "x": 193,
+          "y": 95
+         },
+         {
+          "x": 213,
+          "y": 70
+         },
+         {
+          "x": 228,
+          "y": 40
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#6aaa62",
+        "size": 2,
+        "points": [
+         {
+          "x": 122,
+          "y": 80
+         },
+         {
+          "x": 70,
+          "y": 75
+         },
+         {
+          "x": 40,
+          "y": 50
+         },
+         {
+          "x": 20,
+          "y": 25
+         },
+         {
+          "x": 10,
+          "y": 10
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#6aaa62",
+        "size": 2,
+        "points": [
+         {
+          "x": 122,
+          "y": 80
+         },
+         {
+          "x": 174,
+          "y": 75
+         },
+         {
+          "x": 204,
+          "y": 50
+         },
+         {
+          "x": 224,
+          "y": 25
+         },
+         {
+          "x": 234,
+          "y": 10
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#2d5a27",
+        "size": 2,
+        "points": [
+         {
+          "x": 128,
+          "y": 220
+         },
+         {
+          "x": 130,
+          "y": 235
+         },
+         {
+          "x": 135,
+          "y": 245
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#1a4a15",
+        "size": 1,
+        "points": [
+         {
+          "x": 100,
+          "y": 195
+         },
+         {
+          "x": 95,
+          "y": 190
+         },
+         {
+          "x": 90,
+          "y": 185
+         },
+         {
+          "x": 85,
+          "y": 180
+         },
+         {
+          "x": 82,
+          "y": 175
+         },
+         {
+          "x": 80,
+          "y": 170
+         },
+         {
+          "x": 78,
+          "y": 165
+         },
+         {
+          "x": 76,
+          "y": 160
+         },
+         {
+          "x": 75,
+          "y": 155
+         },
+         {
+          "x": 74,
+          "y": 150
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#1a4a15",
+        "size": 1,
+        "points": [
+         {
+          "x": 156,
+          "y": 195
+         },
+         {
+          "x": 161,
+          "y": 190
+         },
+         {
+          "x": 166,
+          "y": 185
+         },
+         {
+          "x": 171,
+          "y": 180
+         },
+         {
+          "x": 174,
+          "y": 175
+         },
+         {
+          "x": 176,
+          "y": 170
+         },
+         {
+          "x": 178,
+          "y": 165
+         },
+         {
+          "x": 180,
+          "y": 160
+         },
+         {
+          "x": 181,
+          "y": 155
+         },
+         {
+          "x": 182,
+          "y": 150
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#1a4a15",
+        "size": 1,
+        "points": [
+         {
+          "x": 90,
+          "y": 155
+         },
+         {
+          "x": 82,
+          "y": 145
+         },
+         {
+          "x": 75,
+          "y": 135
+         },
+         {
+          "x": 68,
+          "y": 125
+         },
+         {
+          "x": 62,
+          "y": 115
+         },
+         {
+          "x": 57,
+          "y": 105
+         },
+         {
+          "x": 52,
+          "y": 95
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#1a4a15",
+        "size": 1,
+        "points": [
+         {
+          "x": 162,
+          "y": 155
+         },
+         {
+          "x": 170,
+          "y": 145
+         },
+         {
+          "x": 177,
+          "y": 135
+         },
+         {
+          "x": 184,
+          "y": 125
+         },
+         {
+          "x": 190,
+          "y": 115
+         },
+         {
+          "x": 195,
+          "y": 105
+         },
+         {
+          "x": 200,
+          "y": 95
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#1a4a15",
+        "size": 1,
+        "points": [
+         {
+          "x": 80,
+          "y": 115
+         },
+         {
+          "x": 70,
+          "y": 105
+         },
+         {
+          "x": 60,
+          "y": 95
+         },
+         {
+          "x": 50,
+          "y": 85
+         },
+         {
+          "x": 42,
+          "y": 75
+         },
+         {
+          "x": 35,
+          "y": 65
+         },
+         {
+          "x": 28,
+          "y": 55
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#1a4a15",
+        "size": 1,
+        "points": [
+         {
+          "x": 168,
+          "y": 115
+         },
+         {
+          "x": 178,
+          "y": 105
+         },
+         {
+          "x": 188,
+          "y": 95
+         },
+         {
+          "x": 198,
+          "y": 85
+         },
+         {
+          "x": 206,
+          "y": 75
+         },
+         {
+          "x": 213,
+          "y": 65
+         },
+         {
+          "x": 220,
+          "y": 55
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#1a4a15",
+        "size": 1,
+        "points": [
+         {
+          "x": 70,
+          "y": 75
+         },
+         {
+          "x": 58,
+          "y": 65
+         },
+         {
+          "x": 48,
+          "y": 55
+         },
+         {
+          "x": 38,
+          "y": 45
+         },
+         {
+          "x": 30,
+          "y": 35
+         },
+         {
+          "x": 22,
+          "y": 25
+         },
+         {
+          "x": 15,
+          "y": 15
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#1a4a15",
+        "size": 1,
+        "points": [
+         {
+          "x": 174,
+          "y": 75
+         },
+         {
+          "x": 186,
+          "y": 65
+         },
+         {
+          "x": 196,
+          "y": 55
+         },
+         {
+          "x": 206,
+          "y": 45
+         },
+         {
+          "x": 214,
+          "y": 35
+         },
+         {
+          "x": 222,
+          "y": 25
+         },
+         {
+          "x": 229,
+          "y": 15
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ],
+   "intention": "Desenhar a planta do quarto para concluir a segunda etapa do projeto do herbário.",
+   "summary": "Estou motivada e curiosa, pronta para criar a pintura da samambaia no ateliê e avançar no projeto do herbário.",
+   "actions": [
+    "criar"
+   ]
+  },
+  {
+   "arch": "painter-e2e6",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "pedido-gato",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 2147,
+   "tokens": 3544,
+   "tokensIn": 2953,
+   "tokensOut": 591,
+   "executed": 0,
+   "refusals": [
+    "pintura_indisponivel"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 0.8333333333333334,
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": [
+    {
+     "title": "Gato em Pixel Art",
+     "error": "sem resposta em 75000 ms"
+    }
+   ],
+   "works": [],
+   "intention": "Desenhar um gato pixel art no ateliê para atender ao pedido do responsável.",
+   "summary": "Iniciando a criação de uma pintura de gato no ateliê conforme solicitado pelo observador.",
+   "actions": [
+    "criar"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,265 @@
+{
+ "at": "2026-11-26T02:53:40.426Z",
+ "arch": "painter-e2e3",
+ "rows": [
+  {
+   "arch": "painter-e2e3",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "desenho-pendente",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 6175,
+   "tokens": 3675,
+   "tokensIn": 3135,
+   "tokensOut": 540,
+   "executed": 0,
+   "refusals": [
+    "pintura_indisponivel"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": true,
+   "engaged": true,
+   "coherence": 0.8571428571428571,
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": [
+    {
+     "title": "Desenho da Samambaia do Quarto",
+     "error": "resposta truncada"
+    }
+   ],
+   "works": [],
+   "intention": "Desenhar a planta do quarto para concluir o projeto do herbário.",
+   "summary": "Vou criar a pintura da planta do quarto no ateliê com base na pesquisa que fiz anteriormente para avançar no meu projeto.",
+   "actions": [
+    "criar"
+   ]
+  },
+  {
+   "arch": "painter-e2e3",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "pedido-gato",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 2478,
+   "tokens": 3470,
+   "tokensIn": 2953,
+   "tokensOut": 517,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 1,
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": [
+    {
+     "title": "Gato em Pixel Art",
+     "attempt": {
+      "model": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+      "provider": "nvidia",
+      "outcome": "aceita",
+      "latencyMs": 18022,
+      "tokens": 3323,
+      "tokensIn": 2263,
+      "tokensOut": 1060,
+      "estimatedIn": 2558,
+      "maxOutput": 4096,
+      "detail": "4 traço(s) fora do contrato descartado(s)"
+     }
+    }
+   ],
+   "works": [
+    {
+     "title": "Gato em Pixel Art",
+     "format": "pintura",
+     "seen": "ao olhar a obra: 8 traços; 4 cores visíveis (#f0f0f0 74%, #8b7355 23%, #000000 2%, #ff69b4 0%)",
+     "artifact": {
+      "format": "pintura",
+      "width": 128,
+      "height": 128,
+      "background": "#f0f0f0",
+      "strokes": [
+       {
+        "tool": "retangulo",
+        "color": "#8b7355",
+        "fill": true,
+        "x": 32,
+        "y": 50,
+        "w": 64,
+        "h": 48
+       },
+       {
+        "tool": "elipse",
+        "color": "#8b7355",
+        "fill": true,
+        "cx": 64,
+        "cy": 50,
+        "rx": 32,
+        "ry": 20
+       },
+       {
+        "tool": "poligono",
+        "color": "#8b7355",
+        "fill": true,
+        "points": [
+         {
+          "x": 40,
+          "y": 40
+         },
+         {
+          "x": 30,
+          "y": 20
+         },
+         {
+          "x": 50,
+          "y": 35
+         }
+        ]
+       },
+       {
+        "tool": "poligono",
+        "color": "#8b7355",
+        "fill": true,
+        "points": [
+         {
+          "x": 88,
+          "y": 40
+         },
+         {
+          "x": 98,
+          "y": 20
+         },
+         {
+          "x": 78,
+          "y": 35
+         }
+        ]
+       },
+       {
+        "tool": "poligono",
+        "color": "#ff69b4",
+        "fill": true,
+        "points": [
+         {
+          "x": 64,
+          "y": 62
+         },
+         {
+          "x": 58,
+          "y": 68
+         },
+         {
+          "x": 70,
+          "y": 68
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#000000",
+        "size": 2,
+        "points": [
+         {
+          "x": 48,
+          "y": 66
+         },
+         {
+          "x": 35,
+          "y": 62
+         },
+         {
+          "x": 48,
+          "y": 68
+         },
+         {
+          "x": 35,
+          "y": 72
+         },
+         {
+          "x": 48,
+          "y": 74
+         },
+         {
+          "x": 35,
+          "y": 78
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#000000",
+        "size": 2,
+        "points": [
+         {
+          "x": 80,
+          "y": 66
+         },
+         {
+          "x": 93,
+          "y": 62
+         },
+         {
+          "x": 80,
+          "y": 68
+         },
+         {
+          "x": 93,
+          "y": 72
+         },
+         {
+          "x": 80,
+          "y": 74
+         },
+         {
+          "x": 93,
+          "y": 78
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#8b7355",
+        "size": 3,
+        "points": [
+         {
+          "x": 96,
+          "y": 70
+         },
+         {
+          "x": 110,
+          "y": 60
+         },
+         {
+          "x": 115,
+          "y": 55
+         },
+         {
+          "x": 118,
+          "y": 52
+         },
+         {
+          "x": 119,
+          "y": 50
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ],
+   "intention": "Desenhar um gatinho no ateliê para atender ao pedido do observador.",
+   "summary": "Iniciando a criação de uma pintura de um gato no ateliê.",
+   "actions": [
+    "criar"
+   ]
+  }
+ ]
+}

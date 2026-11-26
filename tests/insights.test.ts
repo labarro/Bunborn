@@ -15,9 +15,9 @@ function env(): Env {
 async function seed(e: Env) {
   const store = new Store(e.DB);
   const now = Date.now();
-  const s = born(now - 3600000);
+  const s = born(now - 120000);
   let token = (await store.acquire(now))!;
-  await store.commit(token, s, [entry({ ...s, updatedAt: now - 3600000 }, 'nascimento', 'Nascimento FIXTURE.', {}, { importance: 1 })], [], true);
+  await store.commit(token, s, [entry({ ...s, updatedAt: now - 120000 }, 'nascimento', 'Nascimento FIXTURE.', {}, { importance: 1 })], [], true);
   await store.release(token);
   token = (await store.acquire(now))!;
   const at = { ...s, updatedAt: now - 60000 };

@@ -1,0 +1,548 @@
+{
+ "at": "2026-11-26T02:41:34.086Z",
+ "arch": "nemo-draw2",
+ "rows": [
+  {
+   "arch": "nemo-draw2",
+   "model": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+   "scenario": "desenho-pendente",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 26846,
+   "tokens": 5245,
+   "tokensIn": 3389,
+   "tokensOut": 1856,
+   "executed": 0.5,
+   "refusals": [
+    "evidencia_inexistente"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": true,
+   "engaged": true,
+   "coherence": 0.9285714285714286,
+   "works": [
+    {
+     "title": "Samambaia do quarto",
+     "format": "pintura",
+     "seen": "ao olhar a obra: 8 traços; 5 cores visíveis (#f5f0e8 98%, #2d5a27 1%, #4a9a43 1%, #3a7a33 1%, #5ab553 0%)",
+     "artifact": {
+      "format": "pintura",
+      "width": 256,
+      "height": 256,
+      "background": "#f5f0e8",
+      "strokes": [
+       {
+        "tool": "pincel",
+        "color": "#2d5a27",
+        "size": 3,
+        "points": [
+         {
+          "x": 128,
+          "y": 200
+         },
+         {
+          "x": 120,
+          "y": 170
+         },
+         {
+          "x": 115,
+          "y": 140
+         },
+         {
+          "x": 112,
+          "y": 110
+         },
+         {
+          "x": 110,
+          "y": 80
+         },
+         {
+          "x": 109,
+          "y": 50
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3a7a33",
+        "size": 2,
+        "points": [
+         {
+          "x": 110,
+          "y": 180
+         },
+         {
+          "x": 90,
+          "y": 175
+         },
+         {
+          "x": 75,
+          "y": 165
+         },
+         {
+          "x": 65,
+          "y": 150
+         },
+         {
+          "x": 60,
+          "y": 130
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3a7a33",
+        "size": 2,
+        "points": [
+         {
+          "x": 110,
+          "y": 180
+         },
+         {
+          "x": 130,
+          "y": 175
+         },
+         {
+          "x": 145,
+          "y": 165
+         },
+         {
+          "x": 155,
+          "y": 150
+         },
+         {
+          "x": 160,
+          "y": 130
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#4a9a43",
+        "size": 2,
+        "points": [
+         {
+          "x": 112,
+          "y": 150
+         },
+         {
+          "x": 85,
+          "y": 145
+         },
+         {
+          "x": 70,
+          "y": 135
+         },
+         {
+          "x": 60,
+          "y": 120
+         },
+         {
+          "x": 55,
+          "y": 100
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#4a9a43",
+        "size": 2,
+        "points": [
+         {
+          "x": 112,
+          "y": 150
+         },
+         {
+          "x": 138,
+          "y": 145
+         },
+         {
+          "x": 153,
+          "y": 135
+         },
+         {
+          "x": 163,
+          "y": 120
+         },
+         {
+          "x": 168,
+          "y": 100
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#5ab553",
+        "size": 1.5,
+        "points": [
+         {
+          "x": 115,
+          "y": 120
+         },
+         {
+          "x": 95,
+          "y": 115
+         },
+         {
+          "x": 80,
+          "y": 105
+         },
+         {
+          "x": 70,
+          "y": 90
+         },
+         {
+          "x": 65,
+          "y": 70
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#5ab553",
+        "size": 1.5,
+        "points": [
+         {
+          "x": 115,
+          "y": 120
+         },
+         {
+          "x": 135,
+          "y": 115
+         },
+         {
+          "x": 150,
+          "y": 105
+         },
+         {
+          "x": 160,
+          "y": 90
+         },
+         {
+          "x": 165,
+          "y": 70
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#2d5a27",
+        "size": 2,
+        "points": [
+         {
+          "x": 128,
+          "y": 200
+         },
+         {
+          "x": 128,
+          "y": 230
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ],
+   "intention": "Continuar o projeto Herbário do quarto desenhando a samambaia do quarto no ateliê",
+   "summary": "Estou entediada, curiosa e com muita vontade de criar. O projeto Herbário do quarto tem a etapa 'Desenhar a planta' pendente. Vou ao ateliê criar uma pintura da samambaia que pesquisei antes.",
+   "actions": [
+    "criar",
+    "projeto"
+   ]
+  },
+  {
+   "arch": "nemo-draw2",
+   "model": "nvidia:nvidia/nemotron-3-ultra-550b-a55b",
+   "scenario": "pedido-gato",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 37952,
+   "tokens": 4647,
+   "tokensIn": 3202,
+   "tokensOut": 1445,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 1,
+   "works": [
+    {
+     "title": "Gato para o observador",
+     "format": "pintura",
+     "seen": "ao olhar a obra: 11 traços; 2 cores visíveis (#f5f0e8 98%, #3d3d3d 2%)",
+     "artifact": {
+      "format": "pintura",
+      "width": 256,
+      "height": 256,
+      "background": "#f5f0e8",
+      "strokes": [
+       {
+        "tool": "pincel",
+        "color": "#3d3d3d",
+        "size": 4,
+        "points": [
+         {
+          "x": 128,
+          "y": 100
+         },
+         {
+          "x": 110,
+          "y": 85
+         },
+         {
+          "x": 95,
+          "y": 75
+         },
+         {
+          "x": 85,
+          "y": 65
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3d3d3d",
+        "size": 4,
+        "points": [
+         {
+          "x": 128,
+          "y": 100
+         },
+         {
+          "x": 145,
+          "y": 85
+         },
+         {
+          "x": 160,
+          "y": 75
+         },
+         {
+          "x": 170,
+          "y": 65
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3d3d3d",
+        "size": 6,
+        "points": [
+         {
+          "x": 100,
+          "y": 130
+         },
+         {
+          "x": 95,
+          "y": 140
+         },
+         {
+          "x": 90,
+          "y": 155
+         },
+         {
+          "x": 95,
+          "y": 170
+         },
+         {
+          "x": 110,
+          "y": 180
+         },
+         {
+          "x": 128,
+          "y": 185
+         },
+         {
+          "x": 145,
+          "y": 180
+         },
+         {
+          "x": 160,
+          "y": 170
+         },
+         {
+          "x": 165,
+          "y": 155
+         },
+         {
+          "x": 160,
+          "y": 140
+         },
+         {
+          "x": 155,
+          "y": 130
+         },
+         {
+          "x": 128,
+          "y": 125
+         },
+         {
+          "x": 100,
+          "y": 130
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#ffb6c1",
+        "size": 3,
+        "points": [
+         {
+          "x": 128,
+          "y": 150
+         },
+         {
+          "x": 125,
+          "y": 155
+         },
+         {
+          "x": 130,
+          "y": 155
+         },
+         {
+          "x": 128,
+          "y": 150
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3d3d3d",
+        "size": 2,
+        "points": [
+         {
+          "x": 115,
+          "y": 145
+         },
+         {
+          "x": 112,
+          "y": 148
+         },
+         {
+          "x": 118,
+          "y": 148
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3d3d3d",
+        "size": 2,
+        "points": [
+         {
+          "x": 140,
+          "y": 145
+         },
+         {
+          "x": 137,
+          "y": 148
+         },
+         {
+          "x": 143,
+          "y": 148
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3d3d3d",
+        "size": 2,
+        "points": [
+         {
+          "x": 110,
+          "y": 155
+         },
+         {
+          "x": 105,
+          "y": 160
+         },
+         {
+          "x": 115,
+          "y": 160
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3d3d3d",
+        "size": 2,
+        "points": [
+         {
+          "x": 145,
+          "y": 155
+         },
+         {
+          "x": 150,
+          "y": 160
+         },
+         {
+          "x": 140,
+          "y": 160
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3d3d3d",
+        "size": 3,
+        "points": [
+         {
+          "x": 128,
+          "y": 185
+         },
+         {
+          "x": 128,
+          "y": 210
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3d3d3d",
+        "size": 3,
+        "points": [
+         {
+          "x": 115,
+          "y": 185
+         },
+         {
+          "x": 95,
+          "y": 210
+         }
+        ]
+       },
+       {
+        "tool": "pincel",
+        "color": "#3d3d3d",
+        "size": 3,
+        "points": [
+         {
+          "x": 140,
+          "y": 185
+         },
+         {
+          "x": 160,
+          "y": 210
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ],
+   "intention": "Desenhar um gato no ateliê para presentear o observador",
+   "summary": "O observador pediu um desenho de gato. Tenho muita vontade de criar e o ateliê está disponível. Vou fazer uma pintura simples de um gato usando pinceladas.",
+   "actions": [
+    "criar"
+   ]
+  }
+ ]
+}

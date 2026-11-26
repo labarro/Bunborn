@@ -2,14 +2,34 @@
   "note": "Ajustes de qualidade por evidência da produção (Lumi), somados à nota do benchmark. O benchmark mede formato e leitura do contexto; não mediu o comportamento ao longo de muitos ciclos.",
   "models": {
     "groq:openai/gpt-oss-120b": {
-      "adjust": { "cotidiana": -0.3, "criatividade": -0.3 },
+      "adjust": {
+        "cotidiana": -0.3,
+        "criatividade": -0.3
+      },
       "since": "2026-11-25",
       "evidence": "25/11 20:19–22:04Z: diário usado como registro de ações e planos (5 entradas apagadas a pedido do responsável), 4 tentativas seguidas de comer sem fome apesar da recusa visível, leu atividade já concluída como em andamento."
     },
     "groq:openai/gpt-oss-20b": {
-      "adjust": { "cotidiana": -0.3, "criatividade": -0.3 },
+      "adjust": {
+        "cotidiana": -0.3,
+        "criatividade": -0.3
+      },
       "since": "2026-11-25",
       "evidence": "25/11 19:17–19:34Z: repetiu a mesma pesquisa 4 vezes seguidas e propôs pesquisar enquanto dormia."
+    },
+    "nvidia:nvidia/nemotron-3-ultra-550b-a55b": {
+      "homologate": [
+        "criatividade"
+      ],
+      "since": "2026-11-26",
+      "evidence": "Pintura (tela, 26/11): 7 de 7 decisões de desenho válidas em banco descartável (bench-paint6, bench-nemo-draw1..3); samambaias coerentes com 8 a 12 traços e gatos reconhecíveis em 2 de 3. Escolhida pelo responsável ao comparar as pinturas. Latência 27–43 s (limite 45 s); o fallback cobre tempo esgotado."
+    },
+    "gemini:gemini-3.1-flash-lite": {
+      "revoke": [
+        "criatividade"
+      ],
+      "since": "2026-11-26",
+      "evidence": "Pintura: 1 a 2 traços em 4 de 4 desenhos (bench-paint6 e \"Rascunho de Lumi\" em produção, 26/11 01:30Z). Continua como alternativa geral se todos os modelos de criatividade falharem."
     }
   }
 }

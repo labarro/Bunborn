@@ -2,14 +2,15 @@
 // homologated model, with bounded fallback (max 3 attempts) and no effects applied until the
 // engine receives a valid decision. Identity always comes from Bunborn's persisted state (the
 // context), never from a provider-side session.
-import { parseDecision, quotaDay, type Decision, type InvalidAction } from '../../shared/domain';
+import { creatableArtifactSchema, strokeSchema, parseDecision, quotaDay, type Artifact, type Decision, type InvalidAction } from '../../shared/domain';
+import toolContracts from '../../shared/tool-contracts.json';
 import { modelKey, type Category, type ModelEntry } from '../../shared/ai-catalog';
 import compiledDecisionSchema from '../../shared/decision.schema.json';
 import { Store } from '../store';
-import { CognitiveError, systemFor, type Env } from '../provider';
+import { CognitiveError, instructionsFor, systemFor, type Env } from '../provider';
 import { callModel, extractJson, ProviderFailure, type Keys } from './adapters';
 import { freshHealth, loadHealth, onFailure, onSuccess, saveHealth, type Health } from './health';
-import { defaultConfig, knownModels, rankModels, type AiConfig, type Usage } from './router';
+import { defaultConfig, knownModels, PAINTER, rankModels, type AiConfig, type Usage } from './router';
 import { estimateInput, maxOutputFor } from '../../shared/token-budget';
 /** Ledger writes never mask the decision or the original error (audit 25/11). */
 async function safely(db: D1Database, what: string, work: () => Promise<unknown>) {
@@ -178,5 +179,110 @@ export class RoutedProvider {
     (error as CognitiveError & { route?: RouteRecord }).route = route;
     throw error;
   }
+
+  /**
+   * Paints a work she decided to make, always with the painter model (observer's decision, 26/11:
+   * every drawing of hers is made by Nemotron Ultra). The decision itself (to paint, the title,
+   * the motivation) stays the deciding model's; only the painting is requested here, with the
+   * same identity, rules and context. Same budget, health and eligibility checks as a decision;
+   * one attempt, no fallback to another painter.
+   */
+  async paint(context: unknown, request: { title: string; motivation: string }, now: number): Promise<{ artifact: Painting; attempt: RouteAttempt }> {
+    const keys = providerKeys(this.env);
+    const availableProviders = Object.entries(keys).filter(([, k]) => !!k).map(([p]) => p);
+    const config = await loadConfig(this.store.db);
+    const health = await loadHealth(this.store.db);
+    const budget = this.env.BUDGET_DB ? new Store(this.env.BUDGET_DB) : this.store;
+    const usage = await usageMap(this.store, budget, now);
+    const decisionNumber = (context as { facts?: { decisionNumber?: number } }).facts?.decisionNumber ?? 1;
+    const system = instructionsFor(decisionNumber) + '\nContrato da pintura (obrigatório):\n' + JSON.stringify(paintingContract()) + '\n' + paintShape + '\n' + this.systemAddon;
+    const prompt = JSON.stringify(context) + '\n\nPintura que você decidiu fazer agora: ' + JSON.stringify(request);
+    const bytes = new TextEncoder().encode(prompt + system).length;
+    const inputFor = (m: ModelEntry) => estimateInput(bytes, m);
+    const environment = this.env.ENVIRONMENT_ID ?? this.env.ENVIRONMENT;
+    const { ranked, excluded } = rankModels({ models: knownModels(), health, usage, config, environment, availableProviders, now, estimatedTokens: Math.ceil(bytes / 3.2) + 800, inputFor, category: 'criatividade', lastModel: null });
+    const candidate = ranked.find((c) => c.key === PAINTER);
+    if (!candidate) throw new Error('pintor indisponível: ' + (excluded.find((e) => e.key === PAINTER)?.reason ?? 'sem chave ou desativado'));
+    const m = { ...candidate.model, maxOutput: Math.max(candidate.model.maxOutput, PAINT_OUTPUT) };
+    const h: Health = health.get(PAINTER) ?? freshHealth(PAINTER);
+    const day = dayFor(m, now);
+    const rpd = Math.min(m.limits.rpd, config.dailyCaps[PAINTER] ?? Infinity);
+    const inTokens = inputFor(m);
+    // A detailed painting used 3824 of 4096 output tokens and another truncated (26/11): more room.
+    const maxOutput = Math.max(PAINT_OUTPUT, maxOutputFor(m, 'criatividade', inTokens));
+    const local = await this.store.reserve(m.id, day, now, Math.floor(rpd * 0.9), m.limits.rpm, inTokens + maxOutput, environment, m.limits.tpm, m.limits.tpd, m.provider, 'criatividade');
+    if (!local) throw new Error('orçamento local do pintor');
+    let shared: string | null = null;
+    if (budget !== this.store) {
+      try {
+        shared = await budget.reserve(m.id, day, now, rpd, m.limits.rpm, inTokens + maxOutput, environment, m.limits.tpm, m.limits.tpd, m.provider, 'criatividade');
+      } catch {
+        shared = null;
+      }
+      if (!shared) {
+        await safely(this.store.db, 'settle-local', () => this.store.settle(local, 0, 'negada_global'));
+        throw new Error('orçamento global do pintor');
+      }
+    }
+    const started = Date.now();
+    let tokens = 0, tokensIn = 0, tokensOut = 0, status = 'falha';
+    try {
+      const reply = await callModel(m, { system, prompt, schema: paintingSchema(), maxOutput, reasoning: 'medio' }, keys, this.fetcher, PAINT_TIMEOUT_MS);
+      tokens = reply.tokensTotal; tokensIn = reply.tokensIn; tokensOut = reply.tokensOut;
+      const json = extractJson(reply.text) as { artifact?: unknown; format?: unknown } | null;
+      const { artifact, dropped, why } = readPainting(json?.artifact ?? (json?.format === 'pintura' ? json : undefined));
+      if (!artifact) throw new ProviderFailure('resposta_invalida', 200, null, 'pintura fora do contrato: ' + why);
+      status = 'sucesso';
+      await saveHealth(this.store.db, onSuccess(h, reply.latencyMs, now, 0), now);
+      return { artifact, attempt: { model: PAINTER, provider: m.provider, outcome: 'aceita', latencyMs: reply.latencyMs, tokens, tokensIn, tokensOut, estimatedIn: inTokens, maxOutput, ...(dropped ? { detail: dropped + ' traço(s) fora do contrato descartado(s)' } : {}) } };
+    } catch (e) {
+      const f = e instanceof ProviderFailure ? e : new ProviderFailure('resposta_invalida', 0, null, String((e as Error)?.message ?? e).slice(0, 200));
+      tokens = (e as { reply?: { tokensTotal?: number } }).reply?.tokensTotal ?? tokens;
+      status = f.kind;
+      await saveHealth(this.store.db, onFailure(h, f.kind, f.detail, now, f.retryAfterMs), now);
+      throw f;
+    } finally {
+      const elapsed = Date.now() - started;
+      await safely(this.store.db, 'settle-local', () => this.store.settle(local, tokens, status, elapsed));
+      if (shared) {
+        const id = shared;
+        await safely(this.store.db, 'settle-global', () => budget.settle(id, tokens, status, elapsed));
+      }
+    }
+  }
+}
+type Painting = Extract<Artifact, { format: 'pintura' }>;
+// Nemotron paints in 23–43 s; a decision allows 45 s, a painting a little more (26/11 tests).
+const PAINT_TIMEOUT_MS = 75000;
+const PAINT_OUTPUT = 6144;
+/**
+ * One malformed stroke (an ellipse with "y" instead of "cy") used to discard a 17-stroke painting
+ * (26/11). Invalid strokes are dropped; the painting stands if at least one stroke is valid.
+ */
+export function readPainting(raw: unknown): { artifact: Painting | null; dropped: number; why: string } {
+  const whole = creatableArtifactSchema.safeParse(raw);
+  if (whole.success) return whole.data.format === 'pintura' ? { artifact: whole.data, dropped: 0, why: '' } : { artifact: null, dropped: 0, why: 'formato ' + whole.data.format };
+  const r = raw as { format?: unknown; strokes?: unknown } | null;
+  if (!r || typeof r !== 'object') return { artifact: null, dropped: 0, why: 'sem objeto artifact' };
+  if (r.format !== 'pintura' || !Array.isArray(r.strokes)) return { artifact: null, dropped: 0, why: 'format=' + String(r.format).slice(0, 20) + ', strokes ' + (Array.isArray(r.strokes) ? 'ok' : 'ausente') };
+  const strokes = r.strokes.filter((x) => strokeSchema.safeParse(x).success);
+  const again = creatableArtifactSchema.safeParse({ ...r, strokes: strokes.slice(0, 160) });
+  if (again.success && again.data.format === 'pintura') return { artifact: again.data, dropped: r.strokes.length - strokes.length, why: '' };
+  const issue = again.error?.issues[0];
+  return { artifact: null, dropped: 0, why: issue ? issue.path.join('.') + ' ' + issue.message : 'inválida' };
+}
+const paintShape = 'Formato obrigatório da resposta: um único objeto JSON {"artifact": <a pintura conforme o contrato>}. Sem texto fora do JSON.';
+/** The painting branch of the creation contract, from the precompiled manifest. */
+function paintingContract() {
+  const criar = (toolContracts as Record<string, unknown>[]).find((c) => c.type === 'criar') as { artifact: Record<string, unknown[]> };
+  return Object.values(criar.artifact)[0].find((o) => (o as { format?: string }).format === 'pintura');
+}
+type SchemaNode = { const?: string; anyOf?: SchemaNode[]; properties?: Record<string, SchemaNode> };
+/** The painting branch of the precompiled JSON schema, for providers with structured output. */
+function paintingSchema() {
+  const actions = (compiledDecisionSchema as unknown as { properties: { actions: { items: SchemaNode } } }).properties.actions.items.anyOf!;
+  const criar = actions.find((a) => a.properties?.type?.const === 'criar')!;
+  const pintura = criar.properties!.artifact.anyOf!.find((o) => o.properties?.format?.const === 'pintura');
+  return { type: 'object', properties: { artifact: pintura }, required: ['artifact'] };
 }
 export { modelKey };
