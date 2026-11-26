@@ -65,7 +65,7 @@ export function visibleColours(a: Artifact): { color: string; share: number }[] 
   if (a.format === 'pixels') {
     for (const row of a.pixels) for (const p of row) { const c = a.palette[p].toLowerCase(); counts.set(c, (counts.get(c) ?? 0) + 1); total++; }
   } else if (a.format === 'pintura') {
-    const line = Math.max(1, Math.min(a.width, a.height) / 100);
+    const line = Math.max(a.width, a.height) / 200; // renderer: src/paint-raster.ts outlineWidth
     const boxes = a.strokes.map((st) => boxOf(st, line));
     const GRID = gridFor(a.strokes.reduce((t, st) => t + ('points' in st ? st.points.length : 1), 0));
     for (let gy = 0; gy < GRID; gy++)

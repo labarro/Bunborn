@@ -343,6 +343,14 @@ O ponto em que isso pesa é a continuidade dos assuntos: o projeto de observaç�
 - **Na interface:** renderizado como SVG montado só a partir de primitivas validadas, sem nenhum markup vindo do modelo; o texto é escapado.
 - **Grade de pixels:** saiu do contrato de criação (`creatableArtifactSchema`). As obras antigas em pixels continuam válidas em backups e visíveis no acervo (`artifactSchema`).
 - **Ela vê a obra:** depois de criar, o resultado da ação traz o que ela vê, por exemplo "ao olhar a obra: 12 traços; 7 cores visíveis (#f5f0e8 86%, …)" ou "uma só cor cobre a tela inteira". A percepção usa amostragem adaptativa de até 24×24 com caixas delimitadoras (`shared/art.ts`; pior caso medido em cerca de 3 ms, contra 23 ms sem o limite), aparece em `thread` na decisão seguinte e fica gravada em `artefato.data.seen`. É percepção, não conselho.
+- **Estilo MS Paint (26/11, pedido do observador, com imagens de referência):** `src/paint-raster.ts` desenha num canvas.
+  - **Camadas sem suavização:** cada traço é desenhado numa camada própria e limiarizado (alfa ≥ 50%); nenhuma borda é suavizada.
+  - **Cores e formas:** cores chapadas; retângulos, elipses e polígonos retos, como as ferramentas do Paint.
+  - **Pincel e texto:** o pincel tem tremor de cerca de 1 px, como mão no mouse; o texto sai em Arial serrilhado.
+  - **Resolução:** cerca de 480 px no lado maior, com contorno de cerca de 0,5% da tela, a mesma espessura usada pela percepção.
+  - **Determinístico:** só a aparência muda. O texto dela vira pixels no canvas, nunca markup.
+  - **Tentativa descartada:** um estilo "à mão" com papel e aquarela, em SVG, foi feito antes e descartado pelo observador por não parecer desenho.
+- **Prompt corrigido:** a descrição do mundo ainda citava "desenho em pixels". Ela tentou "pixel art" às 01:53 e recebeu uma recusa sem motivo. Agora o motivo da recusa de uma ação malformada vai junto no resultado, por exemplo "formato inválido: artifact.format (… Expected 'texto' | 'pintura' | …)".
 - **Ao reler uma obra (`ler_obra`), ela também vê:** o "ao olhar a obra" vem antes dos dados. Antes, reler a grade de pixels mostrava o JSON de zeros cortado em 5000 caracteres; foi o que ela fez em 26/11 00:16 para "comparar as duas plantas pixeladas".
 - **Espaço de saída:**
   - com sinal criativo (projeto criativo ativo, criatividade ≥ 70 ou tédio ≥ 70), o teto de saída é o de criação (4096) mesmo quando outra categoria escolhe o modelo, por exemplo "pesquisa" logo depois de pesquisar;

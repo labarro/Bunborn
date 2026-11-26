@@ -510,7 +510,8 @@ export async function tick(
         });
       records.push(intent);
       for (const bad of invalidActions) {
-        outcomes.push({ action: bad.type, result: 'recusada', code: 'acao_malformada' });
+        // The reason travels with the result so she can understand it (it used to say only "acao_malformada").
+        outcomes.push({ action: bad.type, result: 'recusada', code: 'acao_malformada', detail: { note: 'formato inválido: ' + bad.issues.map((i) => (i.path || 'type') + ' (' + i.message + ')').join('; ').slice(0, 240) } });
         records.push(entry(s, 'erro_ferramenta', 'Ação rejeitada ou indisponível.', { tool: bad.type, code: 'acao_malformada', detail: { issues: bad.issues, hint: 'Corrija os campos listados em issues conforme o contrato da ferramenta: ' + bad.issues.map((i) => (i.path || 'type') + ' (' + i.message + ')').join('; ').slice(0, 400) } }));
         s.motives.frustracao = clamp(s.motives.frustracao + 4);
       }

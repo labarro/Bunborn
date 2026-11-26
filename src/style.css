@@ -925,8 +925,9 @@ pre {
   overflow: auto;
 }
 .painting {
-  width: min(100%, 320px);
+  width: min(100%, 360px);
   height: auto;
+  image-rendering: pixelated;
   margin: 20px auto;
   display: block;
   border: 10px solid #e5d9ed;
