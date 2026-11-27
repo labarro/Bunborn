@@ -103,7 +103,7 @@ export async function callModel(model: ModelEntry, req: CognitiveRequest, keys: 
           contents: [{ role: 'user', parts: [{ text: req.prompt }] }],
           generationConfig: {
             responseMimeType: 'application/json',
-            ...(model.structured === 'json_schema' ? { responseJsonSchema: req.schema } : {}),
+            ...(model.structured === 'json_schema' && req.schema ? { responseJsonSchema: req.schema } : {}),
             maxOutputTokens: Math.min(req.maxOutput, model.maxOutput),
             ...(model.reasoning === 'configuravel' && model.id.startsWith('gemini-3') ? { thinkingConfig: { thinkingLevel: req.reasoning === 'medio' ? 'low' : 'minimal' } } : {}),
           },

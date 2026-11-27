@@ -91,3 +91,11 @@ Migrações apenas aditivas (0001–0009). `0007_backup_segments`, `0008_message
 ## Casa (habitat v2, 26/11)
 
 A planta, as paredes, as portas, os tipos de objeto, os caminhos e a validade do arranjo estão em `shared/house.ts`. Período, estações, clima, céu e jardim estão em `shared/world.ts` e são funções puras do relógio virtual: o mesmo código roda no Worker e no navegador, sem escrita extra no D1. A cena (`src/habitat/`) só desenha o estado persistido, mais detalhes corporais locais que não geram registros. Detalhes em HABITAT.md e ART_DIRECTION.md.
+
+
+## Diversidade, mundo vivo e aprendizado (27/11)
+
+- **Determinísticos, sem IA:** `shared/similarity.ts` (similaridade, MMR, SimHash), `shared/events.ts` (acontecimentos do mundo, só o percebido é gravado como `ambiente`) e `shared/creative.ts` (diferença entre versões e seções).
+- **Motor:** novas ações `ir`, `habilidade`, `procedimento`, `experimento` e `obra_secao`; experimentos medidos pelo motor.
+- **Observador:** `/api/trajectory` e `/api/world`, ambos públicos e só de leitura.
+- **Documentos:** COGNITIVE_DIVERSITY.md, LIVING_WORLD.md, LEARNING.md, EXPERIMENTATION.md e CREATIVE_SYSTEM.md.

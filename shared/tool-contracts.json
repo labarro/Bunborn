@@ -214,6 +214,67 @@
     "objectId": "string maxLength 160"
   },
   {
+    "type": "habilidade",
+    "id": "string maxLength 160",
+    "nome": "string maxLength 160",
+    "descricao": "string maxLength 160",
+    "tecnicas": {
+      "LISTA_DE": "string maxLength 160",
+      "maxItens": 6
+    },
+    "limitacoes": "string maxLength 160 | null",
+    "evidence": {
+      "LISTA_DE": "string maxLength 100",
+      "maxItens": 8
+    }
+  },
+  {
+    "type": "procedimento",
+    "id": "string maxLength 160",
+    "titulo": "string maxLength 160",
+    "contexto": "pintura|escrita|musica|jardim|pesquisa|experimento|organizacao|outro",
+    "passos": {
+      "LISTA_DE": "string maxLength 160",
+      "maxItens": 8
+    },
+    "evidence": {
+      "LISTA_DE": "string maxLength 100",
+      "maxItens": 8
+    }
+  },
+  {
+    "type": "experimento",
+    "acao": "iniciar|medir|concluir|abandonar",
+    "id": "string maxLength 160",
+    "pergunta": "string maxLength 160 | null",
+    "hipotese": "string maxLength 160 | null",
+    "variavel": "string maxLength 160 | null",
+    "grupos": {
+      "UM_DESTES_OBJETOS (escolha exatamente um; o valor é um objeto, nunca uma lista)": [
+        {
+          "LISTA_DE": {
+            "canteiro": "string maxLength 160",
+            "condicao": "string maxLength 160"
+          },
+          "maxItens": 4
+        },
+        "null"
+      ]
+    },
+    "conclusao": "string maxLength 2000 | null"
+  },
+  {
+    "type": "obra_secao",
+    "id": "string maxLength 160",
+    "secao": "string maxLength 160",
+    "conteudo": "string maxLength 4000",
+    "modo": "adicionar|substituir"
+  },
+  {
+    "type": "ir",
+    "destino": "string maxLength 160"
+  },
+  {
     "type": "jardim",
     "acao": "plantar|regar|colher",
     "canteiro": "string maxLength 160",

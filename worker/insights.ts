@@ -1,4 +1,5 @@
 import type { Env } from './provider';
+import { contentWords, jaccard, normalize, repeatedSequences, rollingSimilarity } from '../shared/similarity';
 import { Store, decode, type Row } from './store';
 // Public summaries built ONLY from stored records (counts, lists, latest versions).
 // No model call and no interpretation is added. Results are cached in memory of the single
@@ -110,4 +111,78 @@ export async function recordVisit(env: Env, request: Request) {
 export async function visitorsToday(env: Env) {
   const day = dayKey(Date.now());
   return cached(env, 'visitors:' + day, 30000, async () => ({ day, today: (await env.DB.prepare('SELECT COUNT(*) AS n FROM visits WHERE day=?').bind(day).first<{ n: number }>())?.n ?? 0 }));
+}
+
+// ── Trajectory (27/11): qualitative evolution and technical repetition indicators ───────────
+// Built only from stored records, deterministic, cached. These are indicators about a computer
+// simulation's behaviour, not psychological diagnoses, and they are never sent to the creature.
+export async function trajectory(env: Env) {
+  return cached(env, 'trajectory', 300000, async () => {
+    const now = Date.now(), since = now - 86400000;
+    const rows = (await env.DB.prepare("SELECT * FROM records WHERE real_at>=? AND kind IN ('intencao','diario','artefato','ambiente','experimento','habilidade','procedimento','pesquisa','conceito','jardim','memoria') ORDER BY seq").bind(since - 86400000).all<Row>()).results.map(decode);
+    const cur = rows.filter((r) => r.realAt >= since), prev = rows.filter((r) => r.realAt < since);
+    const of = (list: typeof rows, kind: string) => list.filter((r) => r.kind === kind);
+    const intents = of(cur, 'intencao');
+    const outcomes = intents.flatMap((r) => (r.data.outcomes ?? []) as { action: string; result: string; code?: string }[]);
+    const done = outcomes.filter((o) => o.result === 'feita');
+    const dist: Record<string, number> = {};
+    for (const o of done) { const k = o.action.replace(/^atividade:/, ''); dist[k] = (dist[k] ?? 0) + 1; }
+    const refusals: Record<string, number> = {};
+    for (const o of outcomes) if (o.result === 'recusada') refusals[o.code ?? '?'] = (refusals[o.code ?? '?'] ?? 0) + 1;
+    const mainSeq = intents.map((r) => ((r.data.outcomes ?? []) as { action: string; result: string }[]).filter((o) => o.result === 'feita').map((o) => o.action.replace(/^atividade:/, '')).join('+') || '—');
+    const models: Record<string, { decisions: number; diary: number; works: number }> = {};
+    for (const r of intents) {
+      const m = String(r.data.model ?? '?');
+      models[m] ??= { decisions: 0, diary: 0, works: 0 };
+      models[m].decisions++;
+      for (const o of (r.data.outcomes ?? []) as { action: string; result: string }[]) if (o.result === 'feita') { if (o.action === 'diario') models[m].diary++; if (o.action === 'criar' || o.action === 'obra_secao') models[m].works++; }
+    }
+    const diary = of(cur, 'diario'), diaryPrev = of(prev, 'diario');
+    const openings: Record<string, number> = {};
+    for (const r of diary) { const o = normalize(r.content).split(' ').slice(0, 3).join(' '); openings[o] = (openings[o] ?? 0) + 1; }
+    const works = of(cur, 'artefato');
+    const latestBy = <T extends { entityId: string }>(list: T[]) => [...new Map(list.map((r) => [r.entityId, r])).values()];
+    const retrieval = (await env.DB.prepare('SELECT count FROM retrievals ORDER BY count DESC LIMIT 200').all<{ count: number }>()).results.map((r) => r.count);
+    const totalRet = retrieval.reduce((a, b) => a + b, 0);
+    const memNew = of(cur, 'memoria').filter((r) => r.origin === 'criatura');
+    const memDup = memNew.filter((r, i) => memNew.slice(0, i).some((p) => jaccard(contentWords(p.content), contentWords(r.content)) >= 0.5)).length;
+    const exps = latestBy(rows.filter((r) => r.kind === 'experimento'));
+    const changeOf = (r: { data: Record<string, unknown> }) => (r.data.revision as { change?: string } | undefined)?.change;
+    return {
+      generatedAt: now,
+      window: '24 horas reais (comparadas às 24 anteriores)',
+      behaviour: {
+        decisions: intents.length,
+        actionsDone: dist,
+        refusalRate: outcomes.length ? Math.round(((outcomes.length - done.length) / outcomes.length) * 100) / 100 : null,
+        refusals,
+        repeatedSequences: repeatedSequences(mainSeq, 3, 3).slice(0, 5).map(([seq, n]) => ({ seq, n })),
+        byModel: models,
+      },
+      creative: {
+        newWorks: works.filter((r) => Number(r.data.version ?? 1) === 1).length,
+        revisions: works.filter((r) => Number(r.data.version ?? 1) > 1).length,
+        measuredChanges: works.filter((r) => changeOf(r) && Number(r.data.version) > 1).slice(-5).map((r) => ({ title: r.content, version: r.data.version, change: changeOf(r) })),
+        formats: works.reduce((a, r) => { const f = String((r.data.artifact as { format?: string } | undefined)?.format ?? '?'); a[f] = (a[f] ?? 0) + 1; return a; }, {} as Record<string, number>),
+        longWorks: latestBy(works).filter((r) => Array.isArray(r.data.sections) && (r.data.sections as unknown[]).length).map((r) => ({ title: r.content, sections: r.data.sections })),
+      },
+      learning: {
+        research: of(cur, 'pesquisa').length,
+        concepts: of(cur, 'conceito').length,
+        skills: latestBy(rows.filter((r) => r.kind === 'habilidade')).map((r) => ({ nome: r.data.nome, tecnicas: r.data.tecnicas, evidencias: ((r.data.evidence ?? []) as unknown[]).length, versao: r.data.version, declaradaPor: 'criatura' })),
+        procedures: latestBy(rows.filter((r) => r.kind === 'procedimento')).map((r) => ({ titulo: r.content, contexto: r.data.contexto, passos: ((r.data.passos ?? []) as unknown[]).length, evidencias: ((r.data.evidence ?? []) as unknown[]).length })),
+      },
+      experiments: exps.map((r) => ({ pergunta: r.data.pergunta, hipotese: r.data.hipotese, status: r.data.status, medicoes: ((r.data.medicoes ?? []) as unknown[]).length, conclusao: r.data.conclusao ?? null })),
+      world: of(cur, 'ambiente').slice(-8).map((r) => ({ what: r.content, at: r.realAt, rare: !!r.data.rare })),
+      repetition: {
+        note: 'Indicadores técnicos de repetição numa simulação computacional. Repetir não é necessariamente um problema: hábitos e preferências também se repetem.',
+        diarySimilarity: { now: rollingSimilarity(diary.map((r) => r.content)), before: rollingSimilarity(diaryPrev.map((r) => r.content)) },
+        diaryOpenings: Object.entries(openings).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, 5),
+        intentionSimilarity: { now: rollingSimilarity(intents.map((r) => r.content), 6), before: rollingSimilarity(of(prev, 'intencao').map((r) => r.content), 6) },
+        memoryConcentration: totalRet ? { top5Share: Math.round((retrieval.slice(0, 5).reduce((a, b) => a + b, 0) / totalRet) * 100) / 100, note: 'parcela das recuperações acumuladas que foi para as 5 memórias mais recuperadas' } : null,
+        newMemories: memNew.length,
+        nearDuplicateMemories: memDup,
+      },
+    };
+  });
 }

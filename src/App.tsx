@@ -221,6 +221,7 @@ export function App() {
     [next, setNext] = useState<number | null>(null),
     [query, setQuery] = useState(''),
     [filter, setFilter] = useState('todas'),
+    [group, setGroup] = useState(''),
     [message, setMessage] = useState(''),
     [monitor, setMonitor] = useState<unknown>(null),
     [multiplier, setMultiplier] = useState(6),
@@ -302,13 +303,13 @@ export function App() {
         'Recursos',
       ].includes(tab);
       const result = await api<{ records: RecordEntry[]; next: number | null }>(
-        `records?kind=${tabKind[tab]}&after=${after}&latest=${latest}&q=${encodeURIComponent(query)}`,
+        `records?kind=${tabKind[tab]}&after=${after}&latest=${latest}&q=${encodeURIComponent(query)}${tab === 'Linha do tempo' && group ? `&group=${group}` : ''}`,
       );
       setRecords((old) => (append ? [...old, ...result.records] : result.records));
       setNext(result.next ?? null);
       if (tab === 'Monitoramento') setMonitor(await api('monitor'));
     },
-    [auth, publicObs, tab, query],
+    [auth, publicObs, tab, query, group],
   );
   useEffect(() => {
     setRecords([]);
@@ -700,6 +701,22 @@ export function App() {
                   <h2>{tab === 'Linha do tempo' ? 'Registro completo' : tab}</h2>
                 </div>
                 <div className="filters">
+                  {tab === 'Linha do tempo' ? (
+                    <select aria-label="Tipo de acontecimento" value={group} onChange={(e) => setGroup(e.target.value)}>
+                      <option value="">Tudo (registro integral)</option>
+                      <option value="descobertas">Descobertas</option>
+                      <option value="obras">Obras</option>
+                      <option value="projetos">Projetos</option>
+                      <option value="experimentos">Experimentos</option>
+                      <option value="aprendizados">Aprendizados</option>
+                      <option value="identidade">Identidade</option>
+                      <option value="habitat">Casa e jardim</option>
+                      <option value="ambiente">Acontecimentos do mundo</option>
+                      <option value="interacoes">Interações</option>
+                      <option value="reflexoes">Reflexões</option>
+                      <option value="tecnicos">Eventos técnicos</option>
+                    </select>
+                  ) : null}
                   {tab === 'Memórias' ? (
                     <select
                       aria-label="Categoria de memória"

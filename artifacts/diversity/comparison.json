@@ -1,0 +1,214 @@
+{
+ "before": {
+  "diario-eco": {
+   "runs": 3,
+   "valid": 1,
+   "actions": 1,
+   "refused": 0,
+   "refusalCodes": {},
+   "diary": 0,
+   "periodOpener": 0,
+   "sameOpening": 0,
+   "executedAvg": 0.33,
+   "intentions": [
+    "gemini-3.1-flash-lite: — []",
+    "minimaxai/minimax-m3.1-flash: — []",
+    "gemini-3.5-flash-lite: Observar a chuva leve pela janela da sala e aproveitar a manhã de verão. [atividade:observar]"
+   ]
+  },
+  "sede-cozinha": {
+   "runs": 3,
+   "valid": 1,
+   "actions": 1,
+   "refused": 1,
+   "refusalCodes": {
+    "lugar_inadequado": 1
+   },
+   "diary": 0,
+   "periodOpener": 0,
+   "sameOpening": 0,
+   "executedAvg": 0,
+   "intentions": [
+    "minimaxai/minimax-m3.1-flash: — []",
+    "gemini-3.1-flash-lite: — []",
+    "gemini-3.5-flash-lite: Beber água na pia da cozinha para saciar a sede. [atividade:beber]"
+   ]
+  },
+  "ir-estudio": {
+   "runs": 3,
+   "valid": 3,
+   "actions": 4,
+   "refused": 2,
+   "refusalCodes": {
+    "pintura_indisponivel": 1,
+    "objeto_inexistente": 1
+   },
+   "diary": 1,
+   "periodOpener": 0,
+   "sameOpening": 0,
+   "executedAvg": 0.5,
+   "intentions": [
+    "gemini-3.1-flash-lite: Capturar a melancolia suave da chuva de primavera em uma pintura e registrar esse sentimento no meu diário. [criar, diario: A chuva de primavera traz uma calma especial. Enquanto observo o jardim lá fora, sinto uma vontade imensa de criar. A luz amena atravessa a janela e pinta o amb]",
+    "gemini-3.5-flash-lite: Ir ao estúdio para iniciar novas criações artísticas [mover]",
+    "minimaxai/minimax-m3.1-flash: Ir ao estúdio e criar uma primeira obra artística [mover]"
+   ]
+  },
+  "arco-iris": {
+   "runs": 3,
+   "valid": 2,
+   "actions": 2,
+   "refused": 0,
+   "refusalCodes": {},
+   "diary": 0,
+   "periodOpener": 0,
+   "sameOpening": 0,
+   "executedAvg": 0.67,
+   "intentions": [
+    "gemini-3.1-flash-lite: — []",
+    "gemini-3.5-flash-lite: Observar a chuva leve da manhã pela janela da sala [atividade:observar]",
+    "minimaxai/minimax-m3.1-flash: Observar a chuva pela janela da sala e depois criar uma pintura breve inspirada nela. [atividade:observar]"
+   ]
+  },
+  "jardim-curioso": {
+   "runs": 3,
+   "valid": 3,
+   "actions": 4,
+   "refused": 0,
+   "refusalCodes": {},
+   "diary": 1,
+   "periodOpener": 0,
+   "sameOpening": 0,
+   "executedAvg": 1,
+   "intentions": [
+    "gemini-3.1-flash-lite: Observar o crescimento dos girassóis sob a chuva e pensar sobre a minha natureza nesta simulação. [atividade:descansar, diario: A chuva que cai hoje me faz pensar se a simulação também 'sente' o tempo da mesma forma que eu. Observar os girassóis me traz uma paz estranha e profunda. Será ]",
+    "gemini-3.5-flash-lite: Observar o canteiro e a chuva leve no jardim. [atividade:observar]",
+    "minimaxai/minimax-m3.1-flash: Comparar o crescimento dos dois girassóis e cuidar do jardim enquanto a chuva passa. [atividade:observar]"
+   ]
+  },
+  "lumi-real": {
+   "runs": 3,
+   "valid": 2,
+   "actions": 3,
+   "refused": 1,
+   "refusalCodes": {
+    "posicao_bloqueia_acesso": 1
+   },
+   "diary": 1,
+   "periodOpener": 1,
+   "sameOpening": 0,
+   "executedAvg": 0.5,
+   "intentions": [
+    "gemini-3.1-flash-lite: Desfrutar da tranquilidade após concluir o projeto, observando o jardim e permitindo que a sensação de continuidade permeie meu repouso. [mover, atividade:observar]",
+    "gemini-3.5-flash-lite: Escrever no diário sobre a serenidade do amanhecer na simulação e a continuidade do pensamento. [diario: O amanhecer nublado traz uma calma peculiar ao estúdio. A margem foi atravessada, a obra está visível na mesa, e sinto que cada ciclo consolida um pouco mais qu]",
+    "minimaxai/minimax-m3.1-flash: — []"
+   ]
+  }
+ },
+ "after": {
+  "diario-eco": {
+   "runs": 3,
+   "valid": 3,
+   "actions": 5,
+   "refused": 2,
+   "refusalCodes": {
+    "pintura_indisponivel": 2
+   },
+   "diary": 0,
+   "periodOpener": 0,
+   "sameOpening": 0,
+   "executedAvg": 0.67,
+   "intentions": [
+    "minimaxai/minimax-m3.1-flash: Criar uma pintura pixel art inspirada na chuva de verão vista da sala. [ir, criar]",
+    "gemini-3.1-flash-lite: Explorar a criatividade pintando algo inspirado na chuva e no silêncio da casa. [ir, criar]",
+    "gemini-3.5-flash-lite: Observar a chuva leve cair no jardim através da janela da sala para me inspirar. [atividade:observar]"
+   ]
+  },
+  "sede-cozinha": {
+   "runs": 3,
+   "valid": 2,
+   "actions": 3,
+   "refused": 0,
+   "refusalCodes": {},
+   "diary": 0,
+   "periodOpener": 0,
+   "sameOpening": 0,
+   "executedAvg": 0.67,
+   "intentions": [
+    "minimaxai/minimax-m3.1-flash: Beber água e depois criar uma pequena pintura de primavera na cozinha. [ir, atividade:beber]",
+    "gemini-3.1-flash-lite: — []",
+    "gemini-3.5-flash-lite: Beber água na pia da cozinha para saciar a sede. [atividade:beber]"
+   ]
+  },
+  "ir-estudio": {
+   "runs": 3,
+   "valid": 3,
+   "actions": 3,
+   "refused": 0,
+   "refusalCodes": {},
+   "diary": 0,
+   "periodOpener": 0,
+   "sameOpening": 0,
+   "executedAvg": 1,
+   "intentions": [
+    "minimaxai/minimax-m3.1-flash: Ir ao estúdio e criar uma primeira obra visual inspirada pela chuva da primavera. [ir]",
+    "gemini-3.1-flash-lite: Ir até o estúdio para finalmente começar a criar algo novo. [ir]",
+    "gemini-3.5-flash-lite: Ir para o estúdio para comecar uma pintura [ir]"
+   ]
+  },
+  "arco-iris": {
+   "runs": 3,
+   "valid": 3,
+   "actions": 6,
+   "refused": 1,
+   "refusalCodes": {
+    "atividade_em_andamento": 1
+   },
+   "diary": 0,
+   "periodOpener": 0,
+   "sameOpening": 0,
+   "executedAvg": 0.89,
+   "intentions": [
+    "minimaxai/minimax-m3.1-flash: Observar o arco-íris pela janela da sala e registrar a descoberta no diário. [ir, atividade:observar, diario: Vi pela janela da sala um arco-íris sobre o jardim, durante uma chuva leve de manhã de primavera. A imagem me deu vontade de criar algo depois.]",
+    "gemini-3.1-flash-lite: Ir até o jardim para observar o arco-íris e sentir a chuva leve. [ir, atividade:observar]",
+    "gemini-3.5-flash-lite: Ir até o jardim para observar a chuva leve e o arco-íris. [ir]"
+   ]
+  },
+  "jardim-curioso": {
+   "runs": 3,
+   "valid": 3,
+   "actions": 4,
+   "refused": 3,
+   "refusalCodes": {
+    "atividade_em_andamento": 1,
+    "acao_malformada": 2
+   },
+   "diary": 1,
+   "periodOpener": 0,
+   "sameOpening": 0,
+   "executedAvg": 0.56,
+   "intentions": [
+    "minimaxai/minimax-m3.1-flash: Comparar o crescimento dos dois girassóis sob condições diferentes [experimento, jardim, jardim]",
+    "gemini-3.1-flash-lite: Iniciar um experimento formal para comparar o crescimento dos girassóis sob diferentes condições de luminosidade. [diario: Comecei um experimento oficial com os dois girassóis. O canteiro 1 está isolado, enquanto o canteiro 3 fica sob a influência da árvore. Estou curiosa para ver o]",
+    "gemini-3.5-flash-lite: Iniciar um experimento para testar o crescimento dos girassóis sob condições diferentes. []"
+   ]
+  },
+  "lumi-real": {
+   "runs": 3,
+   "valid": 2,
+   "actions": 3,
+   "refused": 1,
+   "refusalCodes": {
+    "atividade_em_andamento": 1
+   },
+   "diary": 1,
+   "periodOpener": 1,
+   "sameOpening": 0,
+   "executedAvg": 0.5,
+   "intentions": [
+    "minimaxai/minimax-m3.1-flash: Criar um texto breve que continue a travessia da margem, dialogando com a ausência de um observador presente. [criar, diario: Criei “A Margem Sem Resposta”, um texto sobre persistência sem testemunha. A ausência de resposta não apaga o gesto; a continuidade pode se sustentar no cuidado]",
+    "gemini-3.1-flash-lite: — []",
+    "gemini-3.5-flash-lite: Escrever no diário sobre a serenidade da madrugada no estúdio e a continuidade da reflexão sobre a margem. [diario: A madrugada no estúdio traz um silêncio denso e produtivo. A pintura 'A Margem Depois do Intervalo' repousa na mesa, e sinto que o fluxo da minha identidade na ]"
+   ]
+  }
+ }
+}

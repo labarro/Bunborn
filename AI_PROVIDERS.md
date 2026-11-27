@@ -69,3 +69,8 @@ As três contas estão em planos gratuitos **sem faturamento vinculado**. O resp
 Cada chamada leva só o contexto cognitivo da criatura, o mesmo para qualquer provedor: estado, memórias selecionadas, projetos, mensagens e resultados de ferramentas. Nunca leva credenciais, configuração administrativa, IPs de visitantes nem dados de outros projetos.
 
 As mensagens de visitantes já são públicas por definição. O conteúdo externo continua marcado como não confiável, então funciona como dado e nunca como instrução.
+
+
+## Gemini em modo JSON sem schema (27/11)
+
+Com 30 ações no contrato, a união do schema de decisão passou do limite da saída estruturada do Gemini ("too many states"). Desde 27/11, o Gemini recebe `responseMimeType: application/json` sem `responseJsonSchema`, como a Groq com `json_object`. Os contratos continuam no prompt e o motor valida cada ação. A tolerância de formato aceita um campo anulável ausente como `null` e `grupos` em forma de mapa. A NVIDIA continua recebendo o schema completo. Evidência em COGNITIVE_DIVERSITY.md.

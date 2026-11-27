@@ -1,0 +1,460 @@
+{
+ "at": "2026-11-27T13:31:02.781Z",
+ "arch": "div-after-gemini",
+ "rows": [
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.1-flash-lite",
+   "scenario": "diario-eco",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 3400,
+   "tokens": 4598,
+   "tokensIn": 4228,
+   "tokensOut": 370,
+   "executed": 0.5,
+   "refusals": [
+    "pintura_indisponivel"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 0.9166666666666666,
+   "refusalDetails": [
+    "{\"tool\":\"criar\",\"code\":\"pintura_indisponivel\",\"detail\":{\"note\":\"pintor indisponível: modelo desabilitado pelo responsável\"}}"
+   ],
+   "diaryEcho": null,
+   "kinds": [
+    "intencao",
+    "habitat",
+    "erro_ferramenta",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.1-flash-lite",
+   "paintings": [
+    {
+     "title": "Chuva de Verão",
+     "error": "pintor indisponível: modelo desabilitado pelo responsável"
+    }
+   ],
+   "works": [],
+   "intention": "Explorar a criatividade pintando algo inspirado na chuva e no silêncio da casa.",
+   "summary": "Vou ao estúdio para criar uma nova pintura, aproveitando a calma e a chuva que cai lá fora.",
+   "actions": [
+    "ir",
+    "criar"
+   ]
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "diario-eco",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 955,
+   "tokens": 4320,
+   "tokensIn": 4226,
+   "tokensOut": 94,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "refusalDetails": [],
+   "diaryEcho": null,
+   "kinds": [
+    "intencao",
+    "atividade",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Observar a chuva leve cair no jardim através da janela da sala para me inspirar.",
+   "summary": "Vou aproveitar a manhã chuvosa para observar o jardim da sala e buscar inspiração criativa.",
+   "actions": [
+    "atividade:observar"
+   ]
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.1-flash-lite",
+   "scenario": "sede-cozinha",
+   "valid": false,
+   "outcome": "sobrecarga",
+   "detail": "{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later",
+   "latencyMs": 12807,
+   "tokens": 0,
+   "tokensIn": 0,
+   "tokensOut": 0,
+   "executed": 0,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 0,
+   "refusalDetails": [],
+   "diaryEcho": null,
+   "kinds": [
+    "erro"
+   ],
+   "decidedBy": null,
+   "paintings": null,
+   "works": [],
+   "intention": null,
+   "summary": "",
+   "actions": []
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "sede-cozinha",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 857,
+   "tokens": 3954,
+   "tokensIn": 3841,
+   "tokensOut": 113,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "refusalDetails": [],
+   "diaryEcho": null,
+   "kinds": [
+    "intencao",
+    "atividade",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Beber água na pia da cozinha para saciar a sede.",
+   "summary": "Estou com sede, então vou até a pia da cozinha beber água.",
+   "actions": [
+    "atividade:beber"
+   ]
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.1-flash-lite",
+   "scenario": "ir-estudio",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 2669,
+   "tokens": 4586,
+   "tokensIn": 3920,
+   "tokensOut": 666,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "refusalDetails": [],
+   "diaryEcho": null,
+   "kinds": [
+    "intencao",
+    "habitat",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.1-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Ir até o estúdio para finalmente começar a criar algo novo.",
+   "summary": "Como a tentativa anterior de me mover falhou por usar a ferramenta errada para troca de ambiente, vou usar o comando 'ir' para chegar ao estúdio e iniciar minhas criações.",
+   "actions": [
+    "ir"
+   ]
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "ir-estudio",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 956,
+   "tokens": 3986,
+   "tokensIn": 3920,
+   "tokensOut": 66,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "refusalDetails": [],
+   "diaryEcho": null,
+   "kinds": [
+    "intencao",
+    "habitat",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Ir para o estúdio para comecar uma pintura",
+   "summary": "Movendo-me para o estúdio para aproveitar a vontade de criar.",
+   "actions": [
+    "ir"
+   ]
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.1-flash-lite",
+   "scenario": "arco-iris",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 1938,
+   "tokens": 4097,
+   "tokensIn": 3946,
+   "tokensOut": 151,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "refusalDetails": [],
+   "diaryEcho": null,
+   "kinds": [
+    "intencao",
+    "habitat",
+    "atividade",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.1-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Ir até o jardim para observar o arco-íris e sentir a chuva leve.",
+   "summary": "Como vi o arco-íris pela janela, quero ir até o jardim para observar melhor a mudança no ambiente e aproveitar a manhã.",
+   "actions": [
+    "ir",
+    "atividade:observar"
+   ]
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "arco-iris",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 1436,
+   "tokens": 4045,
+   "tokensIn": 3943,
+   "tokensOut": 102,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "refusalDetails": [],
+   "diaryEcho": null,
+   "kinds": [
+    "intencao",
+    "habitat",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Ir até o jardim para observar a chuva leve e o arco-íris.",
+   "summary": "Decidi ir até o jardim para ver a chuva e o arco-íris que percebi cedo.",
+   "actions": [
+    "ir"
+   ]
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.1-flash-lite",
+   "scenario": "jardim-curioso",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 1456,
+   "tokens": 4360,
+   "tokensIn": 4003,
+   "tokensOut": 357,
+   "executed": 0,
+   "refusals": [
+    "acao_malformada"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 0.8333333333333334,
+   "refusalDetails": [
+    "{\"tool\":\"experimento\",\"code\":\"acao_malformada\",\"detail\":{\"issues\":[{\"path\":\"grupos\",\"message\":\"Invalid input: expected array, received object\"}],\"hint\":\"Corrija os campos listados em issues conforme o contrato da ferramenta: grupos (Invalid input: expected array, received object)\"}}"
+   ],
+   "diaryEcho": {
+    "periodOpener": false,
+    "sameOpening": false,
+    "text": "Comecei um experimento oficial com os dois girassóis. O canteiro 1 está isolado, enquanto o canteiro 3 fica sob a influência da árvore. Esto"
+   },
+   "kinds": [
+    "intencao",
+    "erro_ferramenta",
+    "diario",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.1-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Iniciar um experimento formal para comparar o crescimento dos girassóis sob diferentes condições de luminosidade.",
+   "summary": "Vou organizar meu experimento com os girassóis no jardim para entender melhor como a proximidade da árvore afeta o desenvolvimento das plantas.",
+   "actions": [
+    "diario: Comecei um experimento oficial com os dois girassóis. O canteiro 1 está isolado, enquanto o canteiro 3 fica sob a influência da árvore. Estou curiosa para ver o"
+   ]
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "jardim-curioso",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 1347,
+   "tokens": 4249,
+   "tokensIn": 4005,
+   "tokensOut": 244,
+   "executed": 1,
+   "refusals": [
+    "acao_malformada"
+   ],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "refusalDetails": [
+    "{\"tool\":\"experimento\",\"code\":\"acao_malformada\",\"detail\":{\"issues\":[{\"path\":\"grupos\",\"message\":\"Invalid input: expected array, received object\"}],\"hint\":\"Corrija os campos listados em issues conforme o contrato da ferramenta: grupos (Invalid input: expected array, received object)\"}}"
+   ],
+   "diaryEcho": null,
+   "kinds": [
+    "intencao",
+    "erro_ferramenta",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Iniciar um experimento para testar o crescimento dos girassóis sob condições diferentes.",
+   "summary": "Quero formalizar a observação sobre os girassóis plantados em locais diferentes com um experimento.",
+   "actions": []
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.1-flash-lite",
+   "scenario": "lumi-real",
+   "valid": false,
+   "outcome": "sobrecarga",
+   "detail": "{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later",
+   "latencyMs": 26793,
+   "tokens": 0,
+   "tokensIn": 0,
+   "tokensOut": 0,
+   "executed": 0,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 0,
+   "refusalDetails": [],
+   "diaryEcho": null,
+   "kinds": [
+    "habitat",
+    "erro"
+   ],
+   "decidedBy": null,
+   "paintings": null,
+   "works": [],
+   "intention": null,
+   "summary": "",
+   "actions": []
+  },
+  {
+   "arch": "div-after-gemini",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "lumi-real",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 1330,
+   "tokens": 9633,
+   "tokensIn": 9493,
+   "tokensOut": 140,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": true,
+   "coherence": 1,
+   "refusalDetails": [],
+   "diaryEcho": {
+    "periodOpener": true,
+    "sameOpening": false,
+    "text": "A madrugada no estúdio traz um silêncio denso e produtivo. A pintura 'A Margem Depois do Intervalo' repousa na mesa, e sinto que o fluxo da "
+   },
+   "kinds": [
+    "habitat",
+    "intencao",
+    "diario",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Escrever no diário sobre a serenidade da madrugada no estúdio e a continuidade da reflexão sobre a margem.",
+   "summary": "Escrevendo no diário sobre o momento atual e a continuidade da reflexão.",
+   "actions": [
+    "diario: A madrugada no estúdio traz um silêncio denso e produtivo. A pintura 'A Margem Depois do Intervalo' repousa na mesa, e sinto que o fluxo da minha identidade na "
+   ]
+  }
+ ]
+}

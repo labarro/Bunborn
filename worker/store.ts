@@ -48,7 +48,8 @@ export class Store {
     const token = crypto.randomUUID();
     const row = await this.db
       .prepare('UPDATE lease SET token=?,expires=? WHERE id=1 AND expires<=? RETURNING token')
-      .bind(token, now + 120000, now)
+      // 5 min: a decision (≤45 s) plus the painter (≤75 s, one quick retry) must commit inside the lease (27/11).
+      .bind(token, now + 300000, now)
       .first();
     return row ? token : null;
   }
@@ -168,6 +169,13 @@ export class Store {
       .sort((a,b)=>b.score-a.score)
       .slice(0, limit).map(item=>item.record);
     return entries;
+  }
+  async retrievalStats(ids: string[]) {
+    const out = new Map<string, { count: number; last_at: number }>();
+    if (!ids.length) return out;
+    const rows = await this.db.prepare(`SELECT memory_id, count, last_at FROM retrievals WHERE memory_id IN (${ids.map(() => '?').join(',')})`).bind(...ids).all<{ memory_id: string; count: number; last_at: number }>();
+    for (const r of rows.results) out.set(r.memory_id, { count: r.count, last_at: r.last_at });
+    return out;
   }
   async markRetrieval(ids: string[], now: number) {
     if (ids.length)

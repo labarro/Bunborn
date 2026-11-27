@@ -12,11 +12,13 @@ import { drawRabbit, frameSet, FEET_X, FEET_Y, FRAME } from './rabbit';
 import { defaultWalls, drawBackWalls, drawDoorFrame, drawFence, drawFloor, drawInnerWall, drawObject, iso, OX, OY, WORLD_H, WORLD_W, type Sprite } from './sprites';
 import { hex, Px, shade } from './pixel';
 import type { AmbientAudio } from './audio';
+import { activeAt } from '../../shared/events';
+import { bedLight } from '../../shared/house';
 
 export type Work = { title: string; artifact: Artifact; version: number; realAt: number };
 export type CameraMode = 'geral' | 'acompanhar' | 'livre';
 export type Callbacks = { onSelect: (o: HabitatObject) => void; onRabbit: () => void; onMode: (m: CameraMode) => void };
-export type Debug = { vm?: number; weather?: Condition };
+export type Debug = { vm?: number; weather?: Condition; events?: string[] };
 
 const D_FLOOR = 20, D_RUG = 25, D_LIGHTPATCH = 26, D_WALLS = 40, D_WALLPIECE = 45, D_FOG = 940, D_RAIN = 950, D_DARK = 960, D_LIGHT = 970, D_FLASH = 980;
 const depthOf = (x: number, y: number, k = 5) => 100 + (x + y) * 10 + k;
@@ -63,6 +65,12 @@ export class HouseScene extends Phaser.Scene {
   private pinch = 0;
   private atmosKey = '';
   private nextThunder = 0;
+  // Living world (27/11): what is happening now, drawn from the same deterministic events as the engine.
+  private life!: Phaser.GameObjects.Graphics;
+  private skyLife!: Phaser.GameObjects.Graphics;
+  private lifeKinds = new Set<string>();
+  private critters: { x: number; y: number; vx: number; vy: number; phase: number; kind: 'borboleta' | 'passaro' | 'folha' }[] = [];
+  private marker?: Phaser.GameObjects.Image;
 
   constructor(cb: Callbacks) {
     super('house');
@@ -77,6 +85,8 @@ export class HouseScene extends Phaser.Scene {
     this.patches = this.add.graphics().setDepth(D_LIGHTPATCH).setBlendMode(Phaser.BlendModes.ADD);
     this.rain = this.add.graphics().setDepth(D_RAIN);
     this.fog = this.add.graphics().setDepth(D_FOG);
+    this.life = this.add.graphics().setDepth(D_FOG - 5);
+    this.skyLife = this.add.graphics().setDepth(5.5); // behind the walls, seen above them and through windows
     this.dark = this.add.rectangle(-WORLD_W, -WORLD_H, WORLD_W * 3, WORLD_H * 3, 0xffffff).setOrigin(0).setDepth(D_DARK).setBlendMode(Phaser.BlendModes.MULTIPLY);
     this.flash = this.add.rectangle(-WORLD_W, -WORLD_H, WORLD_W * 3, WORLD_H * 3, 0xf4f1ff).setOrigin(0).setDepth(D_FLASH).setAlpha(0);
     this.makeShared();
@@ -113,6 +123,7 @@ export class HouseScene extends Phaser.Scene {
       z: (p) => { p.rect(2, 2, 5, 1, hex('#d7d2f0')); p.line(6, 3, 2, 7, hex('#d7d2f0')); p.rect(2, 7, 5, 1, hex('#d7d2f0')); },
       bolha: (p) => { p.ellipse(4.5, 4.5, 3, 3, [230, 245, 250, 200]); p.set(3, 3, hex('#ffffff')); },
       gota: (p) => { p.ellipse(4.5, 5.5, 1.6, 2, hex('#9fd3ea')); },
+      marca: (p) => { p.poly([[1, 2], [8, 2], [4.5, 7]], hex('#f6e7a1')); },
     };
     for (const [name, draw] of Object.entries(icons)) { const p = new Px(9, 9); draw(p); p.outline(hex('#3a2c45')); this.textures.addCanvas('icon-' + name, p.canvas()); }
   }
@@ -164,7 +175,8 @@ export class HouseScene extends Phaser.Scene {
     const vm = this.vm();
     const season = seasonOf(vm);
     const garden = this.state?.house?.garden ?? {};
-    const stages = Object.fromEntries(Object.entries(garden).map(([k, p]) => [k, growth(p, vm).stage + (growth(p, vm).moist ? 'm' : '')]));
+    const lightOf = (id: string) => { const o = objects.find((x) => x.id === id); return o ? bedLight(o, objects) : 1; };
+    const stages = Object.fromEntries(Object.entries(garden).map(([k, p]) => { const g = growth(p, vm, lightOf(k)); return [k, g.stage + (g.moist ? 'm' : '')]; }));
     const workKey = Object.entries(this.works).map(([k, w]) => k + w.version).join();
     const key = JSON.stringify([objects, this.state?.house?.walls, season, stages, workKey]);
     if (key === this.staticKey) return;
@@ -227,7 +239,7 @@ export class HouseScene extends Phaser.Scene {
     for (const o of objects) {
       const info = kindOf(o);
       const plot = o.kind === 'canteiro' ? garden[o.id] : undefined;
-      const g = plot ? growth(plot, vm) : null;
+      const g = plot ? growth(plot, vm, lightOf(o.id)) : null;
       const sprite = drawObject(o, {
         season,
         artwork: o.artifactId && this.works[o.artifactId] ? this.artCanvas(this.works[o.artifactId].artifact) : null,
@@ -462,7 +474,7 @@ export class HouseScene extends Phaser.Scene {
     const cloudTint = mixHex(mixHex(0x3a3f5a, 0xffffff, dl), 0x8a8f9c, Math.max(0, cloud - 0.5));
     this.clouds.forEach((c) => c.setTint(cloudTint).setAlpha(0.85));
     // Ambient light: multiply tint (night blue, warm twilight, grey overcast); white by day.
-    let ambient = mixHex(0x56609a, 0xffffff, Math.min(1, dl * 1.1));
+    let ambient = mixHex(0x7179ad, 0xffffff, Math.min(1, dl * 1.1));
     ambient = mixHex(ambient, 0xf1c39b, warm * 0.45);
     ambient = mixHex(ambient, 0xaab0bc, cloud * dl * 0.5);
     this.dark.setFillStyle(ambient).setVisible(ambient !== 0xffffff);
@@ -489,6 +501,15 @@ export class HouseScene extends Phaser.Scene {
       this.fog.fillStyle(mixHex(0x6c7290, 0xe6eaf0, dl), fogA * 0.8).fillRect(0, 0, WORLD_W, OY + 30);
     }
     this.audio?.ambience({ condition: w.condition, wind: w.wind, day: dl, period, season: seasonOf(vm) });
+    this.lifeKinds = new Set(this.debug.events ?? activeAt(vm).map((e) => e.kind));
+    const want = (this.lifeKinds.has('borboletas') ? 4 : 0) + (this.lifeKinds.has('passaros') ? 3 : 0) + (this.lifeKinds.has('folhas_caem') ? 8 : 0);
+    if (this.critters.length !== want) {
+      this.critters = [];
+      const garden = () => { const g = iso(2 + Math.random() * 15, 11.5 + Math.random() * 3.5); return g; };
+      for (let i = 0; i < (this.lifeKinds.has('borboletas') ? 4 : 0); i++) { const g = garden(); this.critters.push({ x: g.x, y: g.y - 14, vx: 0, vy: 0, phase: Math.random() * 6, kind: 'borboleta' }); }
+      for (let i = 0; i < (this.lifeKinds.has('passaros') ? 3 : 0); i++) this.critters.push({ x: -40 - i * 18, y: 30 + i * 9, vx: 0.035, vy: 0, phase: i, kind: 'passaro' });
+      for (let i = 0; i < (this.lifeKinds.has('folhas_caem') ? 8 : 0); i++) { const t = iso(17.5, 13.5); this.critters.push({ x: t.x + (Math.random() - 0.5) * 30, y: t.y - 40 - Math.random() * 20, vx: 0, vy: 0.012, phase: Math.random() * 6, kind: 'folha' }); }
+    }
   }
   update(time: number, delta: number) {
     if (!this.sky) return;
@@ -532,11 +553,49 @@ export class HouseScene extends Phaser.Scene {
         else this.rain.lineStyle(1, col, 0.8).lineBetween(g.x, g.y - z, g.x - 1 - w.wind * 4, g.y - z - 10);
       }
     }
+    this.drawLife(time, delta);
     if (w.condition === 'tempestade' && time > this.nextThunder) {
       this.nextThunder = time + 9000 + Math.random() * 16000;
       this.flash.setAlpha(0.45);
       this.tweens.add({ targets: this.flash, alpha: 0, duration: 420, ease: 'Quad.easeOut' });
       this.time.delayedCall(600 + Math.random() * 1500, () => this.audio?.sfx('thunder'));
+    }
+  }
+  private drawLife(time: number, delta: number) {
+    const g = this.life, sky = this.skyLife;
+    g.clear();
+    sky.clear();
+    if (this.lifeKinds.has('arco_iris')) {
+      const c = { x: WORLD_W / 2, y: OY + 60 };
+      const bands = [0xe57373, 0xf2b45a, 0xf2e27a, 0x8fd18b, 0x7fb6e6, 0xa58bd6];
+      bands.forEach((col, i) => { sky.lineStyle(3, col, 0.45); sky.beginPath(); sky.arc(c.x, c.y, 300 - i * 3, Math.PI * 1.05, Math.PI * 1.95); sky.strokePath(); });
+    }
+    if (this.lifeKinds.has('pocas')) {
+      for (const [x, y] of [[6, 12], [11, 12], [13, 12.6], [9, 13]]) { const p = iso(x + 0.5, y + 0.5); g.fillStyle(0x9fb8c8, 0.55).fillEllipse(p.x, p.y, 16, 6); g.fillStyle(0xd8e6ee, 0.5).fillRect(p.x - 3, p.y - 1, 4, 1); }
+    }
+    for (const c of this.critters) {
+      c.phase += delta / 160;
+      if (c.kind === 'borboleta') {
+        c.x += Math.sin(c.phase * 0.7) * 0.25; c.y += Math.cos(c.phase * 0.9) * 0.15;
+        const wing = Math.sin(c.phase * 3) > 0 ? 2 : 1;
+        g.fillStyle(0xf2b45a).fillRect(Math.round(c.x) - wing, Math.round(c.y), wing, 2).fillRect(Math.round(c.x) + 1, Math.round(c.y), wing, 2);
+        g.fillStyle(0x3b2c3f).fillRect(Math.round(c.x), Math.round(c.y), 1, 2);
+      } else if (c.kind === 'passaro') {
+        c.x += c.vx * delta; if (c.x > WORLD_W + 40) c.x = -40;
+        const up = Math.sin(c.phase * 2) > 0 ? -1 : 0;
+        sky.fillStyle(0x3b3550).fillRect(Math.round(c.x) - 2, Math.round(c.y) + up, 2, 1).fillRect(Math.round(c.x), Math.round(c.y) + 1, 1, 1).fillRect(Math.round(c.x) + 1, Math.round(c.y) + up, 2, 1);
+      } else {
+        c.y += c.vy * delta; c.x += Math.sin(c.phase) * 0.3;
+        const t = iso(17.5, 13.5);
+        if (c.y > t.y + 6) { c.y = t.y - 45; c.x = t.x + (Math.random() - 0.5) * 30; }
+        g.fillStyle(0xd98a3d).fillRect(Math.round(c.x), Math.round(c.y), 2, 1);
+      }
+    }
+    // Marker over her when the camera is far (easy to find); hidden when close.
+    if (this.rabbit) {
+      this.marker ??= this.add.image(0, 0, 'icon-marca').setDepth(D_LIGHT + 1);
+      const far = this.cameras.main.zoom < this.fitZoom() * 1.3;
+      this.marker.setVisible(far).setPosition(this.rabbit.x, this.rabbit.y - 34 + Math.sin(time / 300) * 2).setScale(1 / Math.max(0.6, this.cameras.main.zoom));
     }
   }
   private lastSeason = '';

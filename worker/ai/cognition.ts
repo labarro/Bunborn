@@ -128,7 +128,9 @@ export class RoutedProvider {
       const started = Date.now();
       let tokens = 0, tokensIn = 0, tokensOut = 0, status = 'falha';
       try {
-        const reply = await callModel(m, { system, prompt, schema: compiledDecisionSchema, maxOutput, reasoning }, keys, this.fetcher);
+        const reply = await callModel(m, { system, prompt, // Gemini: JSON mode without a schema (the 30-action union has "too many states" for it, 27/11);
+        // the contracts are in the prompt and the engine validates every action as always.
+        schema: m.provider === 'gemini' ? null : compiledDecisionSchema, maxOutput, reasoning }, keys, this.fetcher);
         tokens = reply.tokensTotal;
         tokensIn = reply.tokensIn;
         tokensOut = reply.tokensOut;

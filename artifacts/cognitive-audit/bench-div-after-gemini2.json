@@ -1,0 +1,74 @@
+{
+ "at": "2026-11-27T13:32:43.511Z",
+ "arch": "div-after-gemini2",
+ "rows": [
+  {
+   "arch": "div-after-gemini2",
+   "model": "gemini:gemini-3.1-flash-lite",
+   "scenario": "jardim-curioso",
+   "valid": false,
+   "outcome": "sobrecarga",
+   "detail": "{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later",
+   "latencyMs": 795,
+   "tokens": 0,
+   "tokensIn": 0,
+   "tokensOut": 0,
+   "executed": 0,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 0,
+   "refusalDetails": [],
+   "diaryEcho": null,
+   "kinds": [
+    "erro"
+   ],
+   "decidedBy": null,
+   "paintings": null,
+   "works": [],
+   "intention": null,
+   "summary": "",
+   "actions": []
+  },
+  {
+   "arch": "div-after-gemini2",
+   "model": "gemini:gemini-3.5-flash-lite",
+   "scenario": "jardim-curioso",
+   "valid": true,
+   "outcome": "aceita",
+   "detail": null,
+   "latencyMs": 1544,
+   "tokens": 4242,
+   "tokensIn": 4006,
+   "tokensOut": 236,
+   "executed": 1,
+   "refusals": [],
+   "careWithoutNeed": false,
+   "intenseIgnored": false,
+   "repeatRefused": false,
+   "repeatResearch": false,
+   "continuity": null,
+   "engaged": false,
+   "coherence": 1,
+   "refusalDetails": [],
+   "diaryEcho": null,
+   "kinds": [
+    "intencao",
+    "experimento",
+    "memoria"
+   ],
+   "decidedBy": "gemini-3.5-flash-lite",
+   "paintings": null,
+   "works": [],
+   "intention": "Iniciar um experimento para ver se a proximidade da árvore afeta o crescimento do girassol.",
+   "summary": "Quero formalizar o teste dos girassóis que plantei, comparando o canteiro perto da árvore com o canteiro comum.",
+   "actions": [
+    "experimento"
+   ]
+  }
+ ]
+}

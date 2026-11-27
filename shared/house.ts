@@ -350,3 +350,8 @@ export const catalogueEntry = (id: string) => {
   const k = kinds[c.kind];
   return { ...c, name: k.label, description: k.purpose, footprint: { w: k.w ?? 1, h: k.h ?? 1 }, mount: k.mount ?? 'chao', offers: k.offers ?? [], restrictions: k.outdoor ? 'só no jardim' : k.indoor ? 'só dentro de casa' : 'dentro ou fora' };
 };
+
+/** Sunlight on a garden bed: shade from the tree (within 2.5 cells) halves it. Rule 2 of growth. */
+export function bedLight(bed: Point, objects: HouseObject[]) {
+  return objects.some((o) => o.kind === 'arvore' && Math.hypot(o.x - bed.x, o.y - bed.y) <= 2.5) ? 0.5 : 1;
+}

@@ -615,7 +615,9 @@ describe('extended contracts', () => {
     ) => {
       calls++;
       const payload = JSON.parse(String(options?.body));
-      expect(payload.generationConfig.responseJsonSchema).toHaveProperty('properties');
+      // JSON mode without schema since 27/11 (the action union exceeds Gemini's schema limits).
+      expect(payload.generationConfig.responseMimeType).toBe('application/json');
+      expect(payload.generationConfig.responseJsonSchema).toBeUndefined();
       expect(JSON.stringify(payload)).not.toContain('EXPLICIT-TEST-ONLY-KEY');
       return Response.json({
         candidates: [

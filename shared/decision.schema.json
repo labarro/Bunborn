@@ -900,6 +900,253 @@
             "properties": {
               "type": {
                 "type": "string",
+                "const": "habilidade"
+              },
+              "id": {
+                "type": "string"
+              },
+              "nome": {
+                "type": "string"
+              },
+              "descricao": {
+                "type": "string"
+              },
+              "tecnicas": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "limitacoes": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "nome",
+              "descricao",
+              "tecnicas",
+              "limitacoes",
+              "evidence"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "procedimento"
+              },
+              "id": {
+                "type": "string"
+              },
+              "titulo": {
+                "type": "string"
+              },
+              "contexto": {
+                "type": "string",
+                "enum": [
+                  "pintura",
+                  "escrita",
+                  "musica",
+                  "jardim",
+                  "pesquisa",
+                  "experimento",
+                  "organizacao",
+                  "outro"
+                ]
+              },
+              "passos": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "titulo",
+              "contexto",
+              "passos",
+              "evidence"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "experimento"
+              },
+              "acao": {
+                "type": "string",
+                "enum": [
+                  "iniciar",
+                  "medir",
+                  "concluir",
+                  "abandonar"
+                ]
+              },
+              "id": {
+                "type": "string"
+              },
+              "pergunta": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "hipotese": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "variavel": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "grupos": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "canteiro": {
+                          "type": "string"
+                        },
+                        "condicao": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "canteiro",
+                        "condicao"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "conclusao": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "acao",
+              "id",
+              "pergunta",
+              "hipotese",
+              "variavel",
+              "grupos",
+              "conclusao"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "obra_secao"
+              },
+              "id": {
+                "type": "string"
+              },
+              "secao": {
+                "type": "string"
+              },
+              "conteudo": {
+                "type": "string"
+              },
+              "modo": {
+                "type": "string",
+                "enum": [
+                  "adicionar",
+                  "substituir"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "secao",
+              "conteudo",
+              "modo"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "ir"
+              },
+              "destino": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "destino"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
                 "const": "jardim"
               },
               "acao": {

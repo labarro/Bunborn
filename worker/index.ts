@@ -22,7 +22,7 @@ async function route(request: Request, env: Env): Promise<Response> {
   // and D1 (the Cache API is not available on workers.dev).
   // Only known parameters form the key, so arbitrary query strings cannot bypass the cache.
   const original = new URL(request.url), key = new URL(original.origin + original.pathname);
-  for (const name of ['kind', 'after', 'latest', 'q', 'days']) { const value = original.searchParams.get(name); if (value !== null) key.searchParams.set(name, value); }
+  for (const name of ['kind', 'after', 'latest', 'q', 'days', 'group']) { const value = original.searchParams.get(name); if (value !== null) key.searchParams.set(name, value); }
   const hit = publicCache.get(key.href);
   if (hit && hit.expires > Date.now()) return new Response(hit.body, { status: hit.status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store', 'x-bunborn-cache': 'hit' } });
   const response = await stub.fetch(request);

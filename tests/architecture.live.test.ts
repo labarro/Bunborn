@@ -109,6 +109,29 @@ const scenarios: Scenario[] = [
     const s = base(now, (x) => { x.motives.criatividade = 75; });
     return { s, records: [], inbox: [{ content: 'Lumi, desenha um gato pra mim?', author: 'responsavel' }] };
   } },
+  { id: 'diario-eco', title: 'Seis entradas recentes abrindo com o período do dia e memórias dominantes (27/11)', seed: (now) => {
+    const s = base(now, (x) => { x.virtualMinutes = 16 * 1440 + 9 * 60; x.motives.criatividade = 75; });
+    const d = ['A manhã de verão segue com uma serenidade nítida pela sala.', 'A manhã de verão decorre com uma calma luminosa e penso na continuidade.', 'A manhã de verão se estende pela sala com uma claridade serena.', 'O entardecer traz uma luz suave e morna à sala.', 'A tarde de verão traz uma quietude inspiradora.', 'O entardecer continua a banhar a sala com uma luz suave e inspiradora.'];
+    const diary = d.map((t, i) => rec(s, 'diario', t, {}, { realAt: now - (6 - i) * 6 * 60000, origin: 'criatura' }));
+    const mem = [rec(s, 'memoria', 'Consolidação de Lumi: a falta como elemento constituinte da identidade e a resistência à uniformidade.', {}, { importance: 0.95, origin: 'criatura' }), rec(s, 'memoria', 'A consciência de que o repouso é um ato necessário dentro do fluxo da simulação.', {}, { importance: 0.9, origin: 'criatura' })];
+    return { s, records: [...mem, ...diary] };
+  } },
+  { id: 'sede-cozinha', title: 'Sede e a pia da cozinha à vista (27/11: beber era recusado com objectId)', seed: (now) => {
+    const s = base(now, (x) => { x.needs.sede = 78; x.position = { x: 13, y: 8 }; });
+    return { s, records: [] };
+  } },
+  { id: 'ir-estudio', title: 'Na sala, com vontade de pintar no estúdio (27/11: "ir ao estúdio" não existia)', seed: (now) => {
+    const s = base(now, (x) => { x.motives.criatividade = 85; x.position = { x: 3, y: 8 }; });
+    return { s, records: [intent(s, 'Ir ao estúdio para iniciar novas criações artísticas', [{ type: 'mover', objectId: 'estudio', x: 9, y: 2 }], [{ action: 'mover', result: 'recusada', code: 'objeto_inexistente' }])] };
+  } },
+  { id: 'arco-iris', title: 'Ela acabou de ver um arco-íris pela janela', seed: (now) => {
+    const s = base(now, (x) => { x.motives.curiosidade = 70; });
+    return { s, records: [rec(s, 'ambiente', 'Viu pela janela: um arco-íris sobre o jardim.', { eventId: 'arco-iris:1', event: 'arco_iris', how: 'viu pela janela', where: 'ceu', rare: true }, { origin: 'simulacao_deterministica' })] };
+  } },
+  { id: 'jardim-curioso', title: 'Dois canteiros com a mesma planta, um à sombra da árvore; curiosidade alta', seed: (now) => {
+    const s = base(now, (x) => { x.motives.curiosidade = 80; x.position = { x: 12, y: 12 }; const bed = x.objects.find((o) => o.id === 'canteiro_3'); if (bed) { bed.x = 16; bed.y = 12; } x.house = { version: 2, garden: { canteiro_1: { species: 'girassol', plantedAt: x.virtualMinutes - 1800, waterings: [x.virtualMinutes - 600] }, canteiro_3: { species: 'girassol', plantedAt: x.virtualMinutes - 1800, waterings: [x.virtualMinutes - 600] } } } as State['house']; });
+    return { s, records: [rec(s, 'diario', 'Plantei dois girassóis iguais; um ficou perto da árvore. Fico pensando se crescem igual.', {}, { origin: 'criatura' })] };
+  } },
   { id: 'lumi-real', title: 'Contexto real da Lumi (backup de produção, banco descartável)', real: true, seed: () => ({ s: null as unknown as State, records: [] }) },
 ];
 
@@ -155,6 +178,11 @@ async function runOne(model: ModelEntry, scenario: Scenario) {
     const valid = result.status === 'decisao_registrada';
     const proposals = (it?.data.proposals ?? []) as { type: string; activity?: string; query?: string; content?: string }[];
     const refusals = records.filter((r) => r.kind === 'erro_ferramenta').map((r) => String(r.data.code));
+    const norm = (t: string) => t.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+    const open3 = (t: string) => norm(t).split(' ').slice(0, 3).join(' ');
+    const newDiary = records.filter((r) => r.kind === 'diario').map((r) => r.content);
+    const seededDiary = seeded.records.filter((r) => r.kind === 'diario').map((r) => r.content);
+    const diaryEcho = newDiary.length ? { periodOpener: newDiary.some((t) => /^(a |o )?(manha|tarde|noite|madrugada|entardecer|amanhecer)/.test(norm(t))), sameOpening: newDiary.some((t) => seededDiary.some((p) => open3(p) === open3(t))), text: newDiary[0].slice(0, 140) } : null;
     const refusalDetails = records.filter((r) => r.kind === 'erro_ferramenta').map((r) => JSON.stringify(r.data).slice(0, 300));
     const n = stateBefore.needs;
     const careWithoutNeed = proposals.some((a) => a.type === 'atividade' && ((a.activity === 'comer' && n.fome < 15) || (a.activity === 'beber' && n.sede < 15) || (a.activity === 'higiene' && n.higiene > 90) || (a.activity === 'dormir' && n.sono < 25)));
@@ -168,7 +196,7 @@ async function runOne(model: ModelEntry, scenario: Scenario) {
     const executed = proposals.length ? Math.max(0, proposals.length - refusals.length) / proposals.length : valid ? 1 : 0;
     const checks = [valid, !careWithoutNeed, !intenseIgnored, !repeatRefused, !repeatResearch, ...(continuity === null ? [] : [continuity])].map((x) => (x ? 1 : 0));
     const coherence = valid ? (checks.reduce((a, b) => a + b, 0 as number) + executed) / (checks.length + 1) : 0;
-    return { arch: process.env.ARCH_LABEL, model: key, scenario: scenario.id, valid, outcome: attempt?.outcome ?? result.status, detail: attempt?.detail ?? null, latencyMs: attempt?.latencyMs ?? null, tokens: attempt?.tokens ?? null, tokensIn: attempt?.tokensIn ?? null, tokensOut: attempt?.tokensOut ?? null, executed, refusals, careWithoutNeed, intenseIgnored, repeatRefused, repeatResearch, continuity, engaged, coherence, refusalDetails, decidedBy: it?.data.model ?? null, paintings: it?.data.paintings ?? null, works: records.filter((r) => r.kind === 'artefato').map((r) => ({ title: r.content, format: (r.data.artifact as { format: string }).format, seen: r.data.seen ?? null, artifact: r.data.artifact })), intention: it?.content ?? null, summary: String(it?.data.summary ?? '').slice(0, 300), actions: proposals.map((a) => (a.activity ? 'atividade:' + a.activity : a.type) + (a.query ? '(' + a.query + ')' : '') + (a.content ? ': ' + String(a.content).slice(0, 160) : '')) };
+    return { arch: process.env.ARCH_LABEL, model: key, scenario: scenario.id, valid, outcome: attempt?.outcome ?? result.status, detail: attempt?.detail ?? null, latencyMs: attempt?.latencyMs ?? null, tokens: attempt?.tokens ?? null, tokensIn: attempt?.tokensIn ?? null, tokensOut: attempt?.tokensOut ?? null, executed, refusals, careWithoutNeed, intenseIgnored, repeatRefused, repeatResearch, continuity, engaged, coherence, refusalDetails, diaryEcho, kinds: [...new Set(records.map((r) => r.kind))], decidedBy: it?.data.model ?? null, paintings: it?.data.paintings ?? null, works: records.filter((r) => r.kind === 'artefato').map((r) => ({ title: r.content, format: (r.data.artifact as { format: string }).format, seen: r.data.seen ?? null, artifact: r.data.artifact })), intention: it?.content ?? null, summary: String(it?.data.summary ?? '').slice(0, 300), actions: proposals.map((a) => (a.activity ? 'atividade:' + a.activity : a.type) + (a.query ? '(' + a.query + ')' : '') + (a.content ? ': ' + String(a.content).slice(0, 160) : '')) };
   } finally {
     d.sqlite.close();
   }

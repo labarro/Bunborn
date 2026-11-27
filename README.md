@@ -40,6 +40,8 @@ Bunborn é uma **simulação de vida artificial**. Cada observatório abriga uma
 - 🧠 **Pensa sozinha**: a cada intervalo, ela recebe o que percebe e lembra e decide o que fazer com a ajuda de um modelo de linguagem (Gemini). Ninguém escolhe por ela.
 - 🌙 **Tem um corpo simulado**: fome, sede, sono, energia, higiene, conforto e saúde mudam com o tempo. Ela come, bebe, dorme e descansa. Nunca morre.
 - 📚 **Aprende de verdade**: pode pesquisar na Wikipedia e no Wikidata e guarda o que leu com fonte e data.
+- 🌦️ **Mundo vivo**: chuva, arco-íris, borboletas, lua cheia, meteoros e plantas prontas para colher acontecem por regras do motor; ela só guarda o que de fato percebeu.
+- 🧪 **Aprende**: pode registrar habilidades e procedimentos com evidências e fazer experimentos nos canteiros, com medições feitas pela simulação.
 - 🎨 **Cria**: textos, pinturas (pincel, formas e texto numa tela), músicas e objetos, que pode revisar depois e expor no habitat.
 - 🪞 **Constrói identidade**: pode escolher um nome (para sempre), descrever-se, declarar preferências, interesses e projetos, sempre com base em experiências registradas.
 - 💾 **Lembra**: toda a história fica guardada de forma imutável, com oito tipos de memória e recuperação por associação.

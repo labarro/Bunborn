@@ -199,6 +199,14 @@ export const actionSchema = z.discriminatedUnion('type', [
   // House v2 (26/11): personal touches, garden, catalogue on demand, playing her own music.
   z.object({ type: z.literal('decorar'), objectId: z.string().max(160).nullable(), room: z.enum(['quarto', 'estudio', 'banheiro', 'sala', 'cozinha']).nullable(), color: z.string().regex(/^#[0-9a-fA-F]{6}$/) }).strict(),
   z.object({ type: z.literal('guardar'), objectId: short }).strict(),
+  // Learning (27/11): skills she recognises in herself, procedures she worked out, experiments
+  // whose measurements come from the engine, and sections of long text works.
+  z.object({ type: z.literal('habilidade'), id: short, nome: short, descricao: short, tecnicas: z.array(short).max(6), limitacoes: z.string().max(160).nullable(), evidence }).strict(),
+  z.object({ type: z.literal('procedimento'), id: short, titulo: short, contexto: z.enum(['pintura', 'escrita', 'musica', 'jardim', 'pesquisa', 'experimento', 'organizacao', 'outro']), passos: z.array(short).min(1).max(8), evidence }).strict(),
+  z.object({ type: z.literal('experimento'), acao: z.enum(['iniciar', 'medir', 'concluir', 'abandonar']), id: short, pergunta: z.string().max(160).nullable(), hipotese: z.string().max(160).nullable(), variavel: z.string().max(160).nullable(), grupos: z.array(z.object({ canteiro: short, condicao: short }).strict()).max(4).nullable(), conclusao: z.string().max(2000).nullable() }).strict(),
+  z.object({ type: z.literal('obra_secao'), id: short, secao: short, conteudo: z.string().min(1).max(4000), modo: z.enum(['adicionar', 'substituir']) }).strict(),
+  // Walk to a room (quarto, estudio, banheiro, sala, cozinha, jardim) or to an object.
+  z.object({ type: z.literal('ir'), destino: short }).strict(),
   z.object({ type: z.literal('jardim'), acao: z.enum(['plantar', 'regar', 'colher']), canteiro: short, especie: z.enum(Object.keys(species) as [string, ...string[]]).nullable() }).strict(),
   z.object({ type: z.literal('catalogo'), categoria: z.string().max(40).nullable() }).strict(),
   z.object({ type: z.literal('tocar'), artifactId: short, objectId: short }).strict(),
@@ -241,6 +249,15 @@ function normalizeAction(action: unknown): unknown {
   if (art && art.format === 'pintura' && Array.isArray(art.strokes)) {
     const strokes = art.strokes.filter((x) => strokeSchema.safeParse(x).success);
     if (strokes.length && strokes.length < art.strokes.length) return { ...a, artifact: { ...art, strokes } };
+  }
+  // Experiment groups written as a map {canteiro: condição} are the same information as the list.
+  if (a?.type === 'experimento' && a.grupos && typeof a.grupos === 'object' && !Array.isArray(a.grupos))
+    a.grupos = Object.entries(a.grupos as Record<string, unknown>).map(([canteiro, v]) => ({ canteiro, condicao: typeof v === 'string' ? v : String((v as { condicao?: unknown } | null)?.condicao ?? JSON.stringify(v)).slice(0, 160) }));
+  // An absent field that accepts null is read as null (Gemini's flattened schema may omit it);
+  // nothing is invented: only "absent" becomes "none".
+  if (a && typeof a === 'object' && typeof a.type === 'string') {
+    const shape = (actionSchema.options as unknown as { shape: Record<string, z.ZodTypeAny> }[]).find((o) => (o.shape.type as unknown as { value: string }).value === a.type)?.shape;
+    if (shape) for (const [k, v] of Object.entries(shape)) if (!(k in a) && v.safeParse(null).success && !v.safeParse(undefined).success) (a as Record<string, unknown>)[k] = null;
   }
   if (a && typeof a === 'object' && typeof a.type === 'string' && activityKinds.includes(a.type)) {
     const minutes = Number(a.minutes ?? a.duration ?? 30);

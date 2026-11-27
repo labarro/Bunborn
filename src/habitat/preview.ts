@@ -31,7 +31,7 @@ if (q.get('garden')) s.house = { version: 2, garden: { canteiro_1: { species: 't
 const host = document.getElementById('host')!;
 const { scene, game } = createHabitat(host, { onSelect: (o) => console.log('select', o.id), onRabbit: () => console.log('rabbit'), onMode: () => undefined });
 game.events.once('ready', () => {
-  scene.setDebug({ vm: s.virtualMinutes, weather: (q.get('weather') as Condition) ?? undefined });
+  scene.setDebug({ vm: s.virtualMinutes, weather: (q.get('weather') as Condition) ?? undefined, events: q.get('events') ? q.get('events')!.split(',') : undefined });
   scene.apply(s, works);
   if (q.get('room')) scene.focusRoom(q.get('room')!);
   else if (q.get('mode') === 'acompanhar') scene.setMode('acompanhar');

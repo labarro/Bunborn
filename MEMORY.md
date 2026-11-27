@@ -58,3 +58,13 @@ Teto lógico de 180 MB (gatilho no D1) e guarda física de 400 MB (verificada pe
 A memória e a identidade vivem só no estado persistente do Bunborn: registros, traços e projetos. Cada ciclo monta o mesmo contexto, seja qual for o modelo (Gemini, Groq ou NVIDIA em homologação). Nenhum provedor guarda conversa ou sessão.
 
 Cada decisão registra em `route` qual mecanismo a processou, como dado técnico, separado das intenções dela. A afinidade de modelo por categoria reduz trocas desnecessárias em conversas e projetos sem prender a criatura a um provedor fora do ar.
+
+
+## Recuperação com habituação e diversidade (27/11)
+
+As 5 memórias mais recuperadas tinham entre 171 e 254 recuperações cada: entravam em quase toda decisão. A seleção agora:
+- **Habituação:** uma memória mostrada há pouco (decaimento de 3 horas) e muitas vezes (log da contagem) perde posição, sem ser apagada, e volta depois de algumas horas sem aparecer.
+- **MMR:** relevância menos a semelhança com o que já foi escolhido (λ = 0,6).
+- **Quantidade:** 6 memórias de até 320 caracteres.
+
+Nada é aleatório. Detalhes em COGNITIVE_DIVERSITY.md.

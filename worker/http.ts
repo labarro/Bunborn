@@ -9,7 +9,8 @@ import {isFrozen,restoreLocked,beginExport,exportSegment,sealExport,cancelExport
 import {runToolTest} from './tool-tests';
 import {coordinate}from'./coordination';
 import { aiOverview, saveAiConfig } from './ai/admin';
-import { highlights, logbook, recordVisit, visitorsToday, forgetInsights } from './insights';
+import { highlights, logbook, recordVisit, visitorsToday, forgetInsights, trajectory } from './insights';
+import { activeAt, eventsBetween } from '../shared/events';
 export const json = (value: unknown, status = 200) =>
   Response.json(value, { status, headers: { 'cache-control': 'no-store' } });
 const kinds = [
@@ -37,6 +38,12 @@ const kinds = [
   'checkpoint',
   'personalidade',
   'conhecimento',
+  'ambiente',
+  'experimento',
+  'habilidade',
+  'procedimento',
+  'jardim',
+  'musica',
 ];
 export async function api(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url),
@@ -142,6 +149,14 @@ export async function api(request: Request, env: Env): Promise<Response> {
       });
     }
     if (path === '/api/highlights') return json({ ...(await highlights(env)), visitors: await visitorsToday(env) });
+    if (path === '/api/trajectory') return json(await trajectory(env));
+    if (path === '/api/world') {
+      // World events of the last virtual day (computed, nothing stored), and which ones she perceived.
+      const st = await store.state();
+      const vm = st ? (st.paused ? st.virtualMinutes : st.virtualMinutes + ((Date.now() - st.updatedAt) / 60000) * st.multiplier) : 0;
+      const perceived = new Set((await store.latest('ambiente', 60)).map((r) => String(r.data.eventId)));
+      return json({ now: activeAt(vm), recent: eventsBetween(vm - 1440, vm).map((e) => ({ ...e, perceived: perceived.has(e.id) })) });
+    }
     if (path === '/api/logbook') return json(await logbook(env, Math.min(14, Math.max(1, Number(url.searchParams.get('days')) || 7))));
     if (path === '/api/records') {
       const kind = url.searchParams.get('kind') ?? 'memoria';
@@ -168,8 +183,12 @@ export async function api(request: Request, env: Env): Promise<Response> {
           ).all<Row>()
         ).results.map(decode);
       } else if (['todos', 'personalidade', 'conhecimento'].includes(kind)) {
-        const condition =
-          kind === 'personalidade'
+        // Timeline groups (27/11): find what matters without walking through routine; "todos" stays complete.
+        const groups: Record<string, string[]> = { descobertas: ['pesquisa', 'leitura', 'conceito', 'relacao'], obras: ['artefato'], projetos: ['projeto'], experimentos: ['experimento'], aprendizados: ['habilidade', 'procedimento', 'memoria'], identidade: ['identidade', 'comportamento', 'interesse'], habitat: ['habitat', 'jardim', 'recurso', 'musica'], ambiente: ['ambiente'], interacoes: ['conversa'], reflexoes: ['diario'], tecnicos: ['intencao', 'erro', 'erro_ferramenta', 'interrupcao', 'atividade', 'atividade_concluida', 'atividade_interrompida', 'percepcao', 'administracao', 'recuperacao', 'corpo'] };
+        const group = groups[url.searchParams.get('group') ?? ''];
+        const condition = group && kind === 'todos'
+          ? ` AND kind IN (${group.map((k) => "'" + k + "'").join(',')})`
+          : kind === 'personalidade'
             ? " AND kind IN ('identidade','comportamento')"
             : kind === 'conhecimento'
               ? " AND kind IN ('conceito','relacao')"
@@ -348,7 +367,7 @@ export async function api(request: Request, env: Env): Promise<Response> {
   }
   return json({ error: 'rota_inexistente' }, 404);
 }
-export const publicGet = new Set(['/api/state', '/api/records', '/api/monitor', '/api/highlights', '/api/logbook']);
+export const publicGet = new Set(['/api/state', '/api/records', '/api/monitor', '/api/highlights', '/api/logbook', '/api/trajectory', '/api/world']);
 export function isPublicRoute(env: Env, method: string, path: string) {
   if (env.PUBLIC_OBSERVATION !== 'true') return false;
   return (method === 'GET' && publicGet.has(path)) || (method === 'POST' && (path === '/api/message' || path === '/api/visit'));

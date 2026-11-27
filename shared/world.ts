@@ -145,22 +145,28 @@ export const species: Record<string, { label: string; hours: number; color: stri
   morango: { label: 'morango', hours: 64, color: '#e2475f' },
   alface: { label: 'alface', hours: 36, color: '#8cc76a' },
 };
-export type Plot = { species: string; plantedAt: number; waterings: number[] };
+export type Plot = { species: string; plantedAt: number; waterings: number[]; rule?: 2 };
 const MOIST_HOURS = 20;
-/** Growth 0..1 and stage 0 (seed) .. 4 (ready). A dry bed simply waits; nothing dies. */
-export function growth(plot: Plot, vm: number) {
+/**
+ * Growth 0..1 and stage 0 (seed) .. 4 (ready). A dry bed simply waits; nothing dies.
+ * Rule 2 (plots planted from 27/11 on): a moist hour counts fully in daylight and in full sun,
+ * less in shade (light < 1) and little at night. Older plots keep rule 1 (every moist hour counts),
+ * so no plant's past is rewritten. These rules are what experiments can discover.
+ */
+export function growth(plot: Plot, vm: number, light = 1) {
   const sp = species[plot.species];
-  if (!sp) return { progress: 0, stage: 0, moist: false };
-  let grown = 0;
-  let moist = false;
+  if (!sp) return { progress: 0, stage: 0, moist: false, moistHours: 0 };
+  let grown = 0, moistHours = 0;
   const lastHour = Math.floor((vm - plot.plantedAt) / 60);
   for (let i = 0; i < lastHour && grown < sp.hours; i++) {
     const at = plot.plantedAt + i * 60;
     const watered = plot.waterings.some((t) => t <= at && at - t < MOIST_HOURS * 60) || isRaining(weatherAt(at).condition);
-    if (watered) grown++;
+    if (!watered) continue;
+    moistHours++;
+    grown += plot.rule === 2 ? (daylightLevel(at) > 0.3 ? light : 0.3) : 1;
   }
-  moist = plot.waterings.some((t) => t <= vm && vm - t < MOIST_HOURS * 60) || isRaining(weatherAt(vm).condition);
+  const moist = plot.waterings.some((t) => t <= vm && vm - t < MOIST_HOURS * 60) || isRaining(weatherAt(vm).condition);
   const progress = Math.min(1, grown / sp.hours);
-  return { progress, stage: Math.min(4, Math.floor(progress * 4 + 1e-9)), moist };
+  return { progress, stage: Math.min(4, Math.floor(progress * 4 + 1e-9)), moist, moistHours };
 }
 export const stageLabel = ['semente', 'broto', 'crescendo', 'quase pronta', 'pronta para colher'];

@@ -173,6 +173,7 @@ export function HighlightsPanel() {
           )}
         </section>
       </div>
+      <TrajectoryPanel />
     </div>
   );
 }
@@ -240,4 +241,80 @@ export function useVisitors(enabled: boolean) {
       .catch(() => undefined);
   }, [enabled]);
   return today;
+}
+
+type Sim = { average: number; high: number; n: number };
+type Trajectory = {
+  behaviour: { decisions: number; actionsDone: Record<string, number>; refusalRate: number | null; refusals: Record<string, number>; repeatedSequences: { seq: string; n: number }[]; byModel: Record<string, { decisions: number; diary: number; works: number }> };
+  creative: { newWorks: number; revisions: number; measuredChanges: { title: string; version: number; change: string }[]; formats: Record<string, number>; longWorks: { title: string; sections: string[] }[] };
+  learning: { research: number; concepts: number; skills: { nome: string; tecnicas: string[]; evidencias: number; versao: number }[]; procedures: { titulo: string; contexto: string; passos: number; evidencias: number }[] };
+  experiments: { pergunta: string; hipotese: string; status: string; medicoes: number; conclusao: string | null }[];
+  world: { what: string; at: number; rare: boolean }[];
+  repetition: { note: string; diarySimilarity: { now: Sim; before: Sim }; diaryOpenings: [string, number][]; intentionSimilarity: { now: Sim; before: Sim }; memoryConcentration: { top5Share: number; note: string } | null; newMemories: number; nearDuplicateMemories: number };
+};
+const pct = (x: number) => Math.round(x * 100) + '%';
+/** Qualitative trajectory (27/11): examples and evidence instead of invented scores. */
+export function TrajectoryPanel() {
+  const { data } = usePublic<Trajectory>('trajectory', 300000);
+  if (!data) return null;
+  const acts = Object.entries(data.behaviour.actionsDone).sort((a, b) => b[1] - a[1]);
+  const total = acts.reduce((t, [, n]) => t + n, 0) || 1;
+  return (
+    <>
+      <section className="insight-card">
+        <h3>Como as últimas 24 horas foram vividas</h3>
+        {acts.length ? (
+          <ul className="insight-bars">
+            {acts.slice(0, 8).map(([k, n]) => (
+              <li key={k}><span>{k}</span><span className="insight-meter" style={{ width: Math.max(6, (n / total) * 220) + 'px' }} /> {n}</li>
+            ))}
+          </ul>
+        ) : <p>Nenhuma ação concluída nesta janela.</p>}
+        <p className="footnote">Ações que de fato aconteceram em {data.behaviour.decisions} decisões. Quantidade não é evolução: os exemplos abaixo dizem mais.</p>
+      </section>
+      <div className="insight-grid">
+        <section className="insight-card">
+          <h3>Criação</h3>
+          <p>{data.creative.newWorks} obras novas · {data.creative.revisions} revisões</p>
+          {data.creative.measuredChanges.length ? (
+            <ul className="insight-list">{data.creative.measuredChanges.map((c, i) => <li key={i}>“{c.title}” v{c.version}: {c.change}</li>)}</ul>
+          ) : <p className="footnote">Sem revisões medidas nesta janela.</p>}
+          {data.creative.longWorks.map((w) => <p key={w.title} className="footnote">Obra longa “{w.title}”: {w.sections.join(' · ')}</p>)}
+        </section>
+        <section className="insight-card">
+          <h3>Aprendizado</h3>
+          <p>{data.learning.research} pesquisas · {data.learning.concepts} conceitos</p>
+          {data.learning.skills.length ? <ul className="insight-list">{data.learning.skills.map((s) => <li key={s.nome}>Habilidade declarada por ela: {s.nome} ({s.evidencias} evidências{s.tecnicas?.length ? `; técnicas: ${s.tecnicas.join(', ')}` : ''})</li>)}</ul> : null}
+          {data.learning.procedures.length ? <ul className="insight-list">{data.learning.procedures.map((p) => <li key={p.titulo}>Procedimento ({p.contexto}): {p.titulo} · {p.passos} passos</li>)}</ul> : null}
+          {!data.learning.skills.length && !data.learning.procedures.length ? <p className="footnote">Nenhuma habilidade ou procedimento registrado por ela ainda. Nada é atribuído automaticamente.</p> : null}
+        </section>
+      </div>
+      <div className="insight-grid">
+        <section className="insight-card">
+          <h3>Experimentos</h3>
+          {data.experiments.length ? (
+            <ul className="insight-list">{data.experiments.map((e, i) => <li key={i}><strong>{e.pergunta}</strong> · hipótese: {e.hipotese} · {e.status} · {e.medicoes} medições da simulação{e.conclusao ? ` · conclusão dela: ${e.conclusao}` : ''}</li>)}</ul>
+          ) : <p className="footnote">Nenhum experimento. Os resultados, quando houver, vêm da própria simulação, não do modelo.</p>}
+        </section>
+        <section className="insight-card">
+          <h3>O que ela percebeu no mundo</h3>
+          {data.world.length ? <ul className="insight-list">{data.world.map((w, i) => <li key={i}><time>{ago(w.at)}</time> {w.what}{w.rare ? ' ✦' : ''}</li>)}</ul> : <p className="footnote">Nada percebido nesta janela (o mundo segue acontecendo mesmo quando ela dorme).</p>}
+        </section>
+      </div>
+      <details className="insight-card technical">
+        <summary>Área técnica · indicadores de repetição</summary>
+        <p className="footnote">{data.repetition.note}</p>
+        <ul className="insight-list">
+          <li>Diário: semelhança média com as 10 entradas anteriores {pct(data.repetition.diarySimilarity.now.average)} (antes {pct(data.repetition.diarySimilarity.before.average)}); {data.repetition.diarySimilarity.now.high} de {data.repetition.diarySimilarity.now.n} muito parecidas</li>
+          {data.repetition.diaryOpenings.length ? <li>Aberturas repetidas: {data.repetition.diaryOpenings.map(([o, n]) => `“${o}…” ×${n}`).join(' · ')}</li> : null}
+          <li>Intenções: semelhança média {pct(data.repetition.intentionSimilarity.now.average)} (antes {pct(data.repetition.intentionSimilarity.before.average)})</li>
+          {data.repetition.memoryConcentration ? <li>Memória: {pct(data.repetition.memoryConcentration.top5Share)} — {data.repetition.memoryConcentration.note}</li> : null}
+          <li>Memórias novas escritas por ela: {data.repetition.newMemories} ({data.repetition.nearDuplicateMemories} quase repetidas)</li>
+          <li>Ações recusadas: {data.behaviour.refusalRate === null ? '—' : pct(data.behaviour.refusalRate)} {Object.entries(data.behaviour.refusals).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, n]) => `${k} ×${n}`).join(' · ')}</li>
+          {data.behaviour.repeatedSequences.map((s) => <li key={s.seq}>Sequência recorrente: {s.seq} ×{s.n}</li>)}
+          <li>Por modelo: {Object.entries(data.behaviour.byModel).map(([m, v]) => `${m.split('/').pop()} ${v.decisions} decisões (${v.diary} diário, ${v.works} obras)`).join(' · ')}</li>
+        </ul>
+      </details>
+    </>
+  );
 }

@@ -1,10 +1,15 @@
 import { lookAt } from '../shared/art';
-import { catalogue, catalogueEntry, kindOf, migrateObjects, roomAt, rooms as houseRooms } from '../shared/house';
+import { catalogue, catalogueEntry, footprint, kindOf, migrateObjects, roomAt, rooms as houseRooms } from '../shared/house';
+import { closest, mmr, normalize } from '../shared/similarity';
+import { bedLight } from '../shared/house';
+import { diffArtifact, editSection, sectionsOf } from '../shared/creative';
+import { activeAt, eventsBetween, perceives } from '../shared/events';
 import { conditionLabel, feltTemperature, growth, outsideView, periodLabel, periodOf, seasonLabel, seasonOf, species, stageLabel, weatherAt } from '../shared/world';
 import {
   artifactSchema,
   creatableArtifactSchema,
   approach,
+  pathfind,
   born,
   clamp,
   reconcile,
@@ -174,15 +179,7 @@ async function applyAction(
         throw new ToolError(rule[1], { sente: feel(rule[0], s.needs[rule[0]]), note: 'o corpo ' + rule[2] });
       if (a.activity === 'higiene' && s.needs.higiene > physiology.needToStart.higiene)
         throw new ToolError('ja_limpa', { sente: feel('higiene', s.needs.higiene), note: 'já está limpa' });
-      let place: string | undefined;
-      if (a.objectId) {
-        const o = s.objects.find((x) => x.id === a.objectId);
-        if (!o) throw new ToolError('objeto_inexistente', { objectId: a.objectId, note: 'esse objeto não existe na casa' });
-        const offers = kindOf(o).offers ?? [];
-        const ok = a.activity === 'descansar' ? offers.includes('descansar') : a.activity === 'observar' ? offers.includes('observar') || offers.includes('descansar') : a.activity === 'dormir' ? o.kind === 'cama' : false;
-        if (!ok) throw new ToolError('lugar_inadequado', { objectId: o.id, offers, note: o.label + ' não serve para ' + a.activity });
-        place = o.id;
-      }
+      const place = a.objectId ? placeFor(s, a.activity, a.objectId) : undefined;
       if (a.activity === 'observar') {
         // Looking again at a room she already knows, unchanged, shows nothing new: the body refuses and says why.
         // The room only changes when furniture moves or a work is exposed (habitat records).
@@ -243,7 +240,7 @@ async function applyAction(
       if (repeated)
         throw new ToolError('diario_repetido', { similarTo: repeated.content.slice(0, 200), writtenAt: new Date(repeated.realAt).toISOString(), note: 'você já escreveu quase o mesmo no diário' });
       start('diario', 20);
-      record('diario', a.content);
+      record('diario', a.content, { echo: diaryEcho(a.content, await store.latest('diario', 12)) });
       s.motives.tedio = clamp(s.motives.tedio - 5);
       s.motives.criatividade = clamp(s.motives.criatividade + 3);
       break;
@@ -398,12 +395,15 @@ async function applyAction(
       // Providers are parsed upstream; this also guards fixtures and the retired pixel grid.
       if (!creatableArtifactSchema.safeParse(art).success) throw new Error('formato_indisponivel');
       const prior = await existingEntity(store, 'artefato', a.id);
+      const change = diffArtifact(prior?.data.artifact as never, a.artifact as never);
+      if (change.identical) throw new ToolError('revisao_sem_alteracao', { id: prior?.entityId, note: 'a nova versão é idêntica à anterior; nada foi salvo' });
       start('criar', 40);
       record(
         'artefato',
         a.title,
         {
           artifact: a.artifact,
+          revision: { fromVersion: Number(prior?.data.version ?? 0), change: change.summary, details: change.details, purpose: a.motivation },
           seen: lookAt(a.artifact),
           motivation: a.motivation,
           projectId: project?.entityId ?? null,
@@ -454,6 +454,66 @@ async function applyAction(
       );
       break;
     }
+    case 'obra_secao': {
+      const work = await existingEntity(store, 'artefato', a.id);
+      const art = work?.data.artifact as { format?: string; content?: string } | undefined;
+      if (!work || art?.format !== 'texto') throw new ToolError('obra_inexistente', { id: a.id, note: 'só obras de texto existentes têm seções; crie a obra primeiro com criar (formato texto)' });
+      const content = editSection(String(art.content ?? ''), a.secao, a.conteudo, a.modo);
+      if (content.length > 12000) throw new ToolError('obra_grande_demais', { note: 'a obra passaria de 12000 caracteres; comece outra obra (por exemplo, um segundo volume)' });
+      const next = { format: 'texto' as const, content };
+      const change = diffArtifact(art as never, next);
+      if (change.identical) throw new ToolError('revisao_sem_alteracao', { id: work.entityId, note: 'a seção ficou igual; nada foi salvo' });
+      start('criar', 30);
+      record('artefato', work.content, { artifact: next, revision: { fromVersion: Number(work.data.version ?? 1), change: change.summary, section: a.secao, mode: a.modo }, motivation: work.data.motivation, projectId: work.data.projectId ?? null, version: Number(work.data.version ?? 1) + 1, author: s.id, sections: sectionsOf(content) }, { entityId: work.entityId, importance: 0.8 });
+      s.motives.criatividade = clamp(s.motives.criatividade + 6);
+      s.motives.tedio = clamp(s.motives.tedio - 10);
+      break;
+    }
+    case 'habilidade': {
+      // Declared by her, with evidence that exists. The system never assigns levels.
+      const prior = await existingEntity(store, 'habilidade', a.id);
+      if (prior && !a.evidence.some((id) => !((prior.data.evidence ?? []) as string[]).includes(id))) throw new ToolError('nova_evidencia_necessaria', { note: 'para atualizar uma habilidade, cite ao menos uma evidência nova' });
+      record('habilidade', a.nome, { nome: a.nome, descricao: a.descricao, tecnicas: a.tecnicas, limitacoes: a.limitacoes, evidence: [...new Set([...((prior?.data.evidence ?? []) as string[]), ...a.evidence])].slice(-24), declaredBy: 'criatura', version: Number(prior?.data.version ?? 0) + 1 }, { entityId: prior?.entityId ?? entityId('habilidade', a.id), category: 'procedimental', associations: a.evidence, importance: 0.7 });
+      break;
+    }
+    case 'procedimento': {
+      const prior = await existingEntity(store, 'procedimento', a.id);
+      record('procedimento', a.titulo, { titulo: a.titulo, contexto: a.contexto, passos: a.passos, evidence: a.evidence, version: Number(prior?.data.version ?? 0) + 1 }, { entityId: prior?.entityId ?? entityId('procedimento', a.id), category: 'procedimental', associations: a.evidence, importance: 0.65 });
+      break;
+    }
+    case 'experimento': {
+      const prior = await existingEntity(store, 'experimento', a.id);
+      const id = prior?.entityId ?? entityId('experimento', a.id);
+      const data = (prior?.data ?? {}) as { pergunta?: string; hipotese?: string; variavel?: string; grupos?: { canteiro: string; condicao: string }[]; medicoes?: unknown[]; status?: string };
+      if (a.acao === 'iniciar') {
+        if (prior && prior.data.status === 'ativo') throw new ToolError('experimento_ativo', { id, note: 'esse experimento já está em andamento; use medir ou concluir' });
+        if (!a.pergunta || !a.hipotese || !a.grupos?.length) throw new ToolError('experimento_incompleto', { note: 'iniciar pede pergunta, hipotese e grupos (canteiros com a condição de cada um)' });
+        for (const g of a.grupos) if (!s.objects.some((o) => o.id === g.canteiro && o.kind === 'canteiro')) throw new ToolError('canteiro_inexistente', { canteiro: g.canteiro, note: 'grupos usam canteiros existentes' });
+        const medicao = measure(s, a.grupos);
+        record('experimento', a.pergunta, { pergunta: a.pergunta, hipotese: a.hipotese, variavel: a.variavel, grupos: a.grupos, medicoes: [medicao], status: 'ativo', escopo: 'mundo virtual do Bunborn (regras da simulação)' }, { entityId: id, category: 'prospectiva', importance: 0.7 });
+      } else {
+        if (!prior) throw new ToolError('experimento_inexistente', { id: a.id, note: 'não há experimento com esse id' });
+        if (data.status !== 'ativo') throw new ToolError('experimento_encerrado', { id, note: 'esse experimento já foi encerrado' });
+        const medicoes = [...(data.medicoes ?? []), measure(s, data.grupos ?? [])].slice(-12);
+        if (a.acao === 'concluir' && medicoes.length < 2) throw new ToolError('poucas_medicoes', { note: 'concluir pede ao menos uma medição depois do início' });
+        if (a.acao === 'concluir' && !a.conclusao) throw new ToolError('sem_conclusao', { note: 'diga sua conclusão' });
+        const status = a.acao === 'medir' ? 'ativo' : a.acao === 'concluir' ? 'concluido' : 'abandonado';
+        record('experimento', prior.content, { ...data, medicoes, status, ...(a.conclusao ? { conclusao: a.conclusao } : {}), escopo: 'mundo virtual do Bunborn (regras da simulação)' }, { entityId: id, category: 'prospectiva', importance: status === 'concluido' ? 0.8 : 0.6 });
+      }
+      start('jardinar', 15, (a.grupos ?? data.grupos ?? [])[0]?.canteiro);
+      break;
+    }
+    case 'ir': {
+      const target = resolvePlace(s, a.destino);
+      if (!target) throw new ToolError('destino_inexistente', { destino: a.destino, note: 'não há cômodo nem objeto com esse nome; cômodos: ' + houseRooms.map((r) => r.id).join(', ') });
+      if (s.activity.until > s.virtualMinutes && !passive.includes(s.activity.kind)) throw new ToolError('atividade_em_andamento', { current: s.activity.kind, note: 'termine ou interrompa ' + s.activity.kind + ' antes de ir' });
+      const path = target.object ? approach(s.position, target.object, s.objects) : pathfind(s.position, target.cell!, s.objects);
+      if (!path.length) throw new ToolError('sem_caminho', { destino: a.destino, note: 'não há caminho livre até lá agora' });
+      s.position = path[path.length - 1];
+      s.activity = { kind: 'caminhar', until: s.virtualMinutes + Math.max(2, Math.round(path.length / 2)), target: target.object?.id ?? 'descanso', intention: s.activity.intention, startNeeds: bodySnapshot(s.needs, s.motives) };
+      record('habitat', `Foi até ${target.label}.`, { walked: path.length - 1, to: target.object?.id ?? roomAt(s.position).id }, { origin: 'criatura' });
+      break;
+    }
     case 'decorar': {
       s.house ??= { version: 2 };
       if (a.room) {
@@ -490,7 +550,7 @@ async function applyAction(
       if (a.acao === 'plantar') {
         if (plot) throw new ToolError('canteiro_ocupado', { canteiro: bed.id, especie: plot.species, note: 'já há algo plantado aí' });
         if (!a.especie) throw new ToolError('sem_especie', { opcoes: Object.keys(species), note: 'diga qual espécie plantar' });
-        garden[bed.id] = { species: a.especie, plantedAt: s.virtualMinutes, waterings: [s.virtualMinutes] };
+        garden[bed.id] = { species: a.especie, plantedAt: s.virtualMinutes, waterings: [s.virtualMinutes], rule: 2 };
         record('jardim', `Plantou ${species[a.especie].label} no ${bed.label}.`, { canteiro: bed.id, especie: a.especie, acao: 'plantar' });
       } else if (a.acao === 'regar') {
         if (!plot) throw new ToolError('canteiro_vazio', { canteiro: bed.id, note: 'não há nada plantado aí' });
@@ -498,7 +558,7 @@ async function applyAction(
         record('jardim', `Regou o ${bed.label}.`, { canteiro: bed.id, especie: plot.species, acao: 'regar' });
       } else {
         if (!plot) throw new ToolError('canteiro_vazio', { canteiro: bed.id, note: 'não há nada plantado aí' });
-        const g = growth(plot, s.virtualMinutes);
+        const g = growth(plot, s.virtualMinutes, bedLight(bed, s.objects));
         if (g.stage < 4) throw new ToolError('ainda_nao_pronta', { canteiro: bed.id, estagio: stageLabel[g.stage], note: 'a planta ainda não está pronta' });
         delete garden[bed.id];
         record('jardim', `Colheu ${species[plot.species].label} do ${bed.label}.`, { canteiro: bed.id, especie: plot.species, acao: 'colher' });
@@ -541,6 +601,7 @@ export async function tick(
     const { state: s, gap,completed,events } = reconcile(original, now);
     const records: RecordEntry[] = [];
     if (s.house?.version !== 2) records.push(migrateHouse(s));
+    records.push(...perceiveWorld(original, s, await store.latest('ambiente', 30)));
     for (const event of events) records.push(bodyEvent(s, event));
     for(const activity of completed){records.push(entry(s,'atividade_concluida',`Atividade concluída: ${activity.kind}.`,{activity},{virtualAt:activity.until,origin:'simulacao_deterministica'}));const felt=perception(s,activity);if(felt)records.push(felt);}
     if (gap)
@@ -595,7 +656,9 @@ export async function tick(
             const ask = () => painter.paint!.call(brain, packContext(context), { title: a.title, motivation: a.motivation }, now);
             // One more try when the answer was malformed or cut (not on timeouts or limits): ~30%
             // of painter answers failed that way in the 26/11 tests.
-            const done = await ask().catch((e: { kind?: string }) => { if (e?.kind === 'resposta_invalida') return ask(); throw e; });
+            const t0 = Date.now();
+            // Retry only a quick malformed answer, so a tick stays well inside its 5-minute lease.
+            const done = await ask().catch((e: { kind?: string }) => { if (e?.kind === 'resposta_invalida' && Date.now() - t0 < 30000) return ask(); throw e; });
             a.artifact = done.artifact;
             paintings.push({ title: a.title, attempt: done.attempt });
           } catch (e) {
@@ -647,7 +710,8 @@ export async function tick(
           await applyAction(draft, a, store.withPending(records), output, now, fetcher);
           Object.assign(s, draft);
           records.push(...output);
-          const seen = a.type === 'criar' ? lookAt(a.artifact) : a.type === 'atividade' && a.activity === 'observar' ? observeNote(draft) : null;
+          const echo = a.type === 'diario' ? (output.find((r) => r.kind === 'diario')?.data.echo as { sameOpening: boolean; words: number; structure: number } | null) : null;
+          const seen = a.type === 'criar' ? lookAt(a.artifact) : a.type === 'atividade' && a.activity === 'observar' ? observeNote(draft) : echo ? `registrada; parecida com uma entrada recente (${echo.sameOpening ? 'mesma abertura, ' : ''}${Math.round(echo.words * 100)}% das palavras)` : null;
           outcomes.push({ action: label(a), result: 'feita', ...(seen ? { detail: { note: seen } } : {}) });
         } catch (e) {
           outcomes.push({ action: label(a), result: 'recusada', code: safeError(e), ...(e instanceof ToolError ? { detail: e.detail } : {}) });
@@ -836,6 +900,65 @@ export function migrateHouse(s: State): RecordEntry {
     { origin: 'sistema', importance: 0.8 },
   );
 }
+const stationOf: Record<string, string> = { comer: 'comida', beber: 'comida', dormir: 'cama', higiene: 'higiene', pesquisar: 'terminal', organizar: 'bau' };
+/** A room (id or label) or an object id, as she may name it. */
+export function resolvePlace(s: State, name: string): { label: string; object?: State['objects'][number]; cell?: { x: number; y: number }; room: string } | null {
+  const n = name.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/\p{M}/gu, '').trim();
+  const o = s.objects.find((x) => x.id.toLocaleLowerCase('pt-BR') === n);
+  if (o) return { label: o.label, object: o, room: roomAt(o).id };
+  const r = houseRooms.find((x) => x.id === n || x.label.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/\p{M}/gu, '') === n);
+  if (!r) return null;
+  // The free cell nearest to the room's centre.
+  const cx = (r.x0 + r.x1) / 2, cy = (r.y0 + r.y1) / 2;
+  const taken = new Set(s.objects.flatMap((x) => footprint(x)).map((c) => c.x + ',' + c.y));
+  const cells: { x: number; y: number }[] = [];
+  for (let y = r.y0; y <= r.y1; y++) for (let x = r.x0; x <= r.x1; x++) if (!taken.has(x + ',' + y)) cells.push({ x, y });
+  cells.sort((p, q) => Math.hypot(p.x - cx, p.y - cy) - Math.hypot(q.x - cx, q.y - cy));
+  return cells.length ? { label: r.label, cell: cells[0], room: r.id } : null;
+}
+/**
+ * Where an activity happens when she names a place. Body activities have their station: naming it,
+ * another object of the same room or the room itself means that station. Resting and observing
+ * can use any object that offers it (a room name picks one there). Otherwise a factual refusal.
+ */
+export function placeFor(s: State, activity: string, name: string): string | undefined {
+  const station = stationOf[activity];
+  const where = resolvePlace(s, name);
+  if (!where) throw new ToolError('objeto_inexistente', { objectId: name, note: 'esse objeto ou cômodo não existe na casa' });
+  if (station) {
+    const st = s.objects.find((o) => o.id === station);
+    if (st && (where.object?.id === station || where.room === roomAt(st).id)) return station;
+    throw new ToolError('lugar_inadequado', { objectId: name, note: `${activity} acontece em ${st?.label ?? station} (${st ? roomAt(st).label : ''})` });
+  }
+  const wants = activity === 'descansar' ? 'descansar' : 'observar';
+  if (where.object) {
+    const offers = kindOf(where.object).offers ?? [];
+    if (offers.includes(wants) || (wants === 'observar' && offers.includes('descansar'))) return where.object.id;
+    throw new ToolError('lugar_inadequado', { objectId: name, note: `${where.object.label} não oferece ${activity}; no mesmo cômodo: ${s.objects.filter((o) => roomAt(o).id === where.room && (kindOf(o).offers ?? []).includes(wants)).map((o) => o.id).join(', ') || 'nada'}` });
+  }
+  const pick = s.objects.find((o) => roomAt(o).id === where.room && (kindOf(o).offers ?? []).includes(wants));
+  if (!pick) throw new ToolError('lugar_inadequado', { objectId: name, note: `em ${where.label} não há onde ${activity}` });
+  return pick.id;
+}
+/** Similarity of a new diary entry to the recent ones (a fact she can read; nothing is refused for it). */
+export function diaryEcho(content: string, recent: RecordEntry[]) {
+  const c = closest(content, recent.map((r) => ({ id: r.id, content: r.content, realAt: r.realAt })));
+  return c.words >= 0.3 || c.structure >= 0.12 || c.sameOpening ? { words: Math.round(c.words * 100) / 100, structure: Math.round(c.structure * 100) / 100, sameOpening: c.sameOpening, id: c.id } : null;
+}
+/** Measurements of an experiment's groups, produced by the simulation itself. */
+export function measure(s: State, grupos: { canteiro: string; condicao: string }[]) {
+  return {
+    diaVirtual: Math.floor(s.virtualMinutes / 1440) + 1,
+    hora: Math.floor((s.virtualMinutes % 1440) / 60),
+    grupos: grupos.map((g) => {
+      const bed = s.objects.find((o) => o.id === g.canteiro);
+      const plot = s.house?.garden?.[g.canteiro];
+      const light = bed ? bedLight(bed, s.objects) : 1;
+      const gr = plot ? growth(plot, s.virtualMinutes, light) : null;
+      return { canteiro: g.canteiro, condicao: g.condicao, especie: plot?.species ?? null, crescimentoPct: gr ? Math.round(gr.progress * 100) : null, estagio: gr ? stageLabel[gr.stage] : 'vazio', horasUmidas: gr?.moistHours ?? 0, regas: plot?.waterings.length ?? 0, sombra: light < 1, posicao: bed ? { x: bed.x, y: bed.y } : null };
+    }),
+  };
+}
 /** What she perceives when an observation starts (facts, never advice). */
 export function observeNote(s: State): string {
   const o = s.objects.find((x) => x.id === s.activity.target);
@@ -843,7 +966,7 @@ export function observeNote(s: State): string {
   if (!o) return '';
   const outside = ['janela', 'canteiro', 'arvore', 'flores', 'banco', 'telescopio'].includes(o.kind) || roomAt(o).outdoor;
   if (outside) {
-    const garden = Object.entries(s.house?.garden ?? {}).map(([bed, plot]) => `${bed}: ${species[plot.species]?.label ?? plot.species} (${stageLabel[growth(plot, vm).stage]})`);
+    const garden = Object.entries(s.house?.garden ?? {}).map(([bed, plot]) => { const o2 = s.objects.find((x) => x.id === bed); return `${bed}: ${species[plot.species]?.label ?? plot.species} (${stageLabel[growth(plot, vm, o2 ? bedLight(o2, s.objects) : 1).stage]})`; });
     return 'lá fora: ' + outsideView(vm, o.kind === 'telescopio' ? 'telescopio' : o.kind === 'janela' ? 'janela' : 'jardim') + (garden.length && o.kind !== 'telescopio' ? '; canteiros: ' + garden.join(', ') : '');
   }
   const room = roomAt(o);
@@ -896,7 +1019,7 @@ function houseContext(s: State) {
   const pick = (o: State['objects'][number]) => ({ id: o.id, x: o.x, y: o.y, ...(o.id.includes(':') ? { label: o.label } : {}), ...(o.artifactId ? { artifactId: o.artifactId } : {}) });
   const others: Record<string, string[]> = {};
   for (const o of s.objects) { const r = roomAt(o); if (r.id !== here.id && o.kind !== 'tapete') (others[r.label] ??= []).push(o.id); }
-  const garden = Object.entries(s.house?.garden ?? {}).map(([bed, plot]) => { const g = growth(plot, s.virtualMinutes); return { canteiro: bed, especie: plot.species, estagio: stageLabel[g.stage], umido: g.moist }; });
+  const garden = Object.entries(s.house?.garden ?? {}).map(([bed, plot]) => { const o = s.objects.find((x) => x.id === bed); const g = growth(plot, s.virtualMinutes, o ? bedLight(o, s.objects) : 1); return { canteiro: bed, especie: plot.species, estagio: stageLabel[g.stage], umido: g.moist }; });
   return {
     room: here.label,
     objects: s.objects.filter((o) => roomAt(o).id === here.id).map(pick),
@@ -906,9 +1029,77 @@ function houseContext(s: State) {
     ...(s.house?.walls && Object.keys(s.house.walls).length ? { wallColors: s.house.walls } : {}),
   };
 }
-function worldContext(s: State) {
+function worldContext(s: State, previousVm: number | undefined, noticed: RecordEntry[], now: number) {
   const w = weatherAt(s.virtualMinutes);
-  return { period: periodLabel[periodOf(s.virtualMinutes)], season: seasonLabel[seasonOf(s.virtualMinutes)], weather: conditionLabel[w.condition], air: feltTemperature(w.temp), ...(w.wind > 0.6 ? { wind: 'forte' } : w.wind > 0.35 ? { wind: 'brisa' } : {}) };
+  // What changed since her last decision, and what she actually perceived recently (never what
+  // happened while she slept or could not see).
+  const changed: string[] = [];
+  if (previousVm !== undefined) {
+    const pw = weatherAt(previousVm).condition, pp = periodOf(previousVm);
+    if (pp !== periodOf(s.virtualMinutes)) changed.push(`${periodLabel[pp]} → ${periodLabel[periodOf(s.virtualMinutes)]}`);
+    if (pw !== w.condition) changed.push(`${conditionLabel[pw]} → ${conditionLabel[w.condition]}`);
+  }
+  return {
+    period: periodLabel[periodOf(s.virtualMinutes)], season: seasonLabel[seasonOf(s.virtualMinutes)], weather: conditionLabel[w.condition], air: feltTemperature(w.temp),
+    ...(w.wind > 0.6 ? { wind: 'forte' } : w.wind > 0.35 ? { wind: 'brisa' } : {}),
+    ...(changed.length ? { changedSinceLastDecision: changed } : {}),
+    ...(noticed.length ? { noticed: noticed.slice(0, 3).map((r) => ({ id: r.id, what: r.content, agoRealMinutes: ago(now, r.realAt) })) } : {}),
+  };
+}
+const outsideKinds = ['janela', 'canteiro', 'arvore', 'flores', 'banco', 'telescopio'];
+/**
+ * World events that happened since the last tick and that she could perceive: awake, and outdoors
+ * or looking out for sights; sounds and felt changes anywhere. One record per event, at most three
+ * per tick. Events she could not perceive still happened (the observer can see them) but are not hers.
+ */
+export function perceiveWorld(before: State, s: State, already: RecordEntry[]): RecordEntry[] {
+  const seen = new Set(already.map((r) => String(r.data.eventId)));
+  const timeline = [before.activity, ...(before.queue ?? []), s.activity];
+  const activityAt = (t: number) => timeline.find((a) => a.until > t) ?? s.activity;
+  const out: RecordEntry[] = [];
+  const events = eventsBetween(before.virtualMinutes, s.virtualMinutes);
+  // A bed becoming ready is a garden event too.
+  for (const [bedId, plot] of Object.entries(s.house?.garden ?? {})) {
+    const bed = s.objects.find((o) => o.id === bedId);
+    if (!bed) continue;
+    const light = bedLight(bed, s.objects);
+    if (growth(plot, before.virtualMinutes, light).stage < 4 && growth(plot, s.virtualMinutes, light).stage >= 4)
+      events.push({ id: `colheita:${bedId}:${plot.plantedAt}`, kind: 'pronta_colher', label: `${species[plot.species]?.label ?? plot.species} pronta para colher no ${bed.label}`, start: s.virtualMinutes - 1, end: s.virtualMinutes + 1440, where: 'jardim', sense: 'ver' });
+  }
+  for (const e of events) {
+    if (out.length >= 3 || seen.has(e.id)) continue;
+    const t = Math.max(e.start, before.virtualMinutes);
+    const act = activityAt(t);
+    const target = s.objects.find((o) => o.id === act.target);
+    const how = perceives(e, { awake: act.kind !== 'dormir', outdoors: roomAt(s.position).outdoor === true, lookingOut: act.kind === 'observar' && !!target && (outsideKinds.includes(target.kind) || roomAt(target).outdoor === true), night: false });
+    if (!how) continue;
+    out.push(entry(s, 'ambiente', `${how[0].toUpperCase()}${how.slice(1)}: ${e.label}.`, { eventId: e.id, event: e.kind, how, where: e.where, rare: !!e.rare }, { origin: 'simulacao_deterministica', category: 'episodica', importance: e.rare ? 0.6 : 0.3, virtualAt: Math.round(t) }));
+  }
+  return out;
+}
+/** A fact about her own recent diary (the openings she keeps using), never a rule. */
+function diaryPattern(diary: RecordEntry[]) {
+  const counts = new Map<string, number>();
+  for (const r of diary.slice(0, 6)) { const o = normalize(r.content).split(' ').slice(0, 3).join(' '); counts.set(o, (counts.get(o) ?? 0) + 1); }
+  const [top, n] = [...counts].sort((a, b) => b[1] - a[1])[0] ?? ['', 0];
+  return n >= 3 ? `${n} das suas últimas ${Math.min(6, diary.length)} entradas começam com "${top}"` : null;
+}
+/** Skills she declared, procedures relevant to what she is doing, active experiments with the last measurement. */
+function learningContext(s: State, skills: RecordEntry[], procedures: RecordEntry[], experiments: RecordEntry[]) {
+  const latest = (rows: RecordEntry[]) => [...new Map(rows.map((r) => [r.entityId, r])).values()];
+  const relevant = new Set<string>(['outro']);
+  if (s.motives.criatividade >= 55 || s.activity.kind === 'criar') ['pintura', 'escrita', 'musica'].forEach((x) => relevant.add(x));
+  if (Object.keys(s.house?.garden ?? {}).length || roomAt(s.position).outdoor) relevant.add('jardim');
+  if (s.activity.kind === 'pesquisar' || s.motives.curiosidade >= 60) relevant.add('pesquisa');
+  const active = latest(experiments).filter((r) => r.data.status === 'ativo');
+  if (active.length) relevant.add('experimento');
+  const procs = latest(procedures).filter((r) => relevant.has(String(r.data.contexto))).slice(0, 3);
+  const out: Record<string, unknown> = {};
+  const sk = latest(skills);
+  if (sk.length) out.skills = sk.slice(0, 6).map((r) => ({ entityId: r.entityId, nome: r.data.nome, tecnicas: r.data.tecnicas, limitacoes: r.data.limitacoes ?? undefined }));
+  if (procs.length) out.procedures = procs.map((r) => ({ entityId: r.entityId, titulo: r.content, contexto: r.data.contexto, passos: r.data.passos }));
+  if (active.length) out.experiments = active.slice(0, 2).map((r) => ({ entityId: r.entityId, pergunta: r.data.pergunta, hipotese: r.data.hipotese, variavel: r.data.variavel, grupos: r.data.grupos, ultimaMedicao: (r.data.medicoes as unknown[] | undefined)?.at(-1), medicoes: (r.data.medicoes as unknown[] | undefined)?.length ?? 0 }));
+  return out;
 }
 const ago = (now: number, at: number) => Math.max(0, Math.round((now - at) / 60000));
 const noteOf = (o: { result?: string; code?: string; detail?: unknown }) => {
@@ -916,7 +1107,7 @@ const noteOf = (o: { result?: string; code?: string; detail?: unknown }) => {
   return o.result === 'feita' ? (d?.note ? `feita (${d.note})` : 'feita') : `recusada (${d?.note ?? o.code ?? 'motivo não informado'})`;
 };
 /** Notable events she lived (not engine bookkeeping), newest first. */
-const eventKinds = ['conversa', 'artefato', 'habitat', 'jardim', 'musica', 'recurso', 'identidade', 'interesse', 'projeto', 'interrupcao', 'corpo', 'atividade_interrompida', 'relacao'];
+const eventKinds = ['conversa', 'artefato', 'habitat', 'jardim', 'musica', 'recurso', 'experimento', 'habilidade', 'procedimento', 'identidade', 'interesse', 'projeto', 'interrupcao', 'corpo', 'atividade_interrompida', 'relacao'];
 /**
  * Everything the creature perceives when deciding, built from persisted state only.
  * Order follows a lived moment: who she is → how she feels → where she is → what she was doing
@@ -925,6 +1116,7 @@ const eventKinds = ['conversa', 'artefato', 'habitat', 'jardim', 'musica', 'recu
  */
 export async function buildContext(env: Env, store: Store, s: State, now: number) {
   const inbox = await store.inbox();
+  const [noticed, skills, procedures, experiments] = await Promise.all([store.latest('ambiente', 3), store.latest('habilidade', 12), store.latest('procedimento', 16), store.latest('experimento', 8)]);
   const [interests, projects, artifacts, recent, concepts, readings, researchRows, thread, diary, perceptionRows] = await Promise.all([
     store.latest('interesse', 12),
     store.latest('projeto', 10),
@@ -934,7 +1126,7 @@ export async function buildContext(env: Env, store: Store, s: State, now: number
     store.latest('leitura', 2),
     store.latest('pesquisa', 12),
     store.latest('intencao', 4),
-    store.latest('diario', 3),
+    store.latest('diario', 6),
     store.latest('percepcao', 5),
   ]);
   const lastIntent = thread[0];
@@ -945,9 +1137,17 @@ export async function buildContext(env: Env, store: Store, s: State, now: number
   const diaryIds = new Set(diary.map((r) => r.id));
   // Skip what is already in front of her (diary entries, research shown in knowledge).
   const candidates = await store.memories(cue, now, 24, (r) => recallable(r) && !diaryIds.has(r.id) && !shownQueries.has(String(r.data.query ?? '').toLocaleLowerCase('pt-BR')));
-  // Varied recall: a near-repetition of an already chosen memory does not take another slot.
-  const memories: RecordEntry[] = [];
-  for (const r of candidates) if (memories.length < 8 && !repeatedDiary(r.content, memories, 0.4)) memories.push(r);
+  // Varied recall (27/11): the same 5 memories were recalled ~250 times each, in almost every
+  // decision. Recently and often shown memories step back (habituation, not deletion) and MMR keeps
+  // near-equivalent memories from taking several slots. Deterministic; nothing random.
+  const seen = await store.retrievalStats(candidates.map((r) => r.id));
+  const scored = candidates.map((r, i) => {
+    const st = seen.get(r.id);
+    const recentShow = st ? Math.exp(-Math.max(0, now - st.last_at) / (3 * 3600000)) : 0;
+    const habit = st ? Math.min(1, Math.log10(1 + st.count) / 2.4) : 0;
+    return { item: r, text: r.content, score: (candidates.length - i) / candidates.length - 0.7 * recentShow * habit };
+  });
+  const memories: RecordEntry[] = mmr(scored, 6, 0.6);
   const complex = (s.complexNext || (s.decisions > 0 && s.decisions % 24 === 0)) && s.decisions > 0;
   const felt = feelings(s);
   const ongoing = s.activity.until > s.virtualMinutes;
@@ -967,8 +1167,9 @@ export async function buildContext(env: Env, store: Store, s: State, now: number
     identity: { name: s.identity.name, description: s.identity.description, version: s.identity.version, traits: Object.fromEntries(Object.entries(s.identity.traits).map(([k, v]) => [k, { value: v.value, evidence: v.evidence.slice(0, 3), version: v.version }])) },
     interests: interests.map((r) => ({ id: r.id, entityId: r.entityId, topic: r.content, status: r.data.status, effectiveStrength: Math.round(Number(r.data.strength) * Math.exp(-Math.max(0, s.virtualMinutes - r.virtualAt) / 43200) * 100) / 100 })),
     projects: projects.map((r) => ({ id: r.id, entityId: r.entityId, title: r.content, steps: r.data.steps, completed: r.data.completed, status: r.data.status, horizon: r.data.horizon, version: r.data.version })),
-    artifacts: artifacts.map((r) => ({ id: r.id, entityId: r.entityId, title: r.content, version: r.data.version, format: (r.data.artifact as { format?: string } | undefined)?.format })),
-    diaryRecent: diary.map((r) => ({ id: r.id, content: r.content.slice(0, 400), agoRealMinutes: ago(now, r.realAt) })),
+    artifacts: [...new Map(artifacts.map((r) => [r.entityId, r])).values()].map((r) => ({ id: r.id, entityId: r.entityId, title: r.content, version: r.data.version, format: (r.data.artifact as { format?: string } | undefined)?.format, ...(Array.isArray(r.data.sections) && r.data.sections.length ? { sections: r.data.sections } : {}), ...((r.data.revision as { change?: string } | undefined)?.change ? { lastChange: (r.data.revision as { change: string }).change } : {}) })),
+    diaryRecent: diary.slice(0, 3).map((r) => ({ id: r.id, content: r.content.slice(0, 400), agoRealMinutes: ago(now, r.realAt) })),
+    ...(diaryPattern(diary) ? { diaryPattern: diaryPattern(diary) } : {}),
     // How she feels now, and how she felt things change after recent activities.
     feeling: { body: felt.body, mood: felt.mood, state: bodyAlerts(s).filter((x) => x.startsWith('dormindo')) },
     perceptions: perceptionRows.map((r) => ({ id: r.id, felt: r.data.before && r.data.after ? feltChange(String(r.data.activity), r.data.before as Record<string, number>, r.data.after as Record<string, number>) : r.content })),
@@ -979,7 +1180,7 @@ export async function buildContext(env: Env, store: Store, s: State, now: number
       lastCompleted: s.lastCompleted ? situationOf(s.lastCompleted) : null,
       ...houseContext(s),
     },
-    world: worldContext(s),
+    world: worldContext(s, lastIntent?.virtualAt, noticed, now),
     // Continuity of thought: her last decisions and what happened to each action.
     thread: thread.map((r) => ({
       intention: r.content,
@@ -992,8 +1193,9 @@ export async function buildContext(env: Env, store: Store, s: State, now: number
     knowledge: {
       research: researchByQuery.slice(0, 3).map((r) => ({ id: r.id, query: r.data.query, source: r.data.source, agoRealMinutes: ago(now, r.realAt), results: ((r.data.results ?? []) as { title: string; excerpt: string; url: string }[]).slice(0, 2).map((x) => ({ title: x.title, excerpt: String(x.excerpt ?? '').slice(0, 220), url: x.url })) })),
       concepts: [...new Map(concepts.map((r) => [r.entityId, { entityId: r.entityId, content: r.content }])).values()].slice(0, 12),
+      ...learningContext(s, skills, procedures, experiments),
     },
-    memories: memories.map((r) => ({ id: r.id, category: r.category, content: r.content.slice(0, 420), confidence: r.confidence, status: r.data.status, evidence: r.associations.slice(0, 4) })),
+    memories: memories.map((r) => ({ id: r.id, category: r.category, content: r.content.slice(0, 320), confidence: r.confidence, status: r.data.status, evidence: r.associations.slice(0, 4) })),
     events: recent.filter((r) => eventKinds.includes(r.kind)).slice(0, 6).map((r) => ({ id: r.id, kind: r.kind, content: r.content.slice(0, 240), agoRealMinutes: ago(now, r.realAt) })),
     inbox,
     workingResults: readings.map((r) => ({ id: r.id, realAt: r.realAt, content: r.content, result: JSON.stringify(r.data).slice(0, 5000) })),

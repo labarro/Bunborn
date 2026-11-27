@@ -180,3 +180,12 @@ O modelo escolhe dentre ferramentas permitidas e pode recusar sugestões do obse
 - **Prompt:** descreve essas possibilidades e diz que nada é obrigatório. Nenhuma preferência, de clima, de cômodo ou de jardinagem, é definida antes.
 - **Migração:** registrada como alteração externa do ambiente, sem sugerir reação.
 - **Custo:** cerca de +520 tokens por decisão no contexto real (HABITAT.md).
+
+
+## Diversidade, mundo vivo e aprendizado (27/11)
+
+- **Correções de causa:** `placeFor` (as estações aceitam o objeto ou o nome do cômodo), a ação `ir`, e memórias com habituação e MMR.
+- **Percepções novas:** nota de semelhança no diário, `diaryPattern`, `world.changedSinceLastDecision` e `world.noticed`.
+- **Capacidades novas:** `habilidade`, `procedimento`, `experimento` e `obra_secao`, e revisões medidas.
+- **Custo:** cerca de +470 tokens por decisão no contexto real.
+- **Documentos:** COGNITIVE_DIVERSITY.md, LIVING_WORLD.md, LEARNING.md, EXPERIMENTATION.md e CREATIVE_SYSTEM.md.

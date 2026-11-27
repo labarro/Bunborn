@@ -90,7 +90,7 @@ export const stateSchema = z
         version: z.literal(2),
         walls: z.record(z.string().max(20), z.string().regex(/^#[0-9a-fA-F]{6}$/)).optional(),
         inventory: z.array(z.object({ id: short, label: short, kind: short, color: z.string().regex(/^#[0-9a-fA-F]{6}$/), ...point, artifactId: short.optional(), w: z.number().int().min(1).max(3).optional(), h: z.number().int().min(1).max(3).optional() }).strict()).max(40).optional(),
-        garden: z.record(z.string().max(160), z.object({ species: short, plantedAt: time, waterings: z.array(time).max(12) }).strict()).optional(),
+        garden: z.record(z.string().max(160), z.object({ species: short, plantedAt: time, waterings: z.array(time).max(12), rule: z.literal(2).optional() }).strict()).optional(),
       })
       .strict()
       .optional(),
