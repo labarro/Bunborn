@@ -973,7 +973,7 @@ export function observeNote(s: State): string {
   }
   const room = roomAt(o);
   const here = s.objects.filter((x) => roomAt(x).id === room.id && x.kind !== 'tapete').map((x) => x.label + (x.artifactId ? ' (com obra exposta)' : ''));
-  return `no ${room.label.toLowerCase()}: ${here.join(', ')}`;
+  return `${room.id === "sala" || room.id === "cozinha" ? "na" : "no"} ${room.label.toLowerCase()}: ${here.join(", ")}`;
 }
 export function roomSignature(s: Pick<State, 'objects' | 'virtualMinutes'>) {
   let h = 2166136261;
