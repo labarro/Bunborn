@@ -11,3 +11,6 @@ playwright-report/
 *.backup.sql
 *.private.json
 scripts/.tmp-*
+
+# Local fixtures for visual review (generated from backups; never committed)
+preview-data/

@@ -221,13 +221,8 @@ async function applyAction(
         { sources: results, status: 'fonte_consultada', query: a.query },
         { category: 'semantica', importance: 0.65, confidence: 0.7, associations: [r.id, a.query] },
       );
-      // A concept is an actually searched query; edges connect to retrieved context, not fabricated mastery.
-      record(
-        'conceito',
-        a.query,
-        { sources: results.map((x) => x.url), related: s.working.slice(0, 4), researchId: r.id },
-        { entityId: 'conceito:' + a.query.toLocaleLowerCase('pt-BR'), associations: [r.id] },
-      );
+      // A search query is not a concept (Neural Atlas, 28/11): the query and what came back stay as
+      // pesquisa + memória with sources; concepts are declared by her with the conceito action.
       s.motives.tedio = clamp(s.motives.tedio - 10);
       s.motives.curiosidade = clamp(s.motives.curiosidade + 4);
       s.motives.criatividade = clamp(s.motives.criatividade + 2);
@@ -452,6 +447,11 @@ async function applyAction(
         { reason: a.reason, status: 'pendente', ...(item ? { catalogId: item.id, kind: item.kind } : {}) },
         { entityId: 'recurso:' + a.id, category: 'prospectiva' },
       );
+      break;
+    }
+    case 'conceito': {
+      const prior = await existingEntity(store, 'conceito', a.id);
+      record('conceito', a.nome, { nome: a.nome, descricao: a.descricao, aliases: a.aliases, evidence: a.evidence, version: Number(prior?.data.version ?? 0) + 1 }, { entityId: prior?.entityId ?? entityId('conceito', a.id), category: 'semantica', associations: a.evidence, importance: 0.6, confidence: 0.7 });
       break;
     }
     case 'obra_secao': {
@@ -904,7 +904,9 @@ const stationOf: Record<string, string> = { comer: 'comida', beber: 'comida', do
 /** A room (id or label) or an object id, as she may name it. */
 export function resolvePlace(s: State, name: string): { label: string; object?: State['objects'][number]; cell?: { x: number; y: number }; room: string } | null {
   const n = name.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/\p{M}/gu, '').trim();
-  const o = s.objects.find((x) => x.id.toLocaleLowerCase('pt-BR') === n);
+  const norm = (t: string) => t.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/\p{M}/gu, '').trim();
+  // By id or by its label ("Alimentação e água"), as she sees them.
+  const o = s.objects.find((x) => x.id.toLocaleLowerCase('pt-BR') === n || norm(x.label) === n);
   if (o) return { label: o.label, object: o, room: roomAt(o).id };
   const r = houseRooms.find((x) => x.id === n || x.label.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/\p{M}/gu, '') === n);
   if (!r) return null;
@@ -1116,7 +1118,7 @@ const eventKinds = ['conversa', 'artefato', 'habitat', 'jardim', 'musica', 'recu
  */
 export async function buildContext(env: Env, store: Store, s: State, now: number) {
   const inbox = await store.inbox();
-  const [noticed, skills, procedures, experiments] = await Promise.all([store.latest('ambiente', 3), store.latest('habilidade', 12), store.latest('procedimento', 16), store.latest('experimento', 8)]);
+  const [noticed, skills, procedures, experiments, relations] = await Promise.all([store.latest('ambiente', 3), store.latest('habilidade', 12), store.latest('procedimento', 16), store.latest('experimento', 8), store.latest('relacao', 16)]);
   const [interests, projects, artifacts, recent, concepts, readings, researchRows, thread, diary, perceptionRows] = await Promise.all([
     store.latest('interesse', 12),
     store.latest('projeto', 10),
@@ -1192,7 +1194,8 @@ export async function buildContext(env: Env, store: Store, s: State, now: number
     // What she learned: recent research results (one entry per question) and concepts.
     knowledge: {
       research: researchByQuery.slice(0, 3).map((r) => ({ id: r.id, query: r.data.query, source: r.data.source, agoRealMinutes: ago(now, r.realAt), results: ((r.data.results ?? []) as { title: string; excerpt: string; url: string }[]).slice(0, 2).map((x) => ({ title: x.title, excerpt: String(x.excerpt ?? '').slice(0, 220), url: x.url })) })),
-      concepts: [...new Map(concepts.map((r) => [r.entityId, { entityId: r.entityId, content: r.content }])).values()].slice(0, 12),
+      concepts: [...new Map(concepts.filter((r) => !r.data.researchId).map((r) => [r.entityId, { entityId: r.entityId, nome: r.content, descricao: String(r.data.descricao ?? '').slice(0, 160) || undefined }])).values()].slice(0, 10),
+      ...(relations.length ? { relations: [...new Map(relations.map((r) => [r.entityId, { de: r.data.from, para: r.data.to, relacao: r.content, status: r.data.status }])).values()].slice(0, 10) } : {}),
       ...learningContext(s, skills, procedures, experiments),
     },
     memories: memories.map((r) => ({ id: r.id, category: r.category, content: r.content.slice(0, 320), confidence: r.confidence, status: r.data.status, evidence: r.associations.slice(0, 4) })),

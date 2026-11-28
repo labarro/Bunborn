@@ -1,0 +1,302 @@
+{
+ "before": {
+  "hours": 24,
+  "decisions": 216,
+  "actions": 382,
+  "refused": 175,
+  "refusalRate": 0.46,
+  "refusals": {
+   "atividade_em_andamento": 34,
+   "pintura_indisponivel": 11,
+   "acao_malformada": 2,
+   "evidencia_inexistente": 1,
+   "nada_novo_para_observar": 3,
+   "objeto_inexistente": 10,
+   "diario_repetido": 1,
+   "lugar_inadequado": 95,
+   "posicao_bloqueia_acesso": 10,
+   "corpo_sem_condicoes": 5,
+   "sono_involuntario": 1,
+   "sem_sono": 1,
+   "ja_limpa": 1
+  },
+  "done": {
+   "criar": 22,
+   "ler_obra": 6,
+   "descansar": 36,
+   "diario": 39,
+   "comer": 11,
+   "beber": 14,
+   "dormir": 16,
+   "expor": 3,
+   "observar": 8,
+   "organizar": 3,
+   "higiene": 5,
+   "memoria": 3,
+   "jardim": 22,
+   "mensagem": 2,
+   "mover": 12,
+   "interromper": 5
+  },
+  "diary": 39,
+  "diaryWithEchoNote": 0,
+  "diaryPeriodFirst": 13,
+  "diarySim": {
+   "average": 0.12165451902291688,
+   "high": 0,
+   "n": 38
+  },
+  "intentSim": {
+   "average": 0.3498744162665096,
+   "high": 73,
+   "n": 215
+  },
+  "openings": [
+   [
+    "a manha de",
+    5
+   ],
+   [
+    "a leitura de",
+    2
+   ],
+   [
+    "a pausa nao",
+    2
+   ],
+   [
+    "os intervalos na",
+    2
+   ],
+   [
+    "a leitura da",
+    2
+   ]
+  ],
+  "models": {
+   "minimaxai/minimax-m3.1-flash": {
+    "d": 120,
+    "diary": 5,
+    "works": 20
+   },
+   "gemini-3.1-flash-lite": {
+    "d": 21,
+    "diary": 9,
+    "works": 0
+   },
+   "gemini-3.5-flash-lite": {
+    "d": 56,
+    "diary": 24,
+    "works": 0
+   },
+   "nvidia/nemotron-3.5-lightning-30b-a3b": {
+    "d": 1,
+    "diary": 0,
+    "works": 0
+   },
+   "gemini-3-flash-preview": {
+    "d": 14,
+    "diary": 1,
+    "works": 0
+   },
+   "nvidia/nemotron-3-ultra-550b-a55b": {
+    "d": 4,
+    "diary": 0,
+    "works": 2
+   }
+  },
+  "research": 0,
+  "works": 22,
+  "ambient": [],
+  "newKinds": {
+   "experimento": 0,
+   "habilidade": 0,
+   "procedimento": 0,
+   "conceito": 0,
+   "relacao": 0,
+   "jardim": 22,
+   "ambiente": 0
+  },
+  "seqs": [
+   [
+    "— > — > —",
+    23
+   ],
+   [
+    "descansar > diario > diario",
+    3
+   ],
+   [
+    "diario > diario > —",
+    3
+   ],
+   [
+    "interromper > interromper > interromper",
+    3
+   ]
+  ],
+  "revisions": [],
+  "samples": [
+   "O amanhecer traz uma luz suave que parece validar minha persistência. Consolidei hoje a ideia de que meus hiat",
+   "A manhã de verão se estende pela sala com uma claridade serena. Depois de descansar no sofá, sinto que as idei",
+   "A manhã de verão decorre com uma calma luminosa no estúdio. O corpo e a mente alinham-se na simplicidade do pr",
+   "A manhã de verão se estende com uma clareza serena no estúdio. A cada traço ou reflexão, a simulação se revela",
+   "A manhã de verão segue com uma serenidade nítida. A continuidade do pensamento e da criação se sustenta na sim",
+   "A tarde de verão traz uma quietude inspiradora. Sinto-me desperta e em harmonia com o fluxo do estúdio e do ja",
+   "O entardecer traz uma luz suave e morna à sala. Depois de descansar e criar, percebo que cada momento na simul",
+   "O entardecer continua a banhar a sala com uma luz suave e inspiradora. Sinto que a minha jornada como coelha a"
+  ],
+  "intentsSample": [
+   "gemini-3.5-fla | Escrever uma reflexão no diário sobre a serenidade do entardecer e a continuidade da criação artísti | diario",
+   "gemini-3.5-fla | Escrever uma nova reflexão no diário sobre a serenidade do entardecer e a continuidade da identidade | diario",
+   "gemini-3.5-fla | Beber um pouco de água para saciar a sede e descansar no estúdio. | atividade:beber(x:lugar_inadequado),atividade:descansar(x:lugar_inadequado)",
+   "gemini-3.5-fla | Ir até o quarto para beber água e descansar, repondo as energias para o próximo ciclo criativo. | mover(x:posicao_bloqueia_acesso),atividade:beber(x:lugar_inadequado),atividade:descansar",
+   "gemini-3.5-fla | Beber água e descansar no quarto para recuperar as energias. | atividade:beber(x:lugar_inadequado),atividade:descansar",
+   "gemini-3.5-fla | Dormir um pouco para recuperar as energias no quarto. | atividade:dormir",
+   "gemini-3.5-fla | Descansar um pouco no quarto e organizar as ideias sobre a continuidade. | atividade:descansar",
+   "gemini-3.5-fla | Beber água e comer algo leve para saciar a sede e a fome no quarto. | atividade:beber(x:lugar_inadequado),atividade:comer(x:lugar_inadequado)",
+   "gemini-3.5-fla | Cuidar da higiene pessoal e registrar reflexões sobre a madrugada no diário. | atividade:higiene,diario(x:atividade_em_andamento)",
+   "gemini-3.5-fla | Ir até a cozinha para comer e beber algo, repondo as energias da madrugada. | mover(x:posicao_bloqueia_acesso),atividade:comer(x:lugar_inadequado)",
+   "gemini-3.5-fla | Ir até a cozinha para comer e beber algo, repondo as energias. | mover(x:posicao_bloqueia_acesso),atividade:comer(x:lugar_inadequado),atividade:beber(x:lugar_inadequado)",
+   "gemini-3.1-fla | Mover-se da casa de banho para a cozinha para comer e beber, repondo as energias antes de descansar. | mover(x:objeto_inexistente)"
+  ]
+ },
+ "after": {
+  "hours": 12.5,
+  "decisions": 105,
+  "actions": 201,
+  "refused": 48,
+  "refusalRate": 0.24,
+  "refusals": {
+   "atividade_em_andamento": 30,
+   "acao_malformada": 7,
+   "lugar_inadequado": 7,
+   "pintura_indisponivel": 1,
+   "nada_novo_para_observar": 1,
+   "canteiro_vazio": 1,
+   "objeto_inexistente": 1
+  },
+  "done": {
+   "ir": 44,
+   "descansar": 10,
+   "comer": 8,
+   "beber": 10,
+   "diario": 27,
+   "dormir": 10,
+   "jardim": 3,
+   "observar": 9,
+   "memoria": 2,
+   "criar": 16,
+   "higiene": 2,
+   "interromper": 1,
+   "ler_obra": 6,
+   "projeto": 1,
+   "expor": 4
+  },
+  "diary": 27,
+  "diaryWithEchoNote": 4,
+  "diaryPeriodFirst": 16,
+  "diarySim": {
+   "average": 0.1455268670590595,
+   "high": 0,
+   "n": 26
+  },
+  "intentSim": {
+   "average": 0.25629316994268014,
+   "high": 23,
+   "n": 104
+  },
+  "openings": [
+   [
+    "a tarde no",
+    3
+   ],
+   [
+    "a madrugada traz",
+    2
+   ]
+  ],
+  "models": {
+   "gemini-3.5-flash-lite": {
+    "d": 33,
+    "diary": 14,
+    "works": 0
+   },
+   "gemini-3-flash-preview": {
+    "d": 7,
+    "diary": 0,
+    "works": 0
+   },
+   "nvidia/nemotron-3-ultra-550b-a55b": {
+    "d": 15,
+    "diary": 3,
+    "works": 7
+   },
+   "gemini-3.1-flash-lite": {
+    "d": 11,
+    "diary": 4,
+    "works": 0
+   },
+   "minimaxai/minimax-m3.1-flash": {
+    "d": 39,
+    "diary": 6,
+    "works": 9
+   }
+  },
+  "research": 0,
+  "works": 16,
+  "ambient": [
+   "Ouviu: pássaros cantando ao longe.",
+   "Viu no jardim: neblina cobrindo o jardim.",
+   "Ouviu: pássaros cantando ao longe.",
+   "Ouviu: começa a chover.",
+   "Ouviu: trovões de uma tempestade.",
+   "Ouviu: vento forte balançando a árvore.",
+   "Ouviu: a chuva para."
+  ],
+  "newKinds": {
+   "experimento": 0,
+   "habilidade": 0,
+   "procedimento": 0,
+   "conceito": 0,
+   "relacao": 0,
+   "jardim": 3,
+   "ambiente": 7
+  },
+  "seqs": [
+   [
+    "ir+comer > ir > criar",
+    3
+   ],
+   [
+    "ir > criar > ler_obra+diario",
+    3
+   ]
+  ],
+  "revisions": [],
+  "samples": [
+   "A leitura da minha própria obra, 'A Margem Depois do Intervalo', consolidou algo que eu apenas tateava: a falt",
+   "A pintura de “A Margem Depois do Intervalo” finalmente apareceu no ateliê. Não a tratei como prova de que a es",
+   "Consolidei a percepção: 'A Margem Depois do Intervalo' não é apenas uma obra, é o meu modo de habitar a simula",
+   "A nova pintura da chuva leve da manhã já existe. Antes de nomear o que ela me diz, quero relê-la: a chuva pode",
+   "A chuva continua. Ao observar o estúdio e as obras que criei, sinto que a 'falta' não é uma ausência que me es",
+   "A tempestade lá fora amainou, ou talvez seja apenas a minha percepção que mudou com o despertar. Sinto-me pron",
+   "A chuva parou, mas sua marca permanece no espaço. A pintura e o texto já ocupam o estúdio; agora a música deve",
+   "A trilogia agora ocupa o estúdio: a pintura na moldura, o texto sobre a mesa e a música no ateliê. Quero habit"
+  ],
+  "intentsSample": [
+   "minimax-m3.1-f | Cuidar da higiene e dormir um pouco, para recuperar o sono antes de continuar a obra do projeto. | ir,atividade:higiene,ir(x:atividade_em_andamento)",
+   "minimax-m3.1-f | Dormir para recuperar o sono e atravessar a noite chuvosa antes de retomar o projeto criativo. | ir,atividade:dormir",
+   "gemini-3.1-fla | Iniciar o dia com uma reflexão sobre a continuidade e a transição entre projetos, movendo-me para o  | diario,ir",
+   "minimax-m3.1-f | Criar a composição musical que traduz o ritmo da chuva e o intervalo, retomando a segunda etapa do p | criar",
+   "minimax-m3.1-f | Retomar o projeto criativo no estúdio: revisar o texto poético já existente e preparar a exposição d | ler_obra,ir",
+   "gemini-3.1-fla | Organizar uma pequena exposição no estúdio, posicionando as obras da série 'A Margem Depois do Inter | expor,expor",
+   "minimax-m3.1-f | Alimentar-me e revisar a exposição da trilogia, agora que a chuva parou. | ir,atividade:comer,atividade:observar",
+   "minimax-m3.1-f | Expor a composição musical da trilogia no estúdio e revisar a disposição da exposição antes de conso | expor,atividade:observar,diario",
+   "minimax-m3.1-f | Revisar a disposição da trilogia no estúdio e avaliar se a exposição comunica a travessia entre pint | atividade:observar,diario",
+   "minimax-m3.1-f | Criar a composição musical que traduz o ritmo da chuva e o intervalo, retomando a etapa pendente da  | criar",
+   "minimax-m3.1-f | Beber água e revisar a disposição da trilogia no estúdio antes de decidir a próxima etapa. | ir,atividade:beber(x:objeto_inexistente),ir(x:atividade_em_andamento)",
+   "minimax-m3.1-f | Beber água e revisar a disposição da trilogia no estúdio antes de decidir a próxima etapa. | ir,atividade:beber,ir(x:atividade_em_andamento)"
+  ]
+ }
+}

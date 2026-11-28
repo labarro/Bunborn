@@ -189,3 +189,8 @@ O modelo escolhe dentre ferramentas permitidas e pode recusar sugestões do obse
 - **Capacidades novas:** `habilidade`, `procedimento`, `experimento` e `obra_secao`, e revisões medidas.
 - **Custo:** cerca de +470 tokens por decisão no contexto real.
 - **Documentos:** COGNITIVE_DIVERSITY.md, LIVING_WORLD.md, LEARNING.md, EXPERIMENTATION.md e CREATIVE_SYSTEM.md.
+
+
+## Conceitos (28/11)
+
+A ação `conceito` registra uma ideia que ela entendeu, com evidências. Uma busca, sozinha, não é um conceito. `relacionar` liga dois conceitos. O contexto traz até 10 conceitos e 10 relações. Detalhes em NEURAL_ATLAS.md.

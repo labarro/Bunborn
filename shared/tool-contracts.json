@@ -271,6 +271,20 @@
     "modo": "adicionar|substituir"
   },
   {
+    "type": "conceito",
+    "id": "string maxLength 160",
+    "nome": "string maxLength 160",
+    "descricao": "string maxLength 600",
+    "aliases": {
+      "LISTA_DE": "string maxLength 80",
+      "maxItens": 6
+    },
+    "evidence": {
+      "LISTA_DE": "string maxLength 100",
+      "maxItens": 8
+    }
+  },
+  {
     "type": "ir",
     "destino": "string maxLength 160"
   },

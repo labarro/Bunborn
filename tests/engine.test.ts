@@ -300,7 +300,8 @@ describe('evidence, tools, and autonomy contracts', () => {
     expect((record.data.results as { url: string }[])[0].url).toBe(
       'https://pt.wikipedia.org/?curid=1',
     );
-    expect((await store.records('conceito')).length).toBe(1);
+    // A search is not a concept (Neural Atlas, 28/11): concepts come only from the conceito action.
+    expect((await store.records('conceito')).length).toBe(0);
     expect(() =>
       decisionSchema.parse({
         intention: 'x',

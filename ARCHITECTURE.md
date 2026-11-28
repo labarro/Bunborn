@@ -99,3 +99,11 @@ A planta, as paredes, as portas, os tipos de objeto, os caminhos e a validade do
 - **Motor:** novas ações `ir`, `habilidade`, `procedimento`, `experimento` e `obra_secao`; experimentos medidos pelo motor.
 - **Observador:** `/api/trajectory` e `/api/world`, ambos públicos e só de leitura.
 - **Documentos:** COGNITIVE_DIVERSITY.md, LIVING_WORLD.md, LEARNING.md, EXPERIMENTATION.md e CREATIVE_SYSTEM.md.
+
+
+## Neural Atlas (28/11)
+
+- **Grafo:** `shared/atlas.ts` monta o grafo de conhecimentos só a partir dos registros: consultas, conhecimentos com fonte, conceitos declarados, interesses, projetos, obras, experimentos, habilidades, procedimentos e memórias, com a origem de cada ligação.
+- **Servidor:** `/api/atlas` é público, só de leitura e tem cache de 60 s.
+- **Interface:** `src/atlas/` usa d3-force e canvas, carregados sob demanda.
+- **Documento:** NEURAL_ATLAS.md.

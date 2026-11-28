@@ -140,3 +140,29 @@ Correção:
 - **Confundido:** os disjuntores da NVIDIA (MiniMax e Nemotron) estavam abertos, e só o Gemini decidiu (7 de 8 pelo gemini-3.5-flash-lite).
 - **Repetição:** com ele, a intenção "continuar o projeto de observação detalhada do estúdio" se repetiu 5 vezes, com diário em quase todos os ciclos.
 - **Leitura:** isso reforça, sem isolar, a hipótese de que esse modelo tende à repetição, porque também era continuidade de um projeto ativo. Fica para acompanhar pela área técnica (distribuição por modelo) antes de qualquer ajuste de roteamento.
+
+## Depois da implantação (27/11 13:46 → 28/11 02:16 UTC, 12,5 horas, 105 decisões)
+
+Comparação com as 24 horas anteriores à implantação. Exportação somente leitura; os números completos estão em `artifacts/diversity/after-deploy-2026-11-28.json`.
+
+| Indicador | 24 h antes | 12,5 h depois |
+|---|---|---|
+| Ações recusadas | 46% (175 de 382) | **24%** (48 de 201) |
+| `lugar_inadequado` | 95 | **7** |
+| `objeto_inexistente` / `posicao_bloqueia_acesso` | 10 / 10 | 1 / 0 |
+| Usos de `ir` | — | 44 |
+| Semelhança média das intenções | 0,35 | **0,26** |
+| Aberturas repetidas no diário | "a manhã de…" ×5 | "a tarde no…" ×3, "a madrugada traz…" ×2 |
+| Diário com a 1ª frase sobre período ou clima | 13 de 39 | **16 de 27** |
+| Entradas de diário por hora | 1,6 | 2,2 |
+| Acontecimentos do mundo percebidos | — | 7 (pássaros, neblina, chuva começando e parando, tempestade, vento) |
+| Pesquisas / experimentos / habilidades / procedimentos / conceitos | 0 / — / — / — / — | 0 / 0 / 0 / 0 / 0 |
+
+**Leitura:**
+- **Melhorou de forma clara:** as recusas por lugar caíram de 95 para 7. As 7 restantes são casos legítimos: descansar na janela, que não oferece descanso, e comer na mesa da cozinha. A bancada de comida foi para a sala porque ela mesma a moveu em 27/11. As intenções ficaram menos repetidas, e ela usa `ir` com naturalidade.
+- **Continuidade de projeto:** ela concluiu uma trilogia (pintura, texto e música) da série "A Margem Depois do Intervalo" e a expôs no estúdio, retomando etapas pendentes entre decisões.
+- **Não melhorou:** o diário continua abrindo pelo período ou pelo tempo (59%) e ficou mais frequente. A diferença é que agora as entradas falam de acontecimentos percebidos ("A tempestade lá fora amainou", "A chuva parou, mas sua marca permanece"), em vez de molduras vazias ("A manhã de verão segue…"). A nota de semelhança apareceu em 4 entradas.
+- **Por modelo:** o gemini-3.5-flash-lite escreveu diário em 14 de 33 decisões; o Nemotron decidiu 15 vezes (7 obras) e o MiniMax 39 (9 obras).
+- **Capacidades novas ainda não usadas:** em 12,5 horas ela não usou experimento, habilidade, procedimento nem conceito. Isso não foi forçado.
+- **Pesquisa:** continua em zero.
+- **Correção miúda feita depois:** ela tentou "comer em Alimentação e água" (o rótulo do objeto), e isso era recusado como objeto inexistente. Agora o rótulo também é aceito como nome do lugar.

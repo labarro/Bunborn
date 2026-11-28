@@ -68,3 +68,8 @@ As 5 memórias mais recuperadas tinham entre 171 e 254 recuperações cada: entr
 - **Quantidade:** 6 memórias de até 320 caracteres.
 
 Nada é aleatório. Detalhes em COGNITIVE_DIVERSITY.md.
+
+
+## Conceitos e consultas (28/11)
+
+Uma pesquisa deixou de criar automaticamente um `conceito`. A consulta e o resultado continuam como `pesquisa` e `memoria` com fontes, e conceitos agora vêm só da ação `conceito` dela. Os conceitos antigos gerados a partir de buscas foram preservados e aparecem no Neural Atlas como consultas. O contexto traz os conceitos declarados e as relações entre eles (NEURAL_ATLAS.md).

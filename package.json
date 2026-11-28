@@ -17,6 +17,8 @@
     "format:check": "prettier --check src worker shared tests scripts *.ts *.md *.json *.jsonc"
   },
   "dependencies": {
+    "@types/d3-force": "3.0.10",
+    "d3-force": "3.0.0",
     "lucide-react": "^0.468.0",
     "phaser": "^3.90.0",
     "react": "^19.2.0",

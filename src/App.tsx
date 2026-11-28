@@ -46,6 +46,7 @@ import { Explanation } from './explain';
 import { HighlightsPanel, LogbookPanel, useVisitors } from './insights';
 import {exportExistence,restoreExistence}from'./backups';
 const Habitat = lazy(() => import('./HabitatView'));
+const NeuralAtlas = lazy(() => import('./atlas/NeuralAtlas').then((m) => ({ default: m.NeuralAtlas })));
 import type { Work } from './habitat/scene';
 import { kindOf, roomAt } from '../shared/house';
 import { growth, species, stageLabel } from '../shared/world';
@@ -820,8 +821,10 @@ export function App() {
                   ))}
                 </div>
               ) : null}
-              {tab === 'Conhecimentos' && visible.length ? (
-                <KnowledgeMap records={visible} />
+              {tab === 'Conhecimentos' ? (
+                <Suspense fallback={<div className="atlas atlas-loading">Abrindo o Neural Atlas…</div>}>
+                  <NeuralAtlas />
+                </Suspense>
               ) : null}
               {tab === 'Recursos' ? (
                 <div className="inventory">

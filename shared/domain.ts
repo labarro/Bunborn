@@ -205,6 +205,8 @@ export const actionSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('procedimento'), id: short, titulo: short, contexto: z.enum(['pintura', 'escrita', 'musica', 'jardim', 'pesquisa', 'experimento', 'organizacao', 'outro']), passos: z.array(short).min(1).max(8), evidence }).strict(),
   z.object({ type: z.literal('experimento'), acao: z.enum(['iniciar', 'medir', 'concluir', 'abandonar']), id: short, pergunta: z.string().max(160).nullable(), hipotese: z.string().max(160).nullable(), variavel: z.string().max(160).nullable(), grupos: z.array(z.object({ canteiro: short, condicao: short }).strict()).max(4).nullable(), conclusao: z.string().max(2000).nullable() }).strict(),
   z.object({ type: z.literal('obra_secao'), id: short, secao: short, conteudo: z.string().min(1).max(4000), modo: z.enum(['adicionar', 'substituir']) }).strict(),
+  // A concept she understood (an idea, phenomenon, theory), grounded in evidence; a search query is not one.
+  z.object({ type: z.literal('conceito'), id: short, nome: short, descricao: z.string().min(1).max(600), aliases: z.array(z.string().max(80)).max(6), evidence }).strict(),
   // Walk to a room (quarto, estudio, banheiro, sala, cozinha, jardim) or to an object.
   z.object({ type: z.literal('ir'), destino: short }).strict(),
   z.object({ type: z.literal('jardim'), acao: z.enum(['plantar', 'regar', 'colher']), canteiro: short, especie: z.enum(Object.keys(species) as [string, ...string[]]).nullable() }).strict(),

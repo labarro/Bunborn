@@ -9,7 +9,7 @@ import {isFrozen,restoreLocked,beginExport,exportSegment,sealExport,cancelExport
 import {runToolTest} from './tool-tests';
 import {coordinate}from'./coordination';
 import { aiOverview, saveAiConfig } from './ai/admin';
-import { highlights, logbook, recordVisit, visitorsToday, forgetInsights, trajectory } from './insights';
+import { atlas, highlights, logbook, recordVisit, visitorsToday, forgetInsights, trajectory } from './insights';
 import { activeAt, eventsBetween } from '../shared/events';
 export const json = (value: unknown, status = 200) =>
   Response.json(value, { status, headers: { 'cache-control': 'no-store' } });
@@ -150,6 +150,7 @@ export async function api(request: Request, env: Env): Promise<Response> {
     }
     if (path === '/api/highlights') return json({ ...(await highlights(env)), visitors: await visitorsToday(env) });
     if (path === '/api/trajectory') return json(await trajectory(env));
+    if (path === '/api/atlas') return json(await atlas(env));
     if (path === '/api/world') {
       // World events of the last virtual day (computed, nothing stored), and which ones she perceived.
       const st = await store.state();
@@ -367,7 +368,7 @@ export async function api(request: Request, env: Env): Promise<Response> {
   }
   return json({ error: 'rota_inexistente' }, 404);
 }
-export const publicGet = new Set(['/api/state', '/api/records', '/api/monitor', '/api/highlights', '/api/logbook', '/api/trajectory', '/api/world']);
+export const publicGet = new Set(['/api/state', '/api/records', '/api/monitor', '/api/highlights', '/api/logbook', '/api/trajectory', '/api/world', '/api/atlas']);
 export function isPublicRoute(env: Env, method: string, path: string) {
   if (env.PUBLIC_OBSERVATION !== 'true') return false;
   return (method === 'GET' && publicGet.has(path)) || (method === 'POST' && (path === '/api/message' || path === '/api/visit'));

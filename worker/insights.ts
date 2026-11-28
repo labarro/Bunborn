@@ -113,6 +113,17 @@ export async function visitorsToday(env: Env) {
   return cached(env, 'visitors:' + day, 30000, async () => ({ day, today: (await env.DB.prepare('SELECT COUNT(*) AS n FROM visits WHERE day=?').bind(day).first<{ n: number }>())?.n ?? 0 }));
 }
 
+// ── Neural Atlas (28/11): the knowledge graph from stored records only (shared/atlas.ts) ───────
+// Works are sent without their content (only the format): the map needs titles, not paintings.
+export async function atlas(env: Env) {
+  return cached(env, 'atlas', 60000, async () => {
+    const { buildAtlas } = await import('../shared/atlas');
+    const rows = (await env.DB.prepare("SELECT seq,id,entity_id,kind,category,content,CASE WHEN kind='artefato' THEN json_set(json_remove(data,'$.artifact','$.seen'),'$.artifact',json_object('format',json_extract(data,'$.artifact.format'))) ELSE data END AS data,real_at,virtual_at,importance,confidence,associations,origin FROM records WHERE kind IN ('nascimento','pesquisa','conceito','relacao','interesse','projeto','artefato','experimento','habilidade','procedimento') OR (kind='memoria' AND (origin='criatura' OR json_extract(data,'$.status')='fonte_consultada')) ORDER BY seq LIMIT 4000").all<Row>()).results.map(decode);
+    const ret = (await env.DB.prepare('SELECT memory_id, count, last_at FROM retrievals').all<{ memory_id: string; count: number; last_at: number }>()).results;
+    return buildAtlas(rows, new Map(ret.map((r) => [r.memory_id, { count: r.count, last_at: r.last_at }])));
+  });
+}
+
 // ── Trajectory (27/11): qualitative evolution and technical repetition indicators ───────────
 // Built only from stored records, deterministic, cached. These are indicators about a computer
 // simulation's behaviour, not psychological diagnoses, and they are never sent to the creature.
